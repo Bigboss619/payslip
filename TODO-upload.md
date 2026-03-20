@@ -6,6 +6,7 @@
 - [x] Step 3: Update main to `flex-1 p-6` without overflow constraints conflicting (main was already flex-1 implicitly; kept p-6 overflow-y-auto).
 - [x] Step 4: Optimize summary grid for better space: `grid-cols-1 md:grid-cols-3` (already optimal).
 - [x] Step 5: Add `min-h-screen` to body.
-- [ ] Step 6: Test and mark complete with attempt_completion.
+- [x] Step 6: Added `flex-1` to main to fill screen width properly (address feedback: content packed left).
+- [ ] Step 7: Final test and complete.
 
-Progress: All HTML edits complete. Changes: flex div now "flex min-h-screen", body "bg-gray-100 min-h-screen", main retains smooth scroll. No cutoff/overflow issues.
+Progress: Layout now fills screen: sidebar fixed, main expands to fill rest with internal scroll. 
