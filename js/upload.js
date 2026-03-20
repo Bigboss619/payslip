@@ -355,4 +355,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (monthSelect) monthSelect.addEventListener('change', () => { currentPage = 1; handleMonthSelect(); });
   if (deptSelect) deptSelect.addEventListener('change', () => { currentPage = 1; applyFilters(); });
   if (filterBtn) filterBtn.addEventListener('click', () => { currentPage = 1; applyFilters(); });
+  
+  // View Payslips button handler
+  const viewPayslipsBtn = document.getElementById('viewPayslipsBtn');
+  if (viewPayslipsBtn) {
+    viewPayslipsBtn.addEventListener('click', showViewPayslipsModal);
+  }
 });
