@@ -1,14 +1,11 @@
-# Payslip View Fix - TODO Steps
+# Task Progress: Link payslip-view.html to payslip.html & Populate with mockData
 
-## Completed
-- [ ] 1. Create TODO.md ✅
+## TODO Steps (from approved plan)
+- [x] 1. Enhance mockData in js/payslip.js: Add employeeName, employeeId, department, position to each entry.
+- [x] 2. Fix View links in js/payslip.js: Update table href to pass payslipData via URL param.
+- [x] 3. Update payslip-view.html: Ensure dynamic population (minimal, already IDs set).
+- [ ] 4. (Optional) Add sidebar quick-link in pages/payslip.html.
+- [ ] 5. Test navigation & population.
 
-## In Progress
-- [x] 2. Fix js/payslip.js: Update viewPayslip(id) to navigate with payslipData URL param
-- [x] 3. Enhance pages/payslip-view.html: Add missing IDs, fix typos, improve design/print styles
-- [x] 4. Update js/payslip-view.js: Improve data parsing, breakdowns, status colors, PDF download
-- [x] 5. Test navigation and data population ✅ (pages/payslip.html opened)
-- [ ] 6. Update TODO.md with completion
-- [ ] 7. Demo with command
+**Progress**: Completed mockData enhancement and View link fix in js/payslip.js.
 
-**Next Step: Edit js/payslip.js**
