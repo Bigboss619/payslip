@@ -235,7 +235,107 @@ function handlePayrollPagination(direction) {
   renderPayrollTable();
 }
 
-// Init
+// View Payslips Modal and Handler
+function showViewPayslipsModal() {
+  const modal = document.createElement('div');
+  modal.id = 'view-slips-modal';
+  modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+  modal.innerHTML = `
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div class="p-6">
+        <h3 class="text-xl font-bold text-gray-900 mb-6">View Payslip</h3>
+        <div class="space-y-4 mb-6">
+          <input id="modal-staff-name" placeholder="Staff Name" class="w-full border p-3 rounded-lg">
+          <input id="modal-staff-id" placeholder="Staff ID (EMP001)" class="w-full border p-3 rounded-lg">
+          <select id="modal-month" class="w-full border p-3 rounded-lg">
+            <option value="">Select Month</option>
+          </select>
+          <select id="modal-dept" class="w-full border p-3 rounded-lg">
+            <option value="">Select Department</option>
+          </select>
+        </div>
+        <div class="flex justify-end space-x-3">
+          <button onclick="closeViewSlipsModal()" class="px-6 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">Cancel</button>
+          <button id="view-slip-btn" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400" disabled>View Payslip</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  
+  // Populate dropdowns
+  const months = [...new Set(mockPayrollData.map(d => formatMonthYear(d.month, d.year)))];
+  document.getElementById('modal-month').innerHTML += months.map(m => `<option value="${m}">${m}</option>`).join('');
+  
+  const depts = [...new Set(mockPayrollData.map(d => d.department))];
+  document.getElementById('modal-dept').innerHTML += depts.map(d => `<option value="${d}">${d}</option>`).join('');
+  
+  // Filter and enable button
+  const inputs = ['modal-staff-name', 'modal-staff-id', 'modal-month', 'modal-dept'];
+  inputs.forEach(id => {
+    document.getElementById(id).addEventListener('input', updateViewButton);
+  });
+  
+  document.getElementById('view-slip-btn').addEventListener('click', handleViewPayslip);
+}
+
+function closeViewSlipsModal() {
+  const modal = document.getElementById('view-slips-modal');
+  if (modal) modal.remove();
+}
+
+function updateViewButton() {
+  const name = document.getElementById('modal-staff-name').value.toLowerCase();
+  const id = document.getElementById('modal-staff-id').value.toLowerCase();
+  const month = document.getElementById('modal-month').value;
+  const dept = document.getElementById('modal-dept').value;
+  
+  const matches = mockPayrollData.filter(emp => 
+    (!name || emp.name.toLowerCase().includes(name)) &&
+    (!id || emp.staffId.toLowerCase().includes(id)) &&
+    (!month || formatMonthYear(emp.month, emp.year) === month) &&
+    (!dept || emp.department === dept)
+  );
+  
+  const btn = document.getElementById('view-slip-btn');
+  if (matches.length === 1) {
+    btn.disabled = false;
+    btn.textContent = 'View ' + matches[0].name + "'s Payslip";
+  } else {
+    btn.disabled = true;
+btn.textContent = matches.length === 0 ? 'No match' : `${matches.length} matches`;
+  }
+}
+
+function handleViewPayslip() {
+  const name = document.getElementById('modal-staff-name').value.toLowerCase();
+  const id = document.getElementById('modal-staff-id').value.toLowerCase();
+  const month = document.getElementById('modal-month').value;
+  const dept = document.getElementById('modal-dept').value;
+  
+  const match = mockPayrollData.find(emp => 
+    emp.name.toLowerCase().includes(name) &&
+    emp.staffId.toLowerCase().includes(id) &&
+    formatMonthYear(emp.month, emp.year) === month &&
+    emp.department === dept
+  );
+  
+  if (match) {
+    const payslipData = {
+      ...match,
+      date: new Date().toLocaleDateString(),
+      status: 'Paid',
+      deductions: match.netSalary * 0.15, // approximate
+      position: 'Staff' // default
+    };
+    
+    const params = new URLSearchParams({ payslipData: JSON.stringify(payslipData) });
+window.open(`pages/payslip-view.html?${params.toString()}`, '_blank');
+    closeViewSlipsModal();
+  }
+}
+
+// Event listener for View Payslips button
 document.addEventListener('DOMContentLoaded', () => {
   populateSelectors();
   populatePreviousMonths();
