@@ -1,11 +1,10 @@
-# Task Progress: Link payslip-view.html to payslip.html & Populate with mockData
+# Pagination Fix TODO
 
-## TODO Steps (from approved plan)
-- [x] 1. Enhance mockData in js/payslip.js: Add employeeName, employeeId, department, position to each entry.
-- [x] 2. Fix View links in js/payslip.js: Update table href to pass payslipData via URL param.
-- [x] 3. Update payslip-view.html: Ensure dynamic population (minimal, already IDs set).
-- [ ] 4. (Optional) Add sidebar quick-link in pages/payslip.html.
-- [ ] 5. Test navigation & population.
-
-**Progress**: Completed mockData enhancement and View link fix in js/payslip.js.
+## Steps:
+- [x] 1. Edit pages/upload.html - Rename #payrollPagination in previewSection to #previewPagination
+- [x] 2. Refresh browser and test pagination shows on payroll table (10 rows + buttons/info)
+- [x] 3. Test prev/next buttons work
+- [x] 4. Test with filters/month select (resets to page 1)
+- [x] 5. Update TODO-pagination-fix.md to complete
+- [x] 6. attempt_completion
 
