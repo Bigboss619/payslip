@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payslip Detail</title>
+  <link rel="stylesheet" href="../src/output.css">
+</head>
+
+<body>
+
+    <div class="flex h-screen overflow-hidden">
+
+        <!-- SIDEBAR -->
+        <aside id="sidebar" class="w-64 bg-white shadow-lg transition-all duration-300 md:block lg:w-64">
+
+        <div class="p-6 text-xl font-bold border-b flex items-center justify-between">
+            <span>PayslipSys</span>
+            <button class="md:hidden lg:hidden p-1 rounded hover:bg-gray-100 sidebar-toggle">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            </button>
+        </div>
+
+        <nav class="p-4 space-y-2 overflow-hidden">
+
+            <a href="dashboard.html" class="sidebar-link block px-4 py-3 rounded-lg bg-blue-100 text-blue-600 font-medium group relative">
+            <svg class="w-5 h-5 flex-shrink-0 inline-block mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+            <span>Dashboard</span>
+            </a>
+
+            <a href="payslip.html" class="sidebar-link block px-4 py-3 rounded-lg hover:bg-gray-100 group relative">
+            <svg class="w-5 h-5 flex-shrink-0 inline-block mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <span>Payslips</span>
+            </a>
+
+            <a href="#" class="sidebar-link block px-4 py-3 rounded-lg hover:bg-gray-100 group relative">
+            <svg class="w-5 h-5 flex-shrink-0 inline-block mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+            </svg>
+            <span>Upload Payroll</span>
+            </a>
+
+            <a href="#" class="sidebar-link block px-4 py-3 rounded-lg hover:bg-gray-100 text-red-500 group relative">
+            <svg class="w-5 h-5 flex-shrink-0 inline-block mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+            </svg>
+            <span>Logout</span>
+            </a>
+
+        </nav>
+        </aside> 
+
+        <main class="p-6 overflow-y-auto">
+            <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-xl p-8">
+
+                    <!-- HEADER -->
+                    <div class="flex justify-between items-center border-b pb-4 mb-6">
+                    <div>
+                        <h1 class="text-xl font-bold">Your Company Name</h1>
+                        <p class="text-sm text-gray-500">Payslip for January 2026</p>
+                    </div>
+
+                    <div class="text-right text-sm text-gray-600">
+                        <p>Date Generated:</p>
+                        <p class="font-medium">31 Jan 2026</p>
+                    </div>
+                    </div>
+
+                    <!-- EMPLOYEE INFO -->
+                    <div class="grid grid-cols-2 gap-6 mb-6 text-sm">
+
+                    <div>
+                        <p class="text-gray-500">Employee Name</p>
+                        <p class="font-semibold">Emmanuel Ugochukwu</p>
+                    </div>
+
+                    <div>
+                        <p class="text-gray-500">Department</p>
+                        <p class="font-semibold">IT</p>
+                    </div>
+
+                    <div>
+                        <p class="text-gray-500">Days Worked</p>
+                        <p class="font-semibold">22</p>
+                    </div>
+
+                    <div>
+                        <p class="text-gray-500">Pro-rata</p>
+                        <p class="font-semibold">Full</p>
+                    </div>
+
+                    </div>
+
+                    <!-- SALARY TABLE -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+                    <!-- EARNINGS -->
+                    <div>
+                        <h2 class="font-semibold mb-3">Earnings</h2>
+
+                        <table class="w-full text-sm">
+                        <tbody>
+                            <tr class="border-b">
+                            <td class="py-2">Basic Salary (40%)</td>
+                            <td class="text-right">₦120,000</td>
+                            </tr>
+                            <tr class="border-b">
+                            <td class="py-2">Housing (25%)</td>
+                            <td class="text-right">₦75,000</td>
+                            </tr>
+                            <tr class="border-b">
+                            <td class="py-2">Transport (20%)</td>
+                            <td class="text-right">₦60,000</td>
+                            </tr>
+                            <tr class="border-b">
+                            <td class="py-2">Medical (10%)</td>
+                            <td class="text-right">₦30,000</td>
+                            </tr>
+                            <tr>
+                            <td class="py-2">Utility (5%)</td>
+                            <td class="text-right">₦15,000</td>
+                            </tr>
+                        </tbody>
+                        </table>
+                    </div>
+
+                    <!-- DEDUCTIONS -->
+                    <div>
+                        <h2 class="font-semibold mb-3">Deductions</h2>
+
+                        <table class="w-full text-sm">
+                        <tbody>
+                            <tr class="border-b">
+                            <td class="py-2">PAYE Tax</td>
+                            <td class="text-right">₦30,000</td>
+                            </tr>
+                            <tr class="border-b">
+                            <td class="py-2">Payroll Deductions</td>
+                            <td class="text-right">₦10,000</td>
+                            </tr>
+                            <tr>
+                            <td class="py-2">Pension (8%)</td>
+                            <td class="text-right">₦24,000</td>
+                            </tr>
+                        </tbody>
+                        </table>
+                    </div>
+
+                    </div>
+
+                    <!-- SUMMARY -->
+                    <div class="border-t pt-4">
+
+                    <div class="flex justify-between text-sm mb-2">
+                        <span>Gross Salary</span>
+                        <span>₦300,000</span>
+                    </div>
+
+                    <div class="flex justify-between text-sm mb-4">
+                        <span>Total Deductions</span>
+                        <span>₦64,000</span>
+                    </div>
+
+                    <div class="flex justify-between text-lg font-bold">
+                        <span>Net Salary</span>
+                        <span class="text-green-600">₦236,000</span>
+                    </div>
+
+                    </div>
+
+                    <!-- ACTION BUTTONS -->
+                    <div class="mt-6 flex justify-end gap-4">
+
+                    <button onclick="window.print()" class="px-4 py-2 bg-gray-200 rounded-lg">
+                        Print
+                    </button>
+
+                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg">
+                        Download PDF
+                    </button>
+
+                    </div>
+
+            </div>
+        </main>
+
+    </div>
+
+</body>
+</html>
