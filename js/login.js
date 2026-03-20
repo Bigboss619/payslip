@@ -165,11 +165,26 @@ function togglePassword(inputId) {
 loginForm.addEventListener('submit', (e) => {
   e.preventDefault();
   if (validateLogin()) {
-    showToast('Login successful!', 'success');
-    showModal('Welcome Back!', 'You have been successfully logged in.', 'success');
-      window.location.href = "../HR/dasboard.html";
-    // Future: API call, redirect to dashboard
-    // window.location.href = 'pages/dashboard.html';
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    // Hardcoded demo credentials
+    const users = {
+      'user@example.com': { password: 'userpass', role: 'user', dashboard: 'pages/dashboard.html' },
+      'hr@example.com': { password: 'hrpass', role: 'hr', dashboard: 'HR/dashboard.html' }
+    };
+
+    if (users[email] && users[email].password === password) {
+      localStorage.setItem('userRole', users[email].role);
+      showToast(`Welcome, ${users[email].role}!`, 'success');
+      showModal('Login Successful!', `Redirecting to ${users[email].role} dashboard...`, 'success');
+      setTimeout(() => {
+        window.location.href = users[email].dashboard;
+      }, 1500);
+    } else {
+      showToast('Invalid email or password!', 'error');
+      showModal('Login Failed', 'Please check your credentials or use defaults:<br>User: user@example.com / userpass<br>HR: hr@example.com / hrpass', 'error');
+    }
   }
 });
 
