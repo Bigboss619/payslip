@@ -329,9 +329,7 @@ function handleViewPayslip() {
       position: 'Staff' // default
     };
     
-    const params = new URLSearchParams({ payslipData: JSON.stringify(payslipData) });
-window.open(`pages/payslip-view.html?${params.toString()}`, '_blank');
-    closeViewSlipsModal();
+    // Modal closes automatically on navigation
   }
 }
 

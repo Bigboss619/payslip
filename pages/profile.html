@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard</title>
-  <link rel="stylesheet" href="../src/output.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="../src/output.css">
 </head>
-
 <body class="bg-gray-100">
-
     <div class="flex h-screen overflow-hidden">
 
-      <!-- SIDEBAR -->
+        <!-- SIDEBAR -->
       <aside id="sidebar" class="w-64 bg-white shadow-lg transition-all duration-300 md:block lg:w-64">
 
         <div class="p-6 text-xl font-bold border-b flex items-center justify-between">
@@ -63,9 +62,8 @@
       </aside>
 
       <!-- MAIN -->
-      <div class="flex-1 flex flex-col">
-
-        <!-- TOPBAR -->
+       <div class="flex-1 flex flex-col">
+                <!-- TOPBAR -->
         <header class="bg-white shadow px-6 py-4 flex items-center lg:justify-between">
 
           <!-- Mobile toggle + title -->
@@ -94,79 +92,12 @@
         </header>
 
         <!-- CONTENT -->
-        <main class="p-6 overflow-y-auto">
+         <main class="p-6 overflow-y-auto">
 
-          <!-- CARDS -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-
-            <div class="bg-white p-6 rounded-xl shadow">
-              <h2 class="text-sm text-gray-500">Total Payslips</h2>
-              <p class="text-2xl font-bold mt-2">12</p>
-            </div>
-
-            <div class="bg-white p-6 rounded-xl shadow">
-              <h2 class="text-sm text-gray-500">Last Salary</h2>
-              <p class="text-2xl font-bold mt-2">₦250,000</p>
-            </div>
-
-            <div class="bg-white p-6 rounded-xl shadow">
-              <h2 class="text-sm text-gray-500">Department</h2>
-              <p class="text-2xl font-bold mt-2">IT</p>
-            </div>
-
-          </div>
-
-          <!-- TABLE -->
-          <div class="bg-white rounded-xl shadow p-6">
-
-            <h2 class="text-lg font-semibold mb-4">Recent Payslips</h2>
-
-            <table class="w-full text-sm">
-
-              <thead>
-                <tr class="text-left border-b">
-                  <th class="py-2">Month</th>
-                  <th class="py-2">Gross Salary</th>
-                  <th class="py-2">Net Salary</th>
-                  <th class="py-2">Action</th>
-                </tr>
-              </thead>
-
-              <tbody>
-
-                <tr class="border-b">
-                  <td class="py-2">January 2026</td>
-                  <td>₦300,000</td>
-                  <td>₦250,000</td>
-                  <td>
-                    <button class="text-blue-600 hover:underline">
-                      View
-                    </button>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td class="py-2">December 2025</td>
-                  <td>₦300,000</td>
-                  <td>₦245,000</td>
-                  <td>
-                    <button class="text-blue-600 hover:underline">
-                      View
-                    </button>
-                  </td>
-                </tr>
-
-              </tbody>
-
-            </table>
-
-          </div>
-
-        </main>
-
-      </div>
+         </main>
+       </div>
 
     </div>
+    
 </body>
-<script src="../js/dashboard.js"></script>
 </html>
