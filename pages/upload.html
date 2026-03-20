@@ -132,16 +132,18 @@
 
                 </table>
 
-                <div id="payrollPagination">
-                  <!-- Dynamic pagination controls -->
-                </div>
 
+
+              </div>
+
+              <div id="payrollPagination">
+                <!-- Dynamic pagination controls -->
               </div>
 
             </div> 
 
           <!-- SUCCESS MESSAGE -->
-<div id="monthSection" class="bg-white p-6 rounded-xl shadow mb-6">
+          <div id="monthSection" class="bg-white p-6 rounded-xl shadow mb-6">
             <h2 class="text-lg font-semibold mb-4">Select Month to Upload</h2>
             <div class="flex flex-col md:flex-row gap-4 items-center mb-4">
               <select id="monthSelect" class="border p-3 rounded-lg w-full md:w-64" onchange="handleMonthSelect()">
@@ -157,7 +159,7 @@
           </div>
 
             <!-- SUMMARY CARDS -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
 
               <div class="bg-white p-6 rounded-xl shadow">
                 <h2 class="text-sm text-gray-500">Total Employees</h2>
@@ -217,11 +219,14 @@
                 </table>
 
               </div>
+                <div id="payrollPagination">
+                <!-- Dynamic pagination controls -->
+              </div>
 
             </div> 
 
           <!-- ACTIONS -->
-<div class="flex gap-4">
+          <div class="flex gap-4">
 
             <button onclick="document.getElementById('filterSection')?.classList.toggle('hidden')" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700">
               Toggle Filters

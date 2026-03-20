@@ -54,20 +54,37 @@ function renderPayrollTable(data = currentPayrollData) {
 
   if (paginatedData.length === 0) {
     tableBody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500">No data found</td></tr>';
-    updatePayrollPagination(data.length);
-    return;
+  } else {
+    tableBody.innerHTML = paginatedData.map(item => `
+      <tr class="border-b hover:bg-gray-50">
+        <td class="p-2">${item.name}</td>
+        <td class="p-2">${item.department}</td>
+        <td class="p-2">${formatCurrency(item.grossSalary)}</td>
+        <td class="p-2 font-semibold">${formatCurrency(item.netSalary)}</td>
+      </tr>
+    `).join('');
   }
 
-  tableBody.innerHTML = paginatedData.map(item => `
-    <tr class="border-b hover:bg-gray-50">
-      <td class="p-2">${item.name}</td>
-      <td class="p-2">${item.department}</td>
-      <td class="p-2">${formatCurrency(item.grossSalary)}</td>
-      <td class="p-2 font-semibold">${formatCurrency(item.netSalary)}</td>
-    </tr>
-  `).join('');
-
-  updatePayrollPagination(data.length);
+  const paginationDiv = document.getElementById('payrollPagination');
+  if (paginationDiv) {
+    const totalPages = Math.ceil(data.length / pageSize);
+    paginationDiv.innerHTML = `
+      <div class="flex items-center justify-between mt-4 px-4 py-3 bg-gray-50 rounded-lg">
+        <div class="text-sm text-gray-700">
+          Showing ${start + 1} to ${Math.min(end, data.length)} of ${data.length} entries
+        </div>
+        <div class="flex space-x-2">
+          <button onclick="handlePayrollPagination('prev')" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed" ${currentPage === 1 ? 'disabled' : ''}>
+            Previous
+          </button>
+          <span class="text-sm font-medium px-3 py-2">${currentPage} of ${totalPages}</span>
+          <button onclick="handlePayrollPagination('next')" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed" ${currentPage === totalPages ? 'disabled' : ''}>
+            Next
+          </button>
+        </div>
+      </div>
+    `;
+  }
 }
 
 function updateSummary() {
@@ -94,6 +111,7 @@ function selectPreviousMonth(monthYear) {
   selectedMonthYear = monthYear;
   document.getElementById('monthSelect') && (document.getElementById('monthSelect').value = monthYear);
   currentPayrollData = mockPayrollData.filter(item => formatMonthYear(item.month, item.year) === monthYear);
+  currentPage = 1;
   renderPayrollTable();
   updateSummary();
   alert(`Switched to ${monthYear} data`);
@@ -133,6 +151,7 @@ function applyFilters() {
            (!deptFilter || item.department === deptFilter);
   });
 
+  currentPage = 1;
   renderPayrollTable();
   updateSummary();
 }
@@ -143,6 +162,7 @@ function handleMonthSelect() {
     selectedMonthYear = monthSelect.value;
     if (selectedMonthYear) {
       currentPayrollData = mockPayrollData.filter(item => item.month === selectedMonthYear.split(' ')[0]);
+      currentPage = 1;
       renderPayrollTable();
       updateSummary();
     }
@@ -203,6 +223,16 @@ function handleUpload() {
   } else {
     alert(`${selectedMonthYear} already uploaded.`);
   }
+}
+
+function handlePayrollPagination(direction) {
+  const totalPages = Math.ceil(currentPayrollData.length / pageSize);
+  if (direction === 'prev' && currentPage > 1) {
+    currentPage--;
+  } else if (direction === 'next' && currentPage < totalPages) {
+    currentPage++;
+  }
+  renderPayrollTable();
 }
 
 // Init
