@@ -30,6 +30,9 @@ const mockUploadedMonths = new Set(['January 2026', 'December 2025', 'January 20
 
 let currentPayrollData = [...mockPayrollData];
 let selectedMonthYear = '';
+let currentPage = 1;
+const pageSize = 10;
+
 
 const fileInput = document.getElementById("fileInput");
 const fileName = document.getElementById("fileName");
@@ -44,12 +47,18 @@ function renderPayrollTable(data = currentPayrollData) {
   const tableBody = document.getElementById('payrollTableBody');
   if (!tableBody) return;
 
-  if (data.length === 0) {
+  const pageSize = 10;
+  const start = (currentPage - 1) * pageSize;
+  const end = start + pageSize;
+  const paginatedData = data.slice(start, end);
+
+  if (paginatedData.length === 0) {
     tableBody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500">No data found</td></tr>';
+    updatePayrollPagination(data.length);
     return;
   }
 
-  tableBody.innerHTML = data.map(item => `
+  tableBody.innerHTML = paginatedData.map(item => `
     <tr class="border-b hover:bg-gray-50">
       <td class="p-2">${item.name}</td>
       <td class="p-2">${item.department}</td>
@@ -57,6 +66,8 @@ function renderPayrollTable(data = currentPayrollData) {
       <td class="p-2 font-semibold">${formatCurrency(item.netSalary)}</td>
     </tr>
   `).join('');
+
+  updatePayrollPagination(data.length);
 }
 
 function updateSummary() {
@@ -198,6 +209,7 @@ function handleUpload() {
 document.addEventListener('DOMContentLoaded', () => {
   populateSelectors();
   populatePreviousMonths();
+  currentPage = 1;
   renderPayrollTable();
   updateSummary();
 
@@ -208,9 +220,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const deptSelect = document.getElementById('deptSelect');
   const filterBtn = document.getElementById('filterBtn');
 
-  if (nameFilter) nameFilter.addEventListener('input', applyFilters);
-  if (staffIdFilter) staffIdFilter.addEventListener('input', applyFilters);
-  if (monthSelect) monthSelect.addEventListener('change', handleMonthSelect);
-  if (deptSelect) deptSelect.addEventListener('change', applyFilters);
-  if (filterBtn) filterBtn.addEventListener('click', applyFilters);
+  if (nameFilter) nameFilter.addEventListener('input', () => { currentPage = 1; applyFilters(); });
+  if (staffIdFilter) staffIdFilter.addEventListener('input', () => { currentPage = 1; applyFilters(); });
+  if (monthSelect) monthSelect.addEventListener('change', () => { currentPage = 1; handleMonthSelect(); });
+  if (deptSelect) deptSelect.addEventListener('change', () => { currentPage = 1; applyFilters(); });
+  if (filterBtn) filterBtn.addEventListener('click', () => { currentPage = 1; applyFilters(); });
 });
