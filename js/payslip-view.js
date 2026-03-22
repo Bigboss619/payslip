@@ -81,7 +81,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `payslip-${new Date().toISOString().slice(0,10)}.html`;
+            a.download = `payslip-${new Date().toISOString().slice(0,10)}.php`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);

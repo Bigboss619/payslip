@@ -170,8 +170,8 @@ loginForm.addEventListener('submit', (e) => {
 
     // Hardcoded demo credentials
     const users = {
-      'user@example.com': { password: 'userpass', role: 'user', dashboard: 'pages/dashboard.html' },
-      'hr@example.com': { password: 'hrpass', role: 'hr', dashboard: 'HR/dashboard.html' }
+      'user@example.com': { password: 'userpass', role: 'user', dashboard: 'pages/dashboard.php' },
+      'hr@example.com': { password: 'hrpass', role: 'hr', dashboard: 'HR/dashboard.php' }
     };
 
     if (users[email] && users[email].password === password) {

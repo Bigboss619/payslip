@@ -346,7 +346,7 @@ function renderTable(data = currentData) {
       </td>
       <td class="py-4 px-6">
         <div class="flex space-x-2">
-          <a href="payslip-view.html?payslipData=${encodeURIComponent(JSON.stringify(item))}" class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 font-medium text-sm p-2 rounded-xl transition-all duration-200 inline-block" title="View details">
+          <a href="payslip-view.php?payslipData=${encodeURIComponent(JSON.stringify(item))}" class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 font-medium text-sm p-2 rounded-xl transition-all duration-200 inline-block" title="View details">
             👁️ View
           </a>
           <button onclick="downloadPayslip(${item.id})" class="text-green-600 hover:text-green-800 hover:bg-green-50 font-medium text-sm p-2 rounded-xl transition-all duration-200" title="Download PDF">
