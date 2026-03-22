@@ -1,0 +1,6 @@
+RewriteEngine On
+
+RewriteRule  ^payslip$                                payslip.php                           [NC,L]
+RewriteRule  ^dashboard$                              dashboard.php                         [NC,L]
+RewriteRule  ^payslip-view$                           payslip-view.php                      [NC,L]
+RewriteRule  ^profile$                                profile.php                           [NC,L]
