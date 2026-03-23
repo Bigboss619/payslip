@@ -41,7 +41,7 @@ if ($_POST['action'] ?? '') {
         break;
       
       case 'list':
-        $stmt = $conn->query("SELECT id, name FROM departments ORDER BY name");
+        $stmt = $conn->query("SELECT id, name FROM departments ORDER BY id ASC");
         $response['data'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $response['success'] = true;
         break;

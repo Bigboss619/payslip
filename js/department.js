@@ -59,10 +59,7 @@ function renderTable(depts) {
                 class="text-blue-600 hover:text-blue-900 px-3 py-1 rounded-lg hover:bg-blue-50 transition">
           Edit
         </button>
-        <button onclick="deleteDepartment(${dept.id})" 
-                class="text-red-600 hover:text-red-900 px-3 py-1 rounded-lg hover:bg-red-50 transition">
-          Delete
-        </button>
+        <button onclick="openDeleteModal(${dept.id}, '${escapeHtml(dept.name)}')" \n                class="text-red-600 hover:text-red-900 px-3 py-1 rounded-lg hover:bg-red-50 transition">\n          Delete\n        </button>
       </td>
     </tr>
   `).join('');
@@ -109,26 +106,14 @@ function editDepartment(id, name) {
 }
 
 async function deleteDepartment(id) {
-  if (!confirm('Delete this department? This cannot be undone.')) return;
-  
-  try {
-    const formData = `action=delete&id=${id}`;
-    const res = await fetch('../includes/departmentSub.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: formData
-    });
-    const data = await res.json();
-    
-    if (data.success) {
-      showMessage(data.message, 'success');
-      loadDepartments();
-    } else {
-      showMessage(data.message, 'error');
-    }
-  } catch (err) {
-    showMessage('Delete failed', 'error');
-  }
+  const name = document.querySelector(`button[onclick="editDepartment(${id},`).closest('tr').querySelector('div.text-sm.font-medium.text-gray-900').textContent.trim();
+  openDeleteModal(id, name);
+}
+
+function openDeleteModal(id, name) {
+  currentDeleteId = id;
+  document.getElementById('delete-confirm-name').textContent = escapeHtml(name);
+  document.getElementById('delete-confirm-modal').classList.remove('hidden');
 }
 
 function openAddModal() {
