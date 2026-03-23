@@ -1,13 +1,16 @@
-# Payroll Upload Fixes - TODO
+# Fix Save Button Does Nothing After File Selection/Preview
 
-## Steps to Complete:
+## Approved Plan Steps:
+1. **Add error handling and logging to js/upload.js savePayroll()** - Wrap fetch in try/catch, show status/errors, console.log batch_id/response.
+2. **Ensure saveBtn properly enabled** - Verify previewData length check.
+3. **Test upload → preview → save flow** - Use sample Excel, check console/Network/DB.
+4. **Verify backend** - Check PHP errors, session, DB insert.
+5. **Reload data & confirm table update**.
 
-### 1. [x] Create TODO.md (Current - Done)
-### 2. [x] Edit includes/upload-payroll.php - Update Excel parsing, INSERT query, and execute params
-### 3. [x] Edit js/upload.js - Update preview table columns
-### 4. [x] Test upload: Verified code changes - Excel parsing now fetches all columns (staff_id to net_salary matching Excel headers), INSERT query fixed with 14 fields and matching execute params, preview table headers updated in HR/upload.php to match new columns.
-### 5. [x] Update TODO.md with test results
-### 6. [x] Complete task
-
-**Next step:** Edit includes/upload-payroll.php
+## Progress:
+- [x] Analyzed files (HR/upload.php, js/upload.js, includes/upload-payroll.php, get-payroll.php)
+- [x] Created diagnosis & plan
+- [x] Edit js/upload.js (added try/catch, console logs, button state mgmt, error alerts to savePayroll() & showPreview())
+- [ ] Test flow: Upload sample → check console → click Save → observe Network tab/response/status
+- [ ] Fix any remaining backend/DB issues if errors appear
 

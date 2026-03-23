@@ -112,11 +112,18 @@ function showPreview(result) {
   console.log('showPreview called with:', result);
   currentBatchId = result.batch_id;
   previewData = result.preview_data || result.preview || [];
-  console.log('previewData:', previewData.length);
+  console.log('previewData length:', previewData.length, 'batchId:', currentBatchId);
+  
   const previewSection = document.getElementById('previewSection');
   const previewTable = document.getElementById('previewTable');
   
-  // Show first 20 rows, add scroll for more
+  if (!previewData || previewData.length === 0) {
+    console.warn('No preview data');
+    document.getElementById('uploadStatus').innerHTML = '<div class="text-yellow-600">No valid data found in file</div>';
+    return;
+  }
+  
+  // Show first 20 rows
   previewTable.innerHTML = previewData.slice(0, 20).map(item => `
     <tr>
       <td class="p-2 border">${item.staff_id || ''}</td>
@@ -139,12 +146,15 @@ function showPreview(result) {
   
   previewSection.classList.remove('hidden');
   const saveBtn = document.getElementById('saveBtn');
-  if (saveBtn) saveBtn.disabled = previewData.length === 0;
+  if (saveBtn) {
+    saveBtn.disabled = previewData.length === 0;
+    console.log('saveBtn enabled:', !saveBtn.disabled);
+  }
   
   // Show count
   const header = previewSection.querySelector('h2');
-  if (header && previewData.length > 20) {
-    header.textContent += ` (${previewData.length} total rows)`;
+  if (header) {
+    header.textContent = `Preview Data (${previewData.length} rows) - Save to confirm`;
   }
 }
 
@@ -233,6 +243,8 @@ function showViewPayslipsModal() {
 }
 
 async function savePayroll() {
+  console.log('savePayroll called. currentBatchId:', currentBatchId);
+  
   if (!currentBatchId) {
     alert('No preview data to save');
     return;
@@ -243,25 +255,42 @@ async function savePayroll() {
   formData.append('batch_id', currentBatchId);
   
   const status = document.getElementById('uploadStatus');
-  status.innerHTML = '<div class="text-blue-600">Saving...</div>';
+  const saveBtn = document.getElementById('saveBtn');
+  
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Saving...';
+  status.innerHTML = '<div class="text-blue-600">Saving payroll data...</div>';
   
   try {
+    console.log('Sending save request...');
     const response = await fetch(API_BASE + 'upload-payroll.php', {
       method: 'POST',
       body: formData
     });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
     const result = await response.json();
+    console.log('Save response:', result);
     
     if (result.success) {
-      status.innerHTML = `<div class="text-green-600">${result.message}</div>`;
+      status.innerHTML = `<div class="text-green-600 bg-green-100 p-2 rounded">${result.message}</div>`;
       document.getElementById('previewSection').classList.add('hidden');
       loadPayrollData();
       document.getElementById('uploadForm')?.reset();
+      currentBatchId = null;
     } else {
-      status.innerHTML = `<div class="text-red-600 bg-red-100 p-2 rounded">${result.error}</div>`;
+      throw new Error(result.error || 'Save failed');
     }
   } catch (err) {
-    status.innerHTML = `<div class="text-red-600 bg-red-100 p-2 rounded">Error: ${err.message}</div>`;
+    console.error('Save payroll error:', err);
+    status.innerHTML = `<div class="text-red-600 bg-red-100 p-2 rounded">Save failed: ${err.message}</div>`;
+    alert(`Save failed: ${err.message}. Check console for details.`);
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'Save Payroll';
   }
 }
 
