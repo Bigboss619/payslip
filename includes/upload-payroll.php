@@ -80,18 +80,25 @@ try {
     array_shift($rows);
 
     foreach ($rows as $rowIndex => $row) {
-if (count($row) < 16 || empty($row[1]) || $row[0] === 'STAFF ID') continue; // Skip header/empty
+        if (count($row) < 16 || empty($row[1]) || $row[0] === 'STAFF ID') continue; // Skip header/empty
 
         $previewData[] = [
             'staff_id' => $row[0] ?? '',
             'name' => $row[1] ?? '',
             'department' => $row[2] ?? '',
-            'gross' => (float)($row[3] ?? 0),
+            'gross_salary' => (float)($row[3] ?? 0),
+            'pro_rata' => (float)($row[4] ?? 0),
             'days_worked' => (int)($row[5] ?? 0),
-            'basic' => (float)($row[6] ?? 0),
+            'basic_salary' => (float)($row[6] ?? 0),
             'housing' => (float)($row[7] ?? 0),
             'transport' => (float)($row[8] ?? 0),
-            'net' => (float)($row[15] ?? 0),
+            'medical' => (float)($row[9] ?? 0),
+            'utility' => (float)($row[10] ?? 0),
+            // 'monthly_gross_duplicate' => (float)($row[11] ?? 0), // skipped duplicate
+            'paye' => (float)($row[12] ?? 0),
+            'deductions' => (float)($row[13] ?? 0),
+            'pension' => (float)($row[14] ?? 0),
+            'net_salary' => (float)($row[15] ?? 0),
             'row' => $rowIndex + 1
         ];
     }
@@ -147,13 +154,24 @@ if ($mode === 'preview') {
 
         $payslipStmt = $conn->prepare("
             INSERT INTO payslips (
-                user_id, batch_id, gross_salary, basic_salary, housing, transport, medical, utility, paaye, deductions, pension, net_salary, days_worked, 
-                , pro_rata
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                user_id, batch_id, gross_salary, basic_salary, housing, transport, medical, utility, paye, deductions, pension, net_salary, days_worked, pro_rata
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         $payslipStmt->execute([
-            $user['id'], $batch_id, $data['gross'], $data['days_worked'],
-            $data['basic'], $data['housing'], $data['transport'], $data['net']
+            $user['id'],
+            $batch_id,
+            $data['gross_salary'],
+            $data['basic_salary'],
+            $data['housing'],
+            $data['transport'],
+            $data['medical'],
+            $data['utility'],
+            $data['paye'],
+            $data['deductions'],
+            $data['pension'],
+            $data['net_salary'],
+            $data['days_worked'],
+            $data['pro_rata']
         ]);
         $inserted++;
     }

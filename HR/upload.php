@@ -48,9 +48,18 @@ include_once("../includes/nav.php");
         <th class="p-2 border">Staff ID</th>
         <th class="p-2 border">Name</th>
         <th class="p-2 border">Department</th>
-        <th class="p-2 border">Gross</th>
-        <th class="p-2 border">Days</th>
-        <th class="p-2 border">Net</th>
+        <th class="p-2 border">Monthly Gross</th>
+        <th class="p-2 border">Pro-Rata</th>
+        <th class="p-2 border">Days Worked</th>
+        <th class="p-2 border">Basic Salary</th>
+        <th class="p-2 border">Housing</th>
+        <th class="p-2 border">Transport</th>
+        <th class="p-2 border">Medical</th>
+        <th class="p-2 border">Utility</th>
+        <th class="p-2 border">Monthly PAYE</th>
+        <th class="p-2 border">Payroll Deductions</th>
+        <th class="p-2 border">Pension</th>
+        <th class="p-2 border">Monthly Take Home</th>
       </tr>
     </thead>
     <tbody id="previewTable"></tbody>

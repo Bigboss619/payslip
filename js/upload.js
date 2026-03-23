@@ -122,11 +122,20 @@ function showPreview(result) {
       <td class="p-2 border">${item.staff_id || ''}</td>
       <td class="p-2 border">${item.name}</td>
       <td class="p-2 border">${item.department}</td>
-      <td class="p-2 border">${formatCurrency(item.gross)}</td>
+      <td class="p-2 border">${formatCurrency(item.gross_salary)}</td>
+      <td class="p-2 border">${formatCurrency(item.pro_rata)}</td>
       <td class="p-2 border">${item.days_worked || ''}</td>
-      <td class="p-2 border">${formatCurrency(item.net)}</td>
+      <td class="p-2 border">${formatCurrency(item.basic_salary)}</td>
+      <td class="p-2 border">${formatCurrency(item.housing)}</td>
+      <td class="p-2 border">${formatCurrency(item.transport)}</td>
+      <td class="p-2 border">${formatCurrency(item.medical)}</td>
+      <td class="p-2 border">${formatCurrency(item.utility)}</td>
+      <td class="p-2 border">${formatCurrency(item.paye)}</td>
+      <td class="p-2 border">${formatCurrency(item.deductions)}</td>
+      <td class="p-2 border">${formatCurrency(item.pension)}</td>
+      <td class="p-2 border">${formatCurrency(item.net_salary)}</td>
     </tr>
-  `).join('') || '<tr><td colspan="6" class="p-4 text-center">No preview data</td></tr>';
+  `).join('') || '<tr><td colspan="15" class="p-4 text-center">No preview data</td></tr>';
   
   previewSection.classList.remove('hidden');
   const saveBtn = document.getElementById('saveBtn');
