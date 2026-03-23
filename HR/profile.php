@@ -139,37 +139,36 @@ include_once("../includes/header.php"); ?>
 
                 <form method="post" action="../includes/hrprofile.php" class="space-y-4">
                   <input type="hidden" name="change_password" value="1">
-                  <div class="relative">
-                    <label class="text-sm text-gray-500">Current Password</label>
-                    <input type="password" name="current_password" id="currentPw" required class="w-full mt-1 border px-4 py-2 rounded-lg pr-12">
-                    <button type="button" onclick="togglePassword('currentPw')" class="absolute right-3 top-[2.25rem] h-6 w-6 text-gray-400 hover:text-gray-600">
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                      </svg>
-                    </button>
+                  <div class="mb-4">
+                    <label class="text-sm font-medium">Current Password</label>
+                    <div class="relative mt-1">
+                      <input type="password" name="current_password" id="currentPw" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none pr-12 invalid:border-red-500 invalid:focus:ring-red-500">
+                      <button type="button" onclick="togglePassword('currentPw')" class="absolute right-3 top-2 h-6 w-6 text-gray-400 hover:text-gray-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                      </button>
+                    </div>
+                    <p id="currentPwError" class="mt-1 text-sm text-red-600 hidden">Current password required.</p>
                   </div>
 
-                  <div class="relative">
-                    <label class="text-sm text-gray-500">New Password</label>
-                    <input type="password" name="new_password" id="newPw" required minlength="6" class="w-full mt-1 border px-4 py-2 rounded-lg pr-12">
-                    <button type="button" onclick="togglePassword('newPw')" class="absolute right-3 top-[2.25rem] h-6 w-6 text-gray-400 hover:text-gray-600">
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                      </svg>
-                    </button>
+                  <div class="mb-4">
+                    <label class="text-sm font-medium">New Password</label>
+                    <div class="relative mt-1">
+                      <input type="password" name="new_password" id="newPw" required minlength="6" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none pr-12 invalid:border-red-500 invalid:focus:ring-red-500">
+                      <button type="button" onclick="togglePassword('newPw')" class="absolute right-3 top-2 h-6 w-6 text-gray-400 hover:text-gray-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                      </button>
+                    </div>
                   </div>
 
-                  <div class="relative">
-                    <label class="text-sm text-gray-500">Confirm New Password</label>
-                    <input type="password" name="confirm_password" id="confirmPw" required minlength="6" class="w-full mt-1 border px-4 py-2 rounded-lg pr-12">
-                    <button type="button" onclick="togglePassword('confirmPw')" class="absolute right-3 top-[2.25rem] h-6 w-6 text-gray-400 hover:text-gray-600">
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                      </svg>
-                    </button>
+                  <div class="mb-4">
+                    <label class="text-sm font-medium">Confirm New Password</label>
+                    <div class="relative mt-1">
+                      <input type="password" name="confirm_password" id="confirmPw" required minlength="6" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none pr-12 invalid:border-red-500 invalid:focus:ring-red-500">
+                      <button type="button" onclick="togglePassword('confirmPw')" class="absolute right-3 top-2 h-6 w-6 text-gray-400 hover:text-gray-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                      </button>
+                    </div>
+                    <p id="confirmPwError" class="mt-1 text-sm text-red-600 hidden">Passwords do not match.</p>
                   </div>
 
                   <button type="submit" class="mt-4 bg-green-600 text-white px-6 py-2 rounded-lg">
