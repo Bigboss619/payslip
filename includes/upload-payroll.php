@@ -72,7 +72,7 @@ $previewData = [];
 try {
     $spreadsheet = IOFactory::load($filePath);
     $sheet = $spreadsheet->getActiveSheet();
-    $rows = $sheet->toArray(null, true, true, true);
+    $rows = $sheet->toArray();
 
     // Skip first 2 header rows
     array_shift($rows);
@@ -140,6 +140,7 @@ try {
         'month' => $month,
         'year' => $year,
         'preview_count' => count($previewData),
+        'preview_data' => $previewData,
         'inserted' => $inserted
     ]);
 
