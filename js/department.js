@@ -3,11 +3,17 @@ document.addEventListener('DOMContentLoaded', function() {
   loadDepartments();
   
   document.getElementById('department-form').addEventListener('submit', handleSave);
+  
+  // Expose functions for onclick
+  window.openAddModal = openAddModal;
+  window.closeModal = closeModal;
+  window.editDepartment = editDepartment;
+  window.deleteDepartment = deleteDepartment;
 });
 
 async function loadDepartments() {
   try {
-    const res = await fetch('', {
+    const res = await fetch('../includes/departmentSub.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: 'action=list'
@@ -73,7 +79,7 @@ async function handleSave(e) {
   const formData = `action=${action}${id ? `&id=${id}` : ''}&name=${encodeURIComponent(name)}`;
   
   try {
-    const res = await fetch('', {
+    const res = await fetch('../includes/departmentSub.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: formData
@@ -107,7 +113,7 @@ async function deleteDepartment(id) {
   
   try {
     const formData = `action=delete&id=${id}`;
-    const res = await fetch('', {
+    const res = await fetch('../includes/departmentSub.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: formData
@@ -144,11 +150,22 @@ document.getElementById('department-modal').addEventListener('click', function(e
   if (e.target === this) closeModal();
 });
 
-function showMessage(msg, type = 'info') {
-  // Simple toast using native alert for now; can enhance with Toast component later
-  const bg = type === 'success' ? 'bg-green-500' : 'bg-red-500';
-  console.log(`%c${msg}`, `background: ${bg}; color: white; padding: 8px 12px; border-radius: 4px;`);
-  // TODO: Implement proper toast
+function showMessage(msg, type = 'success') {
+  const toast = document.createElement('div');
+  toast.className = `fixed top-4 right-4 z-50 p-4 rounded-xl shadow-2xl text-white transform translate-x-full transition-all duration-300 max-w-sm ${
+    type === 'success' ? 'bg-green-500' : 'bg-red-500'
+  }`;
+  toast.innerHTML = `<div>${msg}</div>`;
+  document.body.appendChild(toast);
+
+  // Slide in
+  requestAnimationFrame(() => toast.classList.remove('translate-x-full'));
+  
+  // Slide out after 3s
+  setTimeout(() => {
+    toast.classList.add('translate-x-full');
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
 }
 
 function escapeHtml(text) {
