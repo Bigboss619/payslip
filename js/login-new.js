@@ -61,6 +61,7 @@ signupForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   
   const formData = new FormData(signupForm);
+  formData.append('register', '1');  // Ensure backend condition passes
   
   try {
     const response = await fetch('includes/resub.php', {
@@ -73,16 +74,17 @@ signupForm.addEventListener('submit', async (e) => {
     showToast(data.message, data.success ? 'success' : 'error');
     
     if (data.success) {
-      // Mock success handling
       localStorage.setItem('userRole', data.user.role);
       showModal('Success!', data.message, 'success');
-      setTimeout(() => {
-        window.location.href = data.user.dashboard;
-      }, 2000);
+      // setTimeout(() => {
+      //   window.location.href = data.user.dashboard;
+      // }, 2000);
     }
   } catch (error) {
     showToast('Network error. Please try again.', 'error');
+    console.error('Signup error:', error);
   }
+
 });
 
 // Real-time for LOGIN only (no validation for signup)

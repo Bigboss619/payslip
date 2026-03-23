@@ -32,9 +32,10 @@ if (isset($_POST['register'])) {
         $errors[] = 'Passwords do not match.';
     }
 
-    // Mock DB check (no real DB)
-    $mock_users = ['user@example.com', 'hr@example.com'];
-    if (!empty($email) && in_array($email, $mock_users)) {
+    // Real DB duplicate check
+    $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
+    $stmt->execute([$email]);
+    if ($stmt->rowCount() > 0) {
         $errors[] = 'Email already exists.';
     }
 
@@ -44,18 +45,23 @@ if (isset($_POST['register'])) {
             'message' => implode(' ', $errors)
         ]);
     } else {
-        // Mock success - in real app: hash password, insert DB
+        // Real insert with hashed password
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $conn->prepare("INSERT INTO users (fullname, staff_id, email, password, role) VALUES (?, ?, ?, ?, 'user')");
+        $stmt->execute([$fullname, $staff_id, $email, $hashed_password]);
+        
         echo json_encode([
             'success' => true,
             'message' => 'Account created successfully! You can now log in.',
             'user' => [
                 'email' => $email,
-                'role' => 'user', // Default
-                'dashboard' => 'pages/dashboard.html'
+                'role' => 'user',
+                'dashboard' => '../HR/dashboard.php'
             ]
         ]);
     }
     exit;
+
 }
 
 echo json_encode(['success' => false, 'message' => 'Invalid request.']);
