@@ -76,12 +76,11 @@ try {
     $sheet = $spreadsheet->getActiveSheet();
     $rows = $sheet->toArray();
 
-    // Skip first 2 header rows
-    array_shift($rows);
+// Skip first row header
     array_shift($rows);
 
     foreach ($rows as $rowIndex => $row) {
-        if (count($row) < 16 || empty($row[1])) continue; // Skip empty/invalid
+if (count($row) < 16 || empty($row[1]) || $row[0] === 'STAFF ID') continue; // Skip header/empty
 
         $previewData[] = [
             'staff_id' => $row[0] ?? '',

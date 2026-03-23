@@ -89,9 +89,14 @@ async function handleFileUpload(e) {
     const result = await response.json();
     
     if (result.success) {
+console.log('Upload result:', result);
       status.innerHTML = `<div class="text-green-600">${result.message}</div>`;
-      showPreview(result);
-      loadPayrollData();
+      if (result.preview_data && result.preview_data.length > 0) {
+        showPreview(result);
+        loadPayrollData();
+      } else {
+        status.innerHTML += '<div class="text-yellow-600">No data to preview</div>';
+      }
     } else {
       status.innerHTML = `<div class="text-red-600 bg-red-100 p-2 rounded">${result.error}</div>`;
     }
@@ -104,8 +109,10 @@ async function handleFileUpload(e) {
 }
 
 function showPreview(result) {
+  console.log('showPreview called with:', result);
   currentBatchId = result.batch_id;
   previewData = result.preview_data || result.preview || [];
+  console.log('previewData:', previewData.length);
   const previewSection = document.getElementById('previewSection');
   const previewTable = document.getElementById('previewTable');
   
