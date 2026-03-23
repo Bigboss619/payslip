@@ -5,7 +5,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'HR') {
   echo json_encode(['success' => false, 'message' => 'Unauthorized']);
   exit;
 }
-include_once("config/config.php");
+include_once("../config/config.php");
 
 $response = ['success' => false, 'message' => '', 'data' => []];
 
