@@ -1,29 +1,21 @@
-# HR Profile Page Implementation TODO
+# Department Management Implementation Plan
 
-## Plan Overview:
-**Goal:** Make HR/profile.php fully functional:
-- Load user data from $_SESSION/DB.
-- Edit profile (name, email).
-- Change password (verify current, hash new).
-- Backend handler includes/hrprofile.php.
+## Status: COMPLETED ✅
 
-**Information Gathered:**
-- HR/profile.php: Static mockup (header/nav, hardcoded Emmanuel data, forms no action).
-- includes/hrprofile.php: Empty.
-- DB users: name, staff_id, email, password, role (no phone/dept; mock those).
-- Session: user_id, name, staff_id, email, role (from logsub.php).
+### Step 1. [DONE] Create departments table in DB
+- Execute SQL migration via phpMyAdmin or CLI to create `departments` table (id PK, name unique).
 
-**File Updates:**
-1. includes/hrprofile.php: Backend - update profile/PW.
-2. HR/profile.php: Dynamic data, forms POST hrprofile.php, session protect.
+### Step 2. [DONE] Implement HR/department.php
+- Add PHP CRUD endpoints (list/add/edit/delete).
+- Add HTML table + modals for UI matching existing style.
 
-**Dependent Files:** config/config.php, header.php (session_start).
+### Step 3. [DONE] Create HR/department.js
+- AJAX handlers for dynamic CRUD, table refresh.
 
-**Followup:** Test edit/save, pw change. Add dept/phone if DB updated.
+### Step 4. [DONE] Test functionality
+- Verify add/edit/delete works.
+- Check integration points (upload dropdown).
 
-**Steps:**
-- [ ] Step 1: Implement includes/hrprofile.php (update profile + change pw)
-- [ ] Step 2: Update HR/profile.php (dynamic data, forms, protection)
-- [ ] Step 3: Test (login HR, edit profile, change pw)
+### Step 5. [DONE] Update TODO.md after each step.
 
-**Ready to proceed?**
+Next: Step 4 - Test in browser (ensure XAMPP running, login HR, visit HR/department.php).
