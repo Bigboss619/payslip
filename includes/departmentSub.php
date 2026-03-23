@@ -22,9 +22,12 @@ if ($_POST['action'] ?? '') {
         break;
       
       case 'edit':
+        if (!isset($_POST['id']) || !is_numeric($_POST['id']) || $_POST['id'] <= 0) {
+          throw new Exception('Invalid data');
+        }
         $id = (int)$_POST['id'];
         $name = trim($_POST['name']);
-        if (empty($name) || $id <= 0) throw new Exception('Invalid data');
+        if (empty($name)) throw new Exception('Invalid data');
         $stmt = $conn->prepare("UPDATE departments SET name = ? WHERE id = ?");
         $stmt->execute([$name, $id]);
         $response['success'] = true;
@@ -32,8 +35,18 @@ if ($_POST['action'] ?? '') {
         break;
       
       case 'delete':
+        if (!isset($_POST['id']) || !is_numeric($_POST['id']) || $_POST['id'] <= 0) {
+          throw new Exception('Failed to delete department');
+        }
         $id = (int)$_POST['id'];
-        if ($id <= 0) throw new Exception('Invalid ID');
+        
+        // Check if department exists
+        $check = $conn->prepare("SELECT COUNT(*) FROM departments WHERE id = ?");
+        $check->execute([$id]);
+        if ($check->fetchColumn() == 0) {
+          throw new Exception('Failed to delete department');
+        }
+        
         $stmt = $conn->prepare("DELETE FROM departments WHERE id = ?");
         $stmt->execute([$id]);
         $response['success'] = true;

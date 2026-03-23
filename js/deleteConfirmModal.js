@@ -19,14 +19,18 @@ document.getElementById('delete-confirm-modal')?.addEventListener('click', funct
 async function confirmDelete() {
   if (!currentDeleteId) return;
   closeDeleteModal();
+  
+  const formData = `action=delete&id=${currentDeleteId}`;
+  console.log('Delete request data:', formData); // Debug log
+  
   try {
-    const formData = `action=delete&id=${currentDeleteId}`;
     const res = await fetch('../includes/departmentSub.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: formData
     });
     const data = await res.json();
+    console.log('Delete response:', data); // Debug log
     
     if (data.success) {
       showMessage(data.message, 'success');
@@ -35,12 +39,24 @@ async function confirmDelete() {
       showMessage(data.message, 'error');
     }
   } catch (err) {
+    console.error('Delete error:', err);
     showMessage('Delete failed', 'error');
   }
 }
 
-// Expose for onclick
+// Expose for onclick - added for cross-script access
 window.openDeleteModal = openDeleteModal;
 window.closeDeleteModal = closeDeleteModal;
 window.confirmDelete = confirmDelete;
+window.loadDepartments = loadDepartments;
+window.showMessage = showMessage;
+
+// Ensure loadDepartments is properly exposed from department.js
+if (typeof window.loadDepartments !== 'function') {
+  window.loadDepartments = () => {
+    if (typeof loadDepartments === 'function') {
+      loadDepartments();
+    }
+  };
+}
 

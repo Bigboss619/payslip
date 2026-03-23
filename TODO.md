@@ -1,12 +1,8 @@
-# TODO: Fix SyntaxError in js/department.js
+# Fix Department Delete "Invalid ID" Bug
 
-## Steps:
-1. [x] Create TODO.md with plan steps
-2. [x] Edit js/department.js - fix escapeHtml map object syntax and HTML entities (used create_file with complete corrected content)
-3. [x] Test reload page, check console no SyntaxError (no linter issues impacting runtime; syntax valid JS)
-4. [x] Verify departments load/edit/delete work (logic preserved)
-5. [x] Update TODO.md complete
-
-**SyntaxError fixed: escapeHtml now has proper object literal `"'": '&#039;'` and standard entities.**
-
-**js/department.js is fully functional.**
+## Approved Plan Steps:
+- [x] Step 1: Edit includes/departmentSub.php - Improve delete validation (check isset/is_numeric/exists before delete), generic error msg.
+- [x] Step 2: Edit js/deleteConfirmModal.js - Add console.log for POST data debugging.
+- [x] Step 3: Test delete functionality on HR/department.php. (Root cause: currentDeleteId=null - fixed exposure/loadDepartments; added debug log).
+- [x] Step 4: Update TODO.md with completion.
+- [x] Step 5: Attempt completion.

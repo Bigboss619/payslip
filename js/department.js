@@ -4,10 +4,11 @@ document.addEventListener('DOMContentLoaded', function() {
   
   document.getElementById('department-form').addEventListener('submit', handleSave);
   
-  // Expose functions for onclick
+// Expose functions for onclick including reload
   window.openAddModal = openAddModal;
   window.closeModal = closeModal;
   window.editDepartment = editDepartment;
+  window.loadDepartments = loadDepartments;
 });
 
 async function loadDepartments() {
@@ -44,7 +45,9 @@ function renderTable(depts) {
   emptyState.classList.add('hidden');
   tableCount.textContent = `${depts.length} department${depts.length !== 1 ? 's' : ''}`;
   
-  tbody.innerHTML = depts.map(dept => `
+  tbody.innerHTML = depts.map(dept => {
+    console.log('Rendering dept:', dept.id, dept.name); // Debug dept data
+    return `
     <tr class="hover:bg-gray-50">
       <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${dept.id}</td>
       <td class="px-6 py-4 whitespace-nowrap">
@@ -64,7 +67,8 @@ function renderTable(depts) {
         </button>
       </td>
     </tr>
-  `).join('');
+    `;
+  }).join('');
 }
 
 async function handleSave(e) {
@@ -127,7 +131,15 @@ document.getElementById('department-modal').addEventListener('click', function(e
 });
 
 function showMessage(msg, type = 'success') {
-  const toast = document.getElementById('department-modal') = toast.classList.remove('translate-x-full');
+  const toast = document.createElement('div');
+  toast.className = `fixed top-4 right-4 z-50 p-4 rounded-xl shadow-2xl text-white transform translate-x-full transition-all duration-300 max-w-sm ${
+    type === 'success' ? 'bg-green-500' : 'bg-red-500'
+  }`;
+  toast.innerHTML = `<div>${msg}</div>`;
+  document.body.appendChild(toast);
+
+  // Slide in
+  requestAnimationFrame(() => toast.classList.remove('translate-x-full'));
   
   // Slide out after 3s
   setTimeout(() => {
@@ -146,3 +158,4 @@ function escapeHtml(text) {
   };
   return text.replace(/[&<>\"']/g, m => map[m]);
 }
+

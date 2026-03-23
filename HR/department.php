@@ -95,7 +95,7 @@
         <div class="flex gap-3 justify-center">
           <button onclick="closeDeleteModal()" class="flex-1 px-6 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl font-medium transition max-w-sm">Cancel</button>
 
-          <button onclick="confirmDelete()" name="delete" class="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-red-700 rounded-xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition max-w-sm">Delete</button>
+          <button onclick="confirmDelete()" name="delete" class="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition max-w-sm">Delete</button>
         </div>
       </div>
     </div>
