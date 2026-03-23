@@ -29,6 +29,7 @@ function isValidEmail(email) {
 
 function validateLogin() {
   const email = document.getElementById('loginEmail').value.trim();
+  const staffId = document.getElementById('loginStaffId').value.trim();
   const password = document.getElementById('loginPassword').value;
 
   let isValid = true;
@@ -41,6 +42,13 @@ function validateLogin() {
     isValid = false;
   } else {
     clearError('loginEmail', 'loginEmailError');
+  }
+
+  if (!staffId) {
+    showError('loginStaffId', 'loginStaffIdError', 'Staff ID is required.');
+    isValid = false;
+  } else {
+    clearError('loginStaffId', 'loginStaffIdError');
   }
 
   if (!password) {
@@ -88,13 +96,15 @@ signupForm.addEventListener('submit', async (e) => {
 
 // Real-time for LOGIN only (no validation for signup)
 function addRealTimeValidation() {
-  // Only login fields
-  ['loginEmail', 'loginPassword'].forEach(id => {
+  // Login fields including staff_id
+  ['loginEmail', 'loginStaffId', 'loginPassword'].forEach(id => {
     const input = document.getElementById(id);
     input.addEventListener('input', () => {
       clearError(id, `${id}Error`);
       if (id === 'loginEmail' && input.value.trim() && !isValidEmail(input.value.trim())) {
         showError(id, `${id}Error`, 'Please enter a valid email.');
+      } else if (id === 'loginStaffId' && !input.value.trim()) {
+        showError(id, `${id}Error`, 'Staff ID is required.');
       } else if (id === 'loginPassword' && input.value.length > 0 && input.value.length < 6) {
         showError(id, `${id}Error`, 'Password must be at least 6 characters.');
       }
@@ -118,28 +128,36 @@ function togglePassword(inputId) {
   }
 }
 
-// Login handler (unchanged demo)
-loginForm.addEventListener('submit', (e) => {
+// Backend login handler
+loginForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   if (validateLogin()) {
-    const email = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPassword').value;
+    const formData = new FormData();
+    formData.append('email', document.getElementById('loginEmail').value.trim());
+    formData.append('staff_id', document.getElementById('loginStaffId').value.trim());
+    formData.append('password', document.getElementById('loginPassword').value);
+    formData.append('login', '1');
 
-    const users = {
-      'user@example.com': { password: 'userpass', role: 'user', dashboard: 'pages/dashboard.php' },
-      'hr@example.com': { password: 'hrpass', role: 'hr', dashboard: 'HR/dashboard.php' }
-    };
-
-    if (users[email] && users[email].password === password) {
-      localStorage.setItem('userRole', users[email].role);
-      showToast(`Welcome, ${users[email].role}!`, 'success');
-      showModal('Login Successful!', `Redirecting to ${users[email].role} dashboard...`, 'success');
-      setTimeout(() => {
-        window.location.href = users[email].dashboard;
-      }, 1500);
-    } else {
-      showToast('Invalid credentials!', 'error');
-      showModal('Login Failed', 'Use: user@example.com/userpass or hr@example.com/hrpass', 'error');
+    try {
+      const response = await fetch('includes/logsub.php', {
+        method: 'POST',
+        body: formData
+      });
+      
+      const data = await response.json();
+      
+      showToast(data.message, data.success ? 'success' : 'error');
+      
+      if (data.success) {
+        localStorage.setItem('userRole', data.role);
+        showModal('Login Successful!', `Redirecting to ${data.role.toUpperCase()} dashboard...`, 'success');
+        setTimeout(() => {
+          window.location.href = data.redirect;
+        }, 1500);
+      }
+    } catch (error) {
+      showToast('Network error. Please try again.', 'error');
+      console.error('Login error:', error);
     }
   }
 });

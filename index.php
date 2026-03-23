@@ -16,14 +16,22 @@
          </h2>
 
          <!-- Login Form -->
-            <form id="loginForm">
+            <form action="includes/logsub.php" id="loginForm">
                 <div class="mb-4">
                     <label class="text-sm font-medium">Email</label>
                     <input id="loginEmail" type="email" value="user@example.com" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none invalid:border-red-500 invalid:focus:ring-red-500">
                     <p id="loginEmailError" class="mt-1 text-sm text-red-600 hidden">Please enter a valid email.</p>
+
+                </div>
+
+                <div class="mb-4">
+                    <label class="text-sm font-medium">Staff ID</label>
+                    <input name="staff_id" id="loginStaffId" type="text" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none invalid:border-red-500 invalid:focus:ring-red-500">
+                    <p id="loginStaffIdError" class="mt-1 text-sm text-red-600 hidden">Staff ID is required.</p>
                 </div>
 
 <div class="mb-6 relative">
+
                     <label class="text-sm font-medium">Password</label>
                     <div class="relative mt-1">
                         <input id="loginPassword" type="password" value="userpass" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none pr-12 invalid:border-red-500 invalid:focus:ring-red-500">
