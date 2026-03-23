@@ -1,5 +1,7 @@
- <!-- Header -->
-  <?php include_once("../includes/header.php"); ?>
+<?php 
+
+include_once("../includes/header.php"); ?>
+
   
 
   <!-- Nav Section -->
@@ -50,11 +52,11 @@
             <div class="bg-white p-6 rounded-xl shadow text-center">
 
               <div class="w-24 h-24 mx-auto bg-blue-500 text-white flex items-center justify-center rounded-full text-3xl font-bold mb-4">
-                E
+                <?php echo strtoupper(substr($_SESSION['name'], 0, 1)); ?>
               </div>
 
-              <h2 class="text-lg font-semibold">Emmanuel Ugochukwu</h2>
-              <p class="text-gray-500 text-sm">IT Department</p>
+              <h2 class="text-lg font-semibold"><?php echo $_SESSION['name']; ?></h2>
+              <p class="text-gray-500 text-sm">HR Department</p>
 
               <button class="mt-4 bg-gray-200 px-4 py-2 rounded-lg text-sm">
                 Change Avatar
@@ -66,7 +68,7 @@
             <div class="lg:col-span-2 space-y-6">
 
               <!-- PERSONAL INFO -->
-              <div class="bg-white p-6 rounded-xl shadow">
+              <form method="post" action="../includes/hrprofile.php" class="bg-white p-6 rounded-xl shadow">
 
                 <h2 class="text-lg font-semibold mb-4">Personal Information</h2>
 
@@ -74,26 +76,22 @@
 
                   <div>
                     <label class="text-sm text-gray-500">Full Name</label>
-                    <input type="text" value="Emmanuel Ugochukwu" class="w-full mt-1 border px-4 py-2 rounded-lg">
+                    <input type="text" name="name" value="<?php echo htmlspecialchars($_SESSION['name']); ?>" required class="w-full mt-1 border px-4 py-2 rounded-lg">
                   </div>
 
                   <div>
                     <label class="text-sm text-gray-500">Email</label>
-                    <input type="email" value="emmanuel@email.com" class="w-full mt-1 border px-4 py-2 rounded-lg">
-                  </div>
-
-                  <div>
-                    <label class="text-sm text-gray-500">Phone</label>
-                    <input type="text" value="08012345678" class="w-full mt-1 border px-4 py-2 rounded-lg">
+                    <input type="email" name="email" value="<?php echo htmlspecialchars($_SESSION['email']); ?>" required class="w-full mt-1 border px-4 py-2 rounded-lg">
                   </div>
 
                 </div>
 
-                <button class="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg">
+                <input type="hidden" name="update_profile" value="1">
+                <button type="submit" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg">
                   Save Changes
                 </button>
 
-              </div>
+              </form>
 
               <!-- WORK INFO -->
               <div class="bg-white p-6 rounded-xl shadow">
@@ -104,7 +102,7 @@
 
                   <div>
                     <label class="text-sm text-gray-500">Staff ID</label>
-                    <input type="text" value="EMP001" disabled class="w-full mt-1 border px-4 py-2 rounded-lg bg-gray-100">
+                    <input type="text" value="<?php echo htmlspecialchars($_SESSION['staff_id']); ?>" disabled class="w-full mt-1 border px-4 py-2 rounded-lg bg-gray-100">
                   </div>
 
                   <div>
@@ -140,9 +138,27 @@
 
                 </div>
 
-                <button class="mt-4 bg-green-600 text-white px-6 py-2 rounded-lg">
-                  Update Password
-                </button>
+                <form method="post" action="../includes/hrprofile.php" class="space-y-4">
+                  <input type="hidden" name="change_password" value="1">
+                  <div>
+                    <label class="text-sm text-gray-500">Current Password</label>
+                    <input type="password" name="current_password" required class="w-full mt-1 border px-4 py-2 rounded-lg">
+                  </div>
+
+                  <div>
+                    <label class="text-sm text-gray-500">New Password</label>
+                    <input type="password" name="new_password" required minlength="6" class="w-full mt-1 border px-4 py-2 rounded-lg">
+                  </div>
+
+                  <div>
+                    <label class="text-sm text-gray-500">Confirm New Password</label>
+                    <input type="password" name="confirm_password" required minlength="6" class="w-full mt-1 border px-4 py-2 rounded-lg">
+                  </div>
+
+                  <button type="submit" class="mt-4 bg-green-600 text-white px-6 py-2 rounded-lg">
+                    Update Password
+                  </button>
+                </form>
 
               </div>
 

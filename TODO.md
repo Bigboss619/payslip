@@ -1,13 +1,29 @@
-# Login Backend Implementation TODO - COMPLETE
+# HR Profile Page Implementation TODO
 
-## Steps:
-- [x] Step 1: Implement includes/logsub.php (PHP backend auth with email/staff_id/pw verify, session, JSON redirect by role)
-- [x] Step 2: Update index.php (add staff_id input + error to #loginForm)
-- [x] Step 3: Update js/login-new.js (add staff_id validation, change submit to POST logsub.php, handle success redirect)
-- [ ] Step 4: Add session protection to dashboards (HR/*.php and pages/*.html? JS check localStorage or PHP)
-- [ ] Step 5: Test registration -> login user (pages/dashboard.html), manual HR user -> HR/dashboard.php
-- [ ] Step 6: Add logout functionality
+## Plan Overview:
+**Goal:** Make HR/profile.php fully functional:
+- Load user data from $_SESSION/DB.
+- Edit profile (name, email).
+- Change password (verify current, hash new).
+- Backend handler includes/hrprofile.php.
 
-**Core login task complete. Optional enhancements above.**
+**Information Gathered:**
+- HR/profile.php: Static mockup (header/nav, hardcoded Emmanuel data, forms no action).
+- includes/hrprofile.php: Empty.
+- DB users: name, staff_id, email, password, role (no phone/dept; mock those).
+- Session: user_id, name, staff_id, email, role (from logsub.php).
 
+**File Updates:**
+1. includes/hrprofile.php: Backend - update profile/PW.
+2. HR/profile.php: Dynamic data, forms POST hrprofile.php, session protect.
 
+**Dependent Files:** config/config.php, header.php (session_start).
+
+**Followup:** Test edit/save, pw change. Add dept/phone if DB updated.
+
+**Steps:**
+- [ ] Step 1: Implement includes/hrprofile.php (update profile + change pw)
+- [ ] Step 2: Update HR/profile.php (dynamic data, forms, protection)
+- [ ] Step 3: Test (login HR, edit profile, change pw)
+
+**Ready to proceed?**

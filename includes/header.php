@@ -1,6 +1,10 @@
 <?php
 ob_start();
 session_start();
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'HR') {
+  header('Location: ../index.php');
+  exit;
+}
 include_once("../config/config.php"); ?>
 <!DOCTYPE html>
 <html lang="en">
