@@ -1,6 +1,15 @@
 // Department Management JS
 document.addEventListener('DOMContentLoaded', function() {
   loadDepartments();
+
+  document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('delete-btn')) {
+    const id = e.target.dataset.id;
+    const name = e.target.dataset.name;
+
+    openDeleteModal(id, name);
+  }
+});
   
   document.getElementById('department-form').addEventListener('submit', handleSave);
   
@@ -57,12 +66,12 @@ function renderTable(depts) {
         ${new Date().toLocaleDateString()}
       </td>
       <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-        <button onclick="editDepartment(${dept.id}, '${escapeHtml(dept.name)}')" 
+        <button onclick="editDepartment(${dept.id}, ${JSON.stringify(dept.name)})" 
                 class="text-blue-600 hover:text-blue-900 px-3 py-1 rounded-lg hover:bg-blue-50 transition">
           Edit
         </button>
-        <button onclick="openDeleteModal(${dept.id}, '${escapeHtml(dept.name)}')" 
-                class="text-red-600 hover:text-red-900 px-3 py-1 rounded-lg hover:bg-red-50 transition">
+        <button  data-id="${dept.id}" data-name="${dept.name}"
+                class="text-red-600 hover:text-red-900 px-3 py-1 delete-btn rounded-lg hover:bg-red-50 transition">
           Delete
         </button>
       </td>

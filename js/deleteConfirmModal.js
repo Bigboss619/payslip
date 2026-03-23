@@ -2,6 +2,7 @@
 let currentDeleteId = null;
 
 function openDeleteModal(id, name) {
+  console.log("DELETE CLICKED:", id, name);
   currentDeleteId = id;
   document.getElementById('delete-confirm-name').textContent = escapeHtml(name);
   document.getElementById('delete-confirm-modal').classList.remove('hidden');
@@ -18,7 +19,8 @@ document.getElementById('delete-confirm-modal')?.addEventListener('click', funct
 
 async function confirmDelete() {
   if (!currentDeleteId) return;
-  closeDeleteModal();
+  // const idToDelete = currentDeleteId;
+  
   
   const formData = `action=delete&id=${currentDeleteId}`;
   console.log('Delete request data:', formData); // Debug log
@@ -31,7 +33,7 @@ async function confirmDelete() {
     });
     const data = await res.json();
     console.log('Delete response:', data); // Debug log
-    
+    closeDeleteModal();
     if (data.success) {
       showMessage(data.message, 'success');
       window.loadDepartments();
