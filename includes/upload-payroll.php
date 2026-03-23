@@ -163,7 +163,7 @@ switch ($mode) {
                     }
 
                 $payslipStmt = $conn->prepare("
-                    INSERT INTO payslips (
+                    INSERT INTO payslip (
                         user_id, batch_id, gross_salary, basic_salary, housing, transport, 
                         medical, utility, paye, deductions, pension, net_salary, 
                         days_worked, pro_rata

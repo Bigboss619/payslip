@@ -36,7 +36,7 @@ $whereClause = implode(' AND ', $where);
 // Data query
 $stmt = $conn->prepare("
     SELECT u.name, u.department, p.gross_salary, p.net_salary, pb.month, pb.year
-    FROM payslips p
+    FROM payslip p
     JOIN users u ON p.user_id = u.id
     JOIN payroll_batches pb ON p.batch_id = pb.id
     WHERE $whereClause
@@ -51,7 +51,7 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Count for pagination
 $countStmt = $conn->prepare("
     SELECT COUNT(*) as total
-    FROM payslips p
+    FROM payslip p
     JOIN users u ON p.user_id = u.id
     JOIN payroll_batches pb ON p.batch_id = pb.id
     WHERE $whereClause
@@ -65,7 +65,7 @@ $sumStmt = $conn->prepare("
         COUNT(*) as total_employees,
         SUM(p.gross_salary) as total_gross,
         SUM(p.net_salary) as total_net
-    FROM payslips p
+    FROM payslip p
     JOIN users u ON p.user_id = u.id
     JOIN payroll_batches pb ON p.batch_id = pb.id
     WHERE $whereClause
