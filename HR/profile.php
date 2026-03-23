@@ -2,7 +2,6 @@
 
 include_once("../includes/header.php"); ?>
 
-  
 
   <!-- Nav Section -->
    <?php include_once("../includes/nav.php"); ?>
@@ -119,7 +118,7 @@ include_once("../includes/header.php"); ?>
 
                 <h2 class="text-lg font-semibold mb-4">Change Password</h2>
 
-                <div class="space-y-4">
+                <!-- <div class="space-y-4">
 
                   <div>
                     <label class="text-sm text-gray-500">Current Password</label>
@@ -136,7 +135,7 @@ include_once("../includes/header.php"); ?>
                     <input type="password" class="w-full mt-1 border px-4 py-2 rounded-lg">
                   </div>
 
-                </div>
+                </div> -->
 
                 <form method="post" action="../includes/hrprofile.php" class="space-y-4">
                   <input type="hidden" name="change_password" value="1">
@@ -171,5 +170,7 @@ include_once("../includes/header.php"); ?>
 
     </div>
     
+<script src="../components/Toast/Toast.js"></script>
+<script src="profile.js"></script>
 </body>
 </html>

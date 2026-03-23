@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once('../config/config.php');
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'message' => 'Not logged in.']);
@@ -19,7 +19,6 @@ if (isset($_POST['update_profile'])) {
     if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Valid email required.';
 
     if (empty($errors)) {
-        // Check email unique
         $stmt = $conn->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
         $stmt->execute([$email, $user_id]);
         if ($stmt->rowCount() > 0) {
@@ -27,42 +26,37 @@ if (isset($_POST['update_profile'])) {
         }
     }
 
-    if (empty($errors)) {
-        $stmt = $conn->prepare("UPDATE users SET name = ?, email = ? WHERE id = ?");
-        $stmt->execute([$name, $email, $user_id]);
-        
-        // Update session
-        $_SESSION['name'] = $name;
-        $_SESSION['email'] = $email;
-
-        $redirect_url = 'HR/profile';
-        
-        echo json_encode([
-            'success' => true,
-            'message' => 'Profile updated successfully!',
-            'redirect'=> $redirect_url
-        ]);
-    } else {
-        echo json_encode([
-            'success' => false,
-            'message' => implode(' ', $errors)
-        ]);
+        if (empty($errors)) {
+            $stmt = $conn->prepare("UPDATE users SET name = ?, email = ? WHERE id = ?");
+            $stmt->execute([$name, $email, $user_id]);
+            
+            $_SESSION['name'] = $name;
+            $_SESSION['email'] = $email;
+            
+            echo json_encode([
+                'success' => true,
+                'message' => 'Profile updated successfully!'
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => implode(' ', $errors)
+            ]);
+        }
+        exit;
     }
-    exit;
-}
 
-if (isset($_POST['change_password'])) {
+    if (isset($_POST['change_password'])) {
     $current_pw = $_POST['current_password'] ?? '';
     $new_pw = $_POST['new_password'] ?? '';
     $confirm_pw = $_POST['confirm_password'] ?? '';
 
     $errors = [];
-    if (empty($current_pw) || strlen($current_pw) < 6) $errors[] = 'Current password required.';
+    if (empty($current_pw)) $errors[] = 'Current password required.';
     if (empty($new_pw) || strlen($new_pw) < 6) $errors[] = 'New password min 6 chars.';
     if ($new_pw !== $confirm_pw) $errors[] = 'Passwords do not match.';
 
     if (empty($errors)) {
-        // Verify current
         $stmt = $conn->prepare("SELECT password FROM users WHERE id = ?");
         $stmt->execute([$user_id]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
