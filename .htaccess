@@ -1,6 +1,19 @@
 RewriteEngine On
 
+# Root routes
 RewriteRule  ^payslip$                                payslip.php                           [NC,L]
 RewriteRule  ^dashboard$                              dashboard.php                         [NC,L]
 RewriteRule  ^payslip-view$                           payslip-view.php                      [NC,L]
 RewriteRule  ^profile$                                profile.php                           [NC,L]
+
+# HR routes
+RewriteRule  ^HR/dashboard$                           HR/dashboard.php                      [NC,L]
+RewriteRule  ^HR/payslip$                             HR/payslip.php                        [NC,L]
+RewriteRule  ^HR/payslip-view$                        HR/payslip-view.php                   [NC,L]
+RewriteRule  ^HR/profile$                             HR/profile.php                        [NC,L]
+RewriteRule  ^HR/upload$                              HR/upload.php                         [NC,L]
+
+# Fallback: Try direct file, else index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]

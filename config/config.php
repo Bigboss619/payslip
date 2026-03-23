@@ -12,6 +12,7 @@
         echo "Connection failed: " .$e->getMessage();
     }
 
-    define("BASE_URL","");
-    define("HR_URL","http://localhost/payslip/HR/");
+    define("BASE_URL","/payslip/");
+    define("HR_URL", BASE_URL . "HR/");
+  
  

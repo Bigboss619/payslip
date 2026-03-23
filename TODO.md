@@ -1,13 +1,8 @@
-# Payslip Login Defaults Implementation Plan
+# Task: Fix 404 for /payslip/HR/dashboard
 
-## Steps:
-- [x] Step 1: Add default user credentials to index.html login inputs (email: user@example.com, password: userpass)
-- [x] Step 2: Update js/login.js with hardcoded credential validation and role-based redirects:
-  - user@example.com / userpass → pages/dashboard.html
-  - hr@example.com / hrpass → HR/dashboard.html
-  - Fix redirect path typo
-  - Handle invalid credentials
-- [ ] Step 3: Test logins with both sets of credentials
-- [ ] Step 4: Demo with browser open command
-
-**Status: Starting implementation...**
+## Steps to Complete:
+1. [x] Create TODO.md (done)
+2. [x] Edit .htaccess to add HR/ rewrite rules (done)
+3. [x] Edit config/config.php to fix BASE_URL (done)
+4. [x] Test the dashboard access (restart XAMPP Apache and visit http://localhost/payslip/HR/dashboard)
+5. [ ] Mark complete and attempt_completion
