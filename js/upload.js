@@ -19,6 +19,14 @@ function setupEventListeners() {
   document.getElementById('applyFilters')?.addEventListener('click', applyFilters);
   document.getElementById('viewPayslipsBtn')?.addEventListener('click', showViewPayslipsModal);
   
+  // Month select change
+  const monthSelect = document.getElementById('monthSelect');
+  if (monthSelect) {
+    monthSelect.addEventListener('change', function() {
+      loadPayrollData(this.value);
+    });
+  }
+  
   // Real-time filters
   ['nameFilter', 'staffIdFilter', 'monthFilter', 'deptFilter'].forEach(id => {
     const el = document.getElementById(id);
@@ -78,6 +86,9 @@ async function handleFileUpload(e) {
       method: 'POST',
       body: formData
     });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
     const result = await response.json();
     
     if (result.success) {
@@ -96,24 +107,23 @@ async function handleFileUpload(e) {
 }
 
 function showPreview(result) {
-  previewData = result.preview_data || []; // Backend sends preview in future
+  previewData = result.preview_data || result.preview || []; 
   const previewSection = document.getElementById('previewSection');
   const previewTable = document.getElementById('previewTable');
   
-  // Mock preview rows from result for now
   previewTable.innerHTML = previewData.slice(0, 10).map(item => `
     <tr>
       <td class="p-2 border">${item.staff_id || ''}</td>
       <td class="p-2 border">${item.name}</td>
       <td class="p-2 border">${item.department}</td>
       <td class="p-2 border">${formatCurrency(item.gross)}</td>
-      <td class="p-2 border">${item.days_worked}</td>
+      <td class="p-2 border">${item.days_worked || ''}</td>
       <td class="p-2 border">${formatCurrency(item.net)}</td>
     </tr>
   `).join('') || '<tr><td colspan="6" class="p-4 text-center">No preview data</td></tr>';
   
   previewSection.classList.remove('hidden');
-  document.getElementById('saveBtn').disabled = false;
+  document.getElementById('saveBtn').disabled = previewData.length === 0;
 }
 
 function savePayroll() {

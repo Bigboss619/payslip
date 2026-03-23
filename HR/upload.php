@@ -62,7 +62,7 @@ include_once("../includes/nav.php");
       <div id="monthSection" class="bg-white p-6 rounded-xl shadow mb-6">
         <h2 class="text-lg font-semibold mb-4">Uploaded Payroll Status</h2>
         <div class="flex flex-col md:flex-row gap-4 items-center mb-4">
-          <select id="monthSelect" class="border p-3 rounded-lg w-full md:w-64" onchange="loadPayrollData()">
+<select id="monthSelect" class="border p-3 rounded-lg w-full md:w-64">
             <option value="">All Months...</option>
           </select>
           <button onclick="checkMonthStatus()" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700">Check</button>
@@ -133,10 +133,10 @@ include_once("../includes/nav.php");
 
   <script src="../js/upload.js"></script>
   <script>
-    // Update JS paths/API to use ../includes/upload-payroll.php for AJAX
-    BASE_API = '../includes/upload-payroll.php';
-    loadInitialData();
+    // JS handles init
   </script>
+
+
 </body>
 </html>
 
