@@ -98,6 +98,6 @@
     
 </body>
 <script src="components/Toast/Toast.js"></script>
-<script src="components/modal/Modal.js"></script>
+<!-- <script src="components/modal/Modal.js"></script> -->
 <script src="js/login-new.js"></script>
 </html>

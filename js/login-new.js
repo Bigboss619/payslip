@@ -74,16 +74,15 @@ signupForm.addEventListener('submit', async (e) => {
     showToast(data.message, data.success ? 'success' : 'error');
     
     if (data.success) {
-      localStorage.setItem('userRole', data.user.role);
-      showModal('Success!', data.message, 'success');
-      // setTimeout(() => {
-      //   window.location.href = data.user.dashboard;
-      // }, 2000);
+      // Clear form & switch to login
+      signupForm.reset();
+      toggleForm();  // Redirect to login section
     }
   } catch (error) {
     showToast('Network error. Please try again.', 'error');
     console.error('Signup error:', error);
   }
+
 
 });
 
