@@ -1,7 +1,6 @@
  <!-- Header -->
   <?php include_once("../includes/header.php"); ?>
   
-
   <!-- Nav Section -->
    <?php include_once("../includes/nav.php"); ?>
 
@@ -20,13 +19,16 @@
             <h2 class="text-lg font-semibold mb-4">Upload Excel File</h2>
 
             <div class="flex flex-col md:flex-row gap-4 items-center">
-
-              <input 
+              <form action="../includes/upload-payroll.php" method="post" enctype="multipart/form-data" action="">
+                <input
+                name="payroll_file" 
                 type="file" 
                 id="fileInput"
                 accept=".xlsx, .xls"
                 class="border p-2 rounded-lg w-full md:w-auto"
-              >
+                >
+              </form>
+              
 
               <button 
                 onclick="handleUpload()" 

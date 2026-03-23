@@ -46,6 +46,14 @@ if ($_POST['action'] ?? '') {
         if ($check->fetchColumn() == 0) {
           throw new Exception('Failed to delete department');
         }
+
+        // Check if department is in use
+        $usedStmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE department_id = ?");
+        $usedStmt->execute([$id]);
+        $usedCount = $usedStmt->fetchColumn();
+        if ($usedCount > 0) {
+          throw new Exception("Department is already in use by {$usedCount} user(s). Cannot delete.");
+        }
         
         $stmt = $conn->prepare("DELETE FROM departments WHERE id = ?");
         $stmt->execute([$id]);
