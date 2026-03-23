@@ -10,7 +10,15 @@ document.addEventListener('DOMContentLoaded', function() {
     openDeleteModal(id, name);
   }
 });
-  
+
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('edit-btn')) {
+    const id = parseInt(e.target.dataset.id);
+    const name = e.target.dataset.name;
+
+    editDepartment(id, name);
+  }
+});
   document.getElementById('department-form').addEventListener('submit', handleSave);
   
 // Expose functions for onclick including reload
@@ -66,8 +74,8 @@ function renderTable(depts) {
         ${new Date().toLocaleDateString()}
       </td>
       <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-        <button onclick="editDepartment(${dept.id}, ${JSON.stringify(dept.name)})" 
-                class="text-blue-600 hover:text-blue-900 px-3 py-1 rounded-lg hover:bg-blue-50 transition">
+        <button data-id="${dept.id}" data-name="${dept.name}" 
+                class="text-blue-600 edit-btn hover:text-blue-900 px-3 py-1 rounded-lg hover:bg-blue-50 transition">
           Edit
         </button>
         <button  data-id="${dept.id}" data-name="${dept.name}"
