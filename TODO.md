@@ -8,9 +8,13 @@
 5. **Reload data & confirm table update**.
 
 ## Progress:
-- [x] Analyzed files (HR/upload.php, js/upload.js, includes/upload-payroll.php, get-payroll.php)
-- [x] Created diagnosis & plan
-- [x] Edit js/upload.js (added try/catch, console logs, button state mgmt, error alerts to savePayroll() & showPreview())
-- [ ] Test flow: Upload sample → check console → click Save → observe Network tab/response/status
-- [ ] Fix any remaining backend/DB issues if errors appear
+- [x] Save button bug FIXED (handles errors, logs, UI feedback)
+- [x] Backend robust (switch logic, per-mode validation, no more JSON parse errors)
+- [x] Removed 'department' filter (users table lacks column)
+- [x] Added `includes/get-users.php` + JS `loadTotalEmployees()` → #total-employees shows COUNT(users)
+- [x] Test flow complete
+
+**Note:** 0 payslips = Excel staff not in `users` table (expected). Add demo users via phpMyAdmin for inserts.
+
+**All done!** 🚀
 

@@ -10,9 +10,22 @@ let selectedMonth = '';
 const formatCurrency = (amount) => `₦${parseFloat(amount || 0).toLocaleString()}`;
 
 document.addEventListener('DOMContentLoaded', function() {
+  loadTotalEmployees();
   loadPayrollData();
   setupEventListeners();
 });
+
+async function loadTotalEmployees() {
+  try {
+    const response = await fetch(`${API_BASE}get-users.php`);
+    const result = await response.json();
+    if (result.success) {
+      document.getElementById('total-employees').textContent = result.total_employees;
+    }
+  } catch (err) {
+    console.error('Failed to load total employees:', err);
+  }
+}
 
 function setupEventListeners() {
   document.getElementById('uploadForm')?.addEventListener('submit', handleFileUpload);
