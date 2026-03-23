@@ -17,8 +17,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+$mode = $_POST['mode'] ?? 'preview';
 $month = $_POST['month'] ?? '';
 $year = (int)$_POST['year'] ?? date('Y');
+$batch_id = $_POST['batch_id'] ?? null;
 $uploaded_by = $_SESSION['user_id'] ?? null;
 
 if (empty($month)) {
@@ -63,7 +65,7 @@ $checkStmt = $conn->prepare("SELECT id FROM payroll_batches WHERE month = ? AND 
 $checkStmt->execute([$month, $year]);
 if ($checkStmt->fetch()) {
     echo json_encode(['success' => false, 'error' => 'Payroll for ' . $month . ' ' . $year . ' already exists']);
-    unlink($filePath);
+    if (isset($filePath)) unlink($filePath);
     exit;
 }
 
@@ -101,16 +103,40 @@ try {
         exit;
     }
 
-    // Create batch
-    $stmt = $conn->prepare("INSERT INTO payroll_batches (month, year, uploaded_by, file_path, created_at) VALUES (?, ?, ?, ?, NOW())");
+if ($mode === 'preview') {
+    // Create batch for preview
+    $stmt = $conn->prepare("INSERT INTO payroll_batches (month, year, uploaded_by, file_path, status, created_at) VALUES (?, ?, ?, ?, 'preview', NOW())");
     $stmt->execute([$month, $year, $uploaded_by, $filePath]);
     $batch_id = $conn->lastInsertId();
 
-    // Process and insert payslips
+    // Store preview data in session
+    $_SESSION['preview_' . $batch_id] = $previewData;
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'Preview ready. Review and save.',
+        'batch_id' => $batch_id,
+        'month' => $month,
+        'year' => $year,
+        'preview_count' => count($previewData),
+        'preview_data' => $previewData
+    ]);
+} elseif ($mode === 'save' && $batch_id) {
+    // Retrieve preview data from session and insert
+    $previewData = $_SESSION['preview_' . $batch_id] ?? [];
+    if (empty($previewData)) {
+        echo json_encode(['success' => false, 'error' => 'No preview data found']);
+        exit;
+    }
+
+    // Update batch status to 'completed'
+    $stmt = $conn->prepare("UPDATE payroll_batches SET status = 'completed' WHERE id = ?");
+    $stmt->execute([$batch_id]);
+
+    // Insert payslips
     $inserted = 0;
     $skipped = 0;
     foreach ($previewData as $data) {
-        // Find user by staff_id or name + dept
         $userStmt = $conn->prepare("SELECT id FROM users WHERE (staff_id = ? OR name = ?) AND department = ? LIMIT 1");
         $userStmt->execute([$data['staff_id'], $data['name'], $data['department']]);
         $user = $userStmt->fetch(PDO::FETCH_ASSOC);
@@ -133,16 +159,24 @@ try {
         $inserted++;
     }
 
+    // Clear session
+    unset($_SESSION['preview_' . $batch_id]);
+
     echo json_encode([
         'success' => true,
-        'message' => "Processed: {$inserted} inserted, {$skipped} skipped.",
+        'message' => "Saved: {$inserted} inserted, {$skipped} skipped.",
         'batch_id' => $batch_id,
-        'month' => $month,
-        'year' => $year,
-        'preview_count' => count($previewData),
-        'preview_data' => $previewData,
         'inserted' => $inserted
     ]);
+} elseif ($mode === 'cancel' && $batch_id) {
+    // Delete preview batch
+    $stmt = $conn->prepare("DELETE FROM payroll_batches WHERE id = ? AND status = 'preview'");
+    $stmt->execute([$batch_id]);
+    unset($_SESSION['preview_' . $batch_id]);
+    echo json_encode(['success' => true, 'message' => 'Preview cancelled']);
+} else {
+    echo json_encode(['success' => false, 'error' => 'Invalid mode or missing batch_id']);
+}
 
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'error' => 'Processing failed: ' . $e->getMessage()]);

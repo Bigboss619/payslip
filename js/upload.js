@@ -4,6 +4,7 @@ let filteredData = [];
 let currentPage = 1;
 const pageSize = 10;
 let previewData = [];
+let currentBatchId = null;
 let selectedMonth = '';
 
 const formatCurrency = (amount) => `₦${parseFloat(amount || 0).toLocaleString()}`;
@@ -70,6 +71,7 @@ async function loadPayrollData(month = '') {
 async function handleFileUpload(e) {
   e.preventDefault();
   const formData = new FormData(e.target);
+  formData.append('mode', 'preview');
   const uploadBtn = document.getElementById('uploadBtn');
   const status = document.getElementById('uploadStatus');
   
@@ -102,11 +104,13 @@ async function handleFileUpload(e) {
 }
 
 function showPreview(result) {
+  currentBatchId = result.batch_id;
   previewData = result.preview_data || result.preview || [];
   const previewSection = document.getElementById('previewSection');
   const previewTable = document.getElementById('previewTable');
   
-  previewTable.innerHTML = previewData.slice(0, 10).map(item => `
+  // Show first 20 rows, add scroll for more
+  previewTable.innerHTML = previewData.slice(0, 20).map(item => `
     <tr>
       <td class="p-2 border">${item.staff_id || ''}</td>
       <td class="p-2 border">${item.name}</td>
@@ -115,10 +119,17 @@ function showPreview(result) {
       <td class="p-2 border">${item.days_worked || ''}</td>
       <td class="p-2 border">${formatCurrency(item.net)}</td>
     </tr>
-  `).join('') || '<tr><td colspan="6" class="p-4 text-center">No preview</td></tr>';
+  `).join('') || '<tr><td colspan="6" class="p-4 text-center">No preview data</td></tr>';
   
   previewSection.classList.remove('hidden');
-  document.getElementById('saveBtn') && (document.getElementById('saveBtn').disabled = previewData.length === 0);
+  const saveBtn = document.getElementById('saveBtn');
+  if (saveBtn) saveBtn.disabled = previewData.length === 0;
+  
+  // Show count
+  const header = previewSection.querySelector('h2');
+  if (header && previewData.length > 20) {
+    header.textContent += ` (${previewData.length} total rows)`;
+  }
 }
 
 function populatePreviousMonths(months) {
@@ -205,14 +216,64 @@ function showViewPayslipsModal() {
   window.location.href = 'payslip.php';
 }
 
-function savePayroll() {
-  alert('Saved to database via upload endpoint.');
-  document.getElementById('previewSection').classList.add('hidden');
+async function savePayroll() {
+  if (!currentBatchId) {
+    alert('No preview data to save');
+    return;
+  }
+  
+  const formData = new FormData();
+  formData.append('mode', 'save');
+  formData.append('batch_id', currentBatchId);
+  
+  const status = document.getElementById('uploadStatus');
+  status.innerHTML = '<div class="text-blue-600">Saving...</div>';
+  
+  try {
+    const response = await fetch(API_BASE + 'upload-payroll.php', {
+      method: 'POST',
+      body: formData
+    });
+    const result = await response.json();
+    
+    if (result.success) {
+      status.innerHTML = `<div class="text-green-600">${result.message}</div>`;
+      document.getElementById('previewSection').classList.add('hidden');
+      loadPayrollData();
+      document.getElementById('uploadForm')?.reset();
+    } else {
+      status.innerHTML = `<div class="text-red-600 bg-red-100 p-2 rounded">${result.error}</div>`;
+    }
+  } catch (err) {
+    status.innerHTML = `<div class="text-red-600 bg-red-100 p-2 rounded">Error: ${err.message}</div>`;
+  }
 }
 
-function cancelPreview() {
+async function cancelPreview() {
+  if (!currentBatchId) {
+    document.getElementById('previewSection').classList.add('hidden');
+    document.getElementById('uploadForm')?.reset();
+    return;
+  }
+  
+  const formData = new FormData();
+  formData.append('mode', 'cancel');
+  formData.append('batch_id', currentBatchId);
+  
+  try {
+    const response = await fetch(API_BASE + 'upload-payroll.php', {
+      method: 'POST',
+      body: formData
+    });
+    const result = await response.json();
+    // Ignore result, just cleanup
+  } catch (err) {
+    console.error('Cancel error:', err);
+  }
+  
   document.getElementById('previewSection').classList.add('hidden');
   document.getElementById('uploadForm')?.reset();
+  currentBatchId = null;
 }
 
 // Init

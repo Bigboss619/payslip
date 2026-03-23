@@ -1,8 +1,20 @@
-# Logout System Implementation
+# Upload Preview Before Insert & Remove mockData
 
-## Steps:
-- [x] Analyze files and confirm plan
-- [x] Step 1: Create this TODO.md
-- [x] Step 2: Fix includes/logout.php redirect loop by adding output buffering and session_write_close()
-- [x] Step 3: Test logout functionality (login → HR/dashboard → click logout → redirect to index.php with session cleared)
-- [x] Step 4: Update TODO.md and complete task
+## Status: In Progress
+
+### Step 1: [DONE ✅] Backend upload-payroll.php (preview/save modes)
+- Add mode='preview' (parse/store session) vs 'save' (insert).
+- Use session for preview_data keyed by batch_id.
+
+### Step 2: [DONE ✅] js/upload.js (preview/save/cancel flow complete)
+- handleFileUpload: send mode=preview.
+- savePayroll(): POST mode=save with batch_id.
+- Add global currentBatchId.
+- cancelPreview(): optional cleanup.
+
+### Step 3: [DONE ✅] HR/upload.php (scrollable preview table)
+
+### Step 4: [DONE ✅] Verified flow & no mockData
+
+### Step 5: [COMPLETE] Task done
+

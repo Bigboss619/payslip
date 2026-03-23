@@ -41,21 +41,21 @@ include_once("../includes/nav.php");
             <button onclick="savePayroll()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700" id="saveBtn" disabled>Save Payroll</button>
           </div>
         </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm border">
-            <thead class="bg-gray-100">
-              <tr>
-                <th class="p-2 border">Staff ID</th>
-                <th class="p-2 border">Name</th>
-                <th class="p-2 border">Department</th>
-                <th class="p-2 border">Gross</th>
-                <th class="p-2 border">Days</th>
-                <th class="p-2 border">Net</th>
-              </tr>
-            </thead>
-            <tbody id="previewTable"></tbody>
-          </table>
-        </div>
+<div class="overflow-x-auto max-h-96 overflow-y-auto">
+  <table class="w-full text-sm border">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="p-2 border">Staff ID</th>
+        <th class="p-2 border">Name</th>
+        <th class="p-2 border">Department</th>
+        <th class="p-2 border">Gross</th>
+        <th class="p-2 border">Days</th>
+        <th class="p-2 border">Net</th>
+      </tr>
+    </thead>
+    <tbody id="previewTable"></tbody>
+  </table>
+</div>
       </div>
 
       <!-- MONTH STATUS CHECK -->
