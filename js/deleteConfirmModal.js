@@ -30,7 +30,7 @@ async function confirmDelete() {
     
     if (data.success) {
       showMessage(data.message, 'success');
-      loadDepartments();
+      window.loadDepartments();
     } else {
       showMessage(data.message, 'error');
     }
@@ -41,4 +41,6 @@ async function confirmDelete() {
 
 // Expose for onclick
 window.openDeleteModal = openDeleteModal;
+window.closeDeleteModal = closeDeleteModal;
+window.confirmDelete = confirmDelete;
 

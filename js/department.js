@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
   window.openAddModal = openAddModal;
   window.closeModal = closeModal;
   window.editDepartment = editDepartment;
-  window.deleteDepartment = deleteDepartment;
 });
 
 async function loadDepartments() {
@@ -59,7 +58,10 @@ function renderTable(depts) {
                 class="text-blue-600 hover:text-blue-900 px-3 py-1 rounded-lg hover:bg-blue-50 transition">
           Edit
         </button>
-        <button onclick="openDeleteModal(${dept.id}, '${escapeHtml(dept.name)}')" \n                class="text-red-600 hover:text-red-900 px-3 py-1 rounded-lg hover:bg-red-50 transition">\n          Delete\n        </button>
+        <button onclick="openDeleteModal(${dept.id}, '${escapeHtml(dept.name)}')" 
+                class="text-red-600 hover:text-red-900 px-3 py-1 rounded-lg hover:bg-red-50 transition">
+          Delete
+        </button>
       </td>
     </tr>
   `).join('');
@@ -105,17 +107,6 @@ function editDepartment(id, name) {
   document.getElementById('dept-name').focus();
 }
 
-async function deleteDepartment(id) {
-  const name = document.querySelector(`button[onclick="editDepartment(${id},`).closest('tr').querySelector('div.text-sm.font-medium.text-gray-900').textContent.trim();
-  openDeleteModal(id, name);
-}
-
-function openDeleteModal(id, name) {
-  currentDeleteId = id;
-  document.getElementById('delete-confirm-name').textContent = escapeHtml(name);
-  document.getElementById('delete-confirm-modal').classList.remove('hidden');
-}
-
 function openAddModal() {
   document.getElementById('department-modal').classList.remove('hidden');
   document.getElementById('modal-title').textContent = 'Add Department';
@@ -136,15 +127,7 @@ document.getElementById('department-modal').addEventListener('click', function(e
 });
 
 function showMessage(msg, type = 'success') {
-  const toast = document.createElement('div');
-  toast.className = `fixed top-4 right-4 z-50 p-4 rounded-xl shadow-2xl text-white transform translate-x-full transition-all duration-300 max-w-sm ${
-    type === 'success' ? 'bg-green-500' : 'bg-red-500'
-  }`;
-  toast.innerHTML = `<div>${msg}</div>`;
-  document.body.appendChild(toast);
-
-  // Slide in
-  requestAnimationFrame(() => toast.classList.remove('translate-x-full'));
+  const toast = document.getElementById('department-modal') = toast.classList.remove('translate-x-full');
   
   // Slide out after 3s
   setTimeout(() => {

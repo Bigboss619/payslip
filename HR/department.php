@@ -1,4 +1,4 @@
- <?php include_once("../includes/header.php"); ?>
+<?php include_once("../includes/header.php"); ?>
 
 <?php include_once("../includes/nav.php"); ?>
 
@@ -80,5 +80,29 @@
       </form>
     </div>
   </div>
-    <!-- DELETE CONFIRM MODAL -->
-      <div id="delete-confirm-modal" class="fixed inset-0 bg-gray-900/30 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">\n    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full">\n      <div class="p-8 text-center">\n        <div class="w-16 h-16 mx-auto bg-red-100 rounded-2xl flex items-center justify-center mb-6">\n          <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>\n          </svg>\n        </div>\n        <h3 class="text-xl font-bold text-gray-900 mb-2">Delete Department?</h3>\n        <p class="text-gray-500 mb-6 max-w-sm mx-auto">This action cannot be undone. This will permanently delete the <strong id="delete-confirm-name" class="font-semibold text-gray-900"></strong> department and remove it from the system.</p>\n        <div class="flex gap-3 justify-center">\n          <button onclick="closeDeleteModal()" class="flex-1 px-6 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl font-medium transition max-w-sm">Cancel</button>\n          <button onclick="confirmDelete()" class="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition max-w-sm">Delete Department</button>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <script src="../js/department.js"></script>\n  <script src="../js/deleteConfirmModal.js"></script>\n</body>\n</html>
+
+  <!-- DELETE CONFIRM MODAL -->
+  <div id="delete-confirm-modal" class="fixed inset-0 bg-gray-900/30 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full">
+      <div class="p-8 text-center">
+        <div class="w-16 h-16 mx-auto bg-red-100 rounded-2xl flex items-center justify-center mb-6">
+          <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Delete Department?</h3>
+        <p class="text-gray-500 mb-6 max-w-sm mx-auto">This action cannot be undone. This will permanently delete the <strong id="delete-confirm-name" class="font-semibold text-gray-900"></strong> department and remove it from the system.</p>
+        <div class="flex gap-3 justify-center">
+          <button onclick="closeDeleteModal()" class="flex-1 px-6 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl font-medium transition max-w-sm">Cancel</button>
+
+          <button onclick="confirmDelete()" name="delete" class="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-red-700 rounded-xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition max-w-sm">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/department.js"></script>
+  <script src="../js/deleteConfirmModal.js"></script>
+</body>
+</html>
+
