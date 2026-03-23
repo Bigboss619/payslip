@@ -147,8 +147,8 @@ if ($mode === 'preview') {
 
         $payslipStmt = $conn->prepare("
             INSERT INTO payslips (
-                user_id, batch_id, gross_salary, days_worked, basic_salary, housing_allowance,
-                transport_allowance, net_salary
+                user_id, batch_id, gross_salary, basic_salary, housing, transport, medical, utility, paaye, deductions, pension, net_salary, days_worked, 
+                , pro_rata
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ");
         $payslipStmt->execute([
