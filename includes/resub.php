@@ -32,11 +32,15 @@ if (isset($_POST['register'])) {
         $errors[] = 'Passwords do not match.';
     }
 
-    // Real DB duplicate check
-    $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
-    $stmt->execute([$email]);
-    if ($stmt->rowCount() > 0) {
-        $errors[] = 'Email already exists.';
+    // Real DB duplicate check with error handling
+    try {
+        $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        if ($stmt->rowCount() > 0) {
+            $errors[] = 'Email already exists.';
+        }
+    } catch (PDOException $e) {
+        $errors[] = 'Database error: Table may not exist.';
     }
 
     if (!empty($errors)) {
@@ -45,22 +49,30 @@ if (isset($_POST['register'])) {
             'message' => implode(' ', $errors)
         ]);
     } else {
-        // Real insert with hashed password
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $conn->prepare("INSERT INTO users (fullname, staff_id, email, password, role) VALUES (?, ?, ?, ?, 'user')");
-        $stmt->execute([$fullname, $staff_id, $email, $hashed_password]);
-        
-        echo json_encode([
-            'success' => true,
-            'message' => 'Account created successfully! You can now log in.',
-            'user' => [
-                'email' => $email,
-                'role' => 'user',
-                'dashboard' => '../HR/dashboard.php'
-            ]
-        ]);
+        try {
+            // Real insert with hashed password
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+            $stmt = $conn->prepare("INSERT INTO users (name, staff_id, email, password, role) VALUES (?, ?, ?, ?, 'user')");
+            $stmt->execute([$fullname, $staff_id, $email, $hashed_password]);
+            
+            echo json_encode([
+                'success' => true,
+                'message' => 'Account created successfully and saved to database! You can now log in.',
+                'user' => [
+                    'email' => $email,
+                    'role' => 'user',
+                    'dashboard' => '../HR/dashboard.php'
+                ]
+            ]);
+        } catch (PDOException $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Insert failed: ' . $e->getMessage()
+            ]);
+        }
     }
     exit;
+
 
 }
 
