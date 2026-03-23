@@ -150,7 +150,7 @@ loginForm.addEventListener('submit', async (e) => {
       
       if (data.success) {
         localStorage.setItem('userRole', data.role);
-        showModal('Login Successful!', `Redirecting to ${data.role.toUpperCase()} dashboard...`, 'success');
+        showToast('Login successful! Redirecting...', 'success');
         setTimeout(() => {
           window.location.href = data.redirect;
         }, 1500);
