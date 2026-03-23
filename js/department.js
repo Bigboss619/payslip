@@ -169,6 +169,12 @@ function showMessage(msg, type = 'success') {
 }
 
 function escapeHtml(text) {
-  const map = { '&': '&amp;', '<': '<', '>': '>', '"': '"', \"'\": '&#039;' };
+  const map = {
+    '&': '&amp;',
+    '<': '<',
+    '>': '>',
+    '"': '"',
+    "'": '&#039;'
+  };
   return text.replace(/[&<>\"']/g, m => map[m]);
 }
