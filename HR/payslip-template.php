@@ -1,14 +1,7 @@
 <?php
 session_start();
-
-// CRITICAL PDF HEADERS
-header('Content-Type: application/pdf');
-header('Content-Disposition: attachment; filename="payslip.pdf"');
-header('Content-Length: 0'); // Will be set dynamically
-header('Cache-Control: private, max-age=0, must-revalidate');
-header('Pragma: public');
-header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
-
+use Dompdf\Dompdf;
+use Dompdf\Options;
 require '../config/config.php';
 
 $id = $_GET['id'] ?? 0;
@@ -20,7 +13,7 @@ if (!$id || !isset($_SESSION['role']) || $_SESSION['role'] !== 'HR') {
 
 // Fetch payslip data
 $stmt = $conn->prepare("
-    SELECT p.*, u.name, u.staff_id, u.department, pb.month, pb.year, pb.status
+    SELECT p.*, u.name, u.staff_id, pb.month, pb.year, pb.status
     FROM payslip p
     JOIN users u ON p.user_id = u.id
     JOIN payroll_batches pb ON p.batch_id = pb.id
@@ -36,11 +29,12 @@ if (!$data) {
     die('Payslip not found');
 }
 
-// Disable output buffering
-while (ob_get_level()) {
-    ob_end_clean();
-}
 
+
+require '../vendor/autoload.php';
+
+// Start output buffering
+ob_start();
 // HTML for PDF (browser will convert to PDF when printing/downloading)
 ?>
 <!DOCTYPE html>
@@ -215,10 +209,10 @@ while (ob_get_level()) {
                     <span class="info-label">Staff ID:</span>
                     <span class="info-value"><?= htmlspecialchars($data['staff_id']) ?></span>
                 </div>
-                <div class="info-item">
+                <!-- <div class="info-item">
                     <span class="info-label">Department:</span>
                     <span class="info-value"><?= htmlspecialchars($data['department']) ?></span>
-                </div>
+                </div> -->
                 <div class="info-item">
                     <span class="info-label">Status:</span>
                     <span class="info-value" style="color: #10b981; font-weight: 700;"><?= htmlspecialchars($data['status']) ?></span>
@@ -282,3 +276,20 @@ while (ob_get_level()) {
     </div>
 </body>
 </html>
+<?php
+$html = ob_get_clean();
+
+// DomPDF setup
+$options = new Options();
+$options->set('isRemoteEnabled', true);
+
+$dompdf = new Dompdf($options);
+$dompdf->loadHtml($html);
+$dompdf->setPaper('A4', 'portrait');
+$dompdf->render();
+
+// Output PDF
+$dompdf->stream("payslip_{$data['staff_id']}.pdf", [
+    "Attachment" => true // download
+]);
+exit;
