@@ -61,8 +61,11 @@ function debounce(func, wait) {
   };
 }
 
-async function loadPayrollData(month = new Date().toISOString().slice(0,7)) {
-  const year = new Date().getFullYear();
+async function loadPayrollData(month = null, year = null) {
+  if (!month || !year) {
+    month = new Date().toISOString().slice(0,7).slice(-2);
+    year = new Date().getFullYear();
+  }
   // Show loading
   const tbody = document.getElementById('payrollTableBody');
   tbody.innerHTML = '<tr><td colspan="16" class="p-12 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div><p>Loading Excel payroll data...</p></td></tr>';
@@ -71,7 +74,7 @@ async function loadPayrollData(month = new Date().toISOString().slice(0,7)) {
     // Use Excel endpoint by default - simplified params
     const params = new URLSearchParams({
       mode: 'get_excel',
-      month: month,
+      month: month.padStart(2, '0'),
       year: year
     });
     
@@ -88,13 +91,23 @@ async function loadPayrollData(month = new Date().toISOString().slice(0,7)) {
     const result = await response.json();
     console.log('Excel API response:', result); // Debug log
     
+    const statusMsg = document.getElementById('statusMsg');
     if (result.success && result.excel_data && result.excel_data.length > 0) {
       currentPayrollData = result.excel_data;
       filteredData = [...currentPayrollData];
       renderExcelTable();
       updateExcelSummary(result);
+      if (statusMsg) {
+        statusMsg.textContent = `✅ Payroll loaded: ${result.excel_data.length} rows for ${month.padStart(2,'0')}/${year}`;
+        statusMsg.className = 'p-3 rounded-lg bg-green-100 text-green-800';
+      }
     } else {
       console.warn('No Excel data:', result.error || 'Empty response');
+      const errorMsg = result.error || 'No payroll Excel file found';
+      if (statusMsg) {
+        statusMsg.textContent = `❌ No payroll found for ${month.padStart(2,'0')}/${year}: ${errorMsg}`;
+        statusMsg.className = 'p-3 rounded-lg bg-red-100 text-red-800';
+      }
       // console.log('Excel Data:', result.excel_data);
       // console.log('Length:', result.excel_data.length);
       // console.log('Loaded Excel Data:', currentPayrollData);
@@ -389,8 +402,24 @@ async function cancelPreview() {
 }
 
 // Init
-function checkMonthStatus() {
-  const monthSelect = document.getElementById('monthSelect');
-  if (monthSelect?.value) loadPayrollData(monthSelect.value);
+function checkPayrollStatus() {
+  const monthEl = document.getElementById('statusMonthSelect');
+  const yearEl = document.getElementById('statusYearSelect');
+  const statusMsg = document.getElementById('statusMsg');
+  
+  if (!monthEl.value || !yearEl.value) {
+    statusMsg.textContent = 'Please select month and year';
+    statusMsg.classList.remove('hidden');
+    statusMsg.className = 'p-3 rounded-lg bg-yellow-100 text-yellow-800';
+    return;
+  }
+  
+  const monthNum = monthEl.value;
+  const year = yearEl.value;
+  statusMsg.classList.remove('hidden');
+  statusMsg.textContent = 'Checking payroll status...';
+  statusMsg.className = 'p-3 rounded-lg bg-blue-100 text-blue-800';
+  
+  loadPayrollData(monthNum, year);
 }
 

@@ -70,12 +70,25 @@ include_once("../includes/nav.php");
       <!-- MONTH STATUS CHECK -->
       <div id="monthSection" class="bg-white p-6 rounded-xl shadow mb-6">
         <h2 class="text-lg font-semibold mb-4">Uploaded Payroll Status</h2>
-        <div class="flex flex-col md:flex-row gap-4 items-center mb-4">
-<select id="monthSelect" class="border p-3 rounded-lg w-full md:w-64">
-            <option value="">All Months...</option>
-          </select>
-          <button onclick="checkMonthStatus()" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700">Check</button>
-        </div>
+<div class="flex flex-col md:flex-row gap-4 items-center mb-4">
+            <select id="statusMonthSelect" class="border p-3 rounded-lg w-full md:w-48">
+              <option value="">Select Month...</option>
+              <option value="01">January</option>
+              <option value="02">February</option>
+              <option value="03">March</option>
+              <option value="04">April</option>
+              <option value="05">May</option>
+              <option value="06">June</option>
+              <option value="07">July</option>
+              <option value="08">August</option>
+              <option value="09">September</option>
+              <option value="10">October</option>
+              <option value="11">November</option>
+              <option value="12">December</option>
+            </select>
+            <input type="number" id="statusYearSelect" class="border p-3 rounded-lg w-32" min="2020" max="2030" value="<?php echo date('Y'); ?>" placeholder="Year">
+            <button onclick="checkPayrollStatus()" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700">Check Status</button>
+          </div>
         <div id="previousMonths" class="flex flex-wrap gap-2 mb-4"></div>
         <div id="statusMsg" class="p-3 rounded-lg hidden"></div>
       </div>

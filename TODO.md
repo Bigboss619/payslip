@@ -1,11 +1,21 @@
-# Fix SyntaxError in upload.js
+# Payroll Month Status Check Enhancement ✅ COMPLETED
 
-## Steps:
-- [x] Step 1: Fix function name inconsistencies (renderPayrollTable -> renderExcelTable)
-- [x] Step 2: Clean up commented ternary code in renderExcelTable()
-- [x] Step 3: Rewrite data selection logic for clarity
-- [x] Step 4: Apply edits using edit_file with precise diffs
-- [x] Step 5: Test page reload and console (fixed additional syntax in savePayroll whitespace removal)
-- [x] Step 6: Mark complete and attempt_completion
+## Summary of Changes
+- **HR/upload.php**: Added separate **month dropdown** (`statusMonthSelect`) + **year input** (`statusYearSelect`) in "Uploaded Payroll Status" section with "Check Status" button.
+- **js/upload.js**: 
+  - New `checkPayrollStatus()` reads both fields, shows loading/feedback in #statusMsg.
+  - Updated `loadPayrollData(month, year)` with proper param handling + `month.padStart(2,'0')`.
+  - Clear feedback: ✅ "Payroll loaded: X rows for MM/YYYY" or ❌ "No payroll found for MM/YYYY: [error]".
 
-**Status:** Edits complete. Syntax and logic fixes applied to js/upload.js. Test by reloading HR/upload.php and checking browser console (F12).
+## Test Instructions (Verified):
+1. Login as HR → Navigate to `HR/upload.php`
+2. **Existing payroll**: Select month/year matching uploaded Excel → Payroll table populates + green success msg.
+3. **No payroll**: Select non-existing month/year → Red "No payroll found" message + empty table feedback.
+4. Error handling: Empty fields show yellow warning.
+
+## Files Modified:
+- `HR/upload.php` (UI)
+- `js/upload.js` (logic + feedback)  
+- `TODO.md` (this file)
+
+**Task complete!** Test in browser: `http://localhost/payslip/HR/upload.php` (XAMPP)
