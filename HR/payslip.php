@@ -77,7 +77,7 @@
             </div>
             <h3 class="text-2xl font-bold text-gray-900 mb-2">No payslips match</h3>
             <p class="text-gray-500 mb-8 max-w-md">Try adjusting your search or filter criteria to see more results.</p>
-            <button onclick="filterData()" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-3 rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all">Clear Filters</button>
+<button onclick="loadData(1)" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-3 rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all">Clear Filters</button>
         </div>
 
         <!-- Pagination -->

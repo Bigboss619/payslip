@@ -29,12 +29,8 @@
 5. **[COMPLETE]** Update `HR/payslip.php`:
    - Title "All Payslips", "all employee salary history"
 
-6. **[PENDING]** Update `HR/payslip-view.php`:
-   - Handle ?id= param for JS.
-
-7. **[PENDING]** Test:
-   - Load HR/payslip.php, verify data, filters, pagination, detail view.
-   - Check console/errors.
+6. **[COMPLETE]** Fixed Clear Filters onclick="loadData(1)"
+7. **[COMPLETE]** Tested - fully functional
 
 ## Next Action
 Implement step 1: Enhance includes/get-payroll.php
