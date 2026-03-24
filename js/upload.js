@@ -60,6 +60,10 @@ function debounce(func, wait) {
 }
 
 async function loadPayrollData(month = '') {
+  // Show loading
+  const tbody = document.getElementById('payrollTableBody');
+  tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div><p>Loading payroll...</p></td></tr>';
+  
   try {
     const params = new URLSearchParams({ limit: pageSize, offset: 0 });
     if (month) params.append('month', month);
@@ -74,10 +78,10 @@ async function loadPayrollData(month = '') {
       updateSummary(result.summary || {});
       populatePreviousMonths(result.months || []);
     } else {
-      document.getElementById('payrollTableBody').innerHTML = '<tr><td colspan="4" class="p-4 text-center">No data: ' + (result.error || 'Unknown') + '</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-gray-500">No data: ' + (result.error || 'Unknown') + '</td></tr>';
     }
   } catch (err) {
-    document.getElementById('payrollTableBody').innerHTML = '<tr><td colspan="4" class="p-4 text-center text-red-500">Error: ' + err.message + '</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-red-500">Error: ' + err.message + '</td></tr>';
   }
 }
 
@@ -102,7 +106,7 @@ async function handleFileUpload(e) {
     const result = await response.json();
     
     if (result.success) {
-console.log('Upload result:', result);
+
       status.innerHTML = `<div class="text-green-600">${result.message}</div>`;
       if (result.preview_data && result.preview_data.length > 0) {
         showPreview(result);
@@ -122,10 +126,8 @@ console.log('Upload result:', result);
 }
 
 function showPreview(result) {
-  console.log('showPreview called with:', result);
   currentBatchId = result.batch_id;
   previewData = result.preview_data || result.preview || [];
-  console.log('previewData length:', previewData.length, 'batchId:', currentBatchId);
   
   const previewSection = document.getElementById('previewSection');
   const previewTable = document.getElementById('previewTable');
@@ -161,7 +163,7 @@ function showPreview(result) {
   const saveBtn = document.getElementById('saveBtn');
   if (saveBtn) {
     saveBtn.disabled = previewData.length === 0;
-    console.log('saveBtn enabled:', !saveBtn.disabled);
+
   }
   
   // Show count
@@ -187,15 +189,33 @@ function renderPayrollTable() {
   const paginated = data.slice(start, end);
   
   const tbody = document.getElementById('payrollTableBody');
-  tbody.innerHTML = paginated.length ? paginated.map(item => `
-    <tr class="border-b hover:bg-gray-50">
+  tbody.innerHTML = paginated.length ? paginated.map((item, index) => `
+viewDetails(this, '${item.staff_id || ''}')">
+      <td class="p-2">
+        <input type="checkbox" class="bulk-checkbox">
+      </td>
+      <td class="p-2 font-mono text-sm">${item.staff_id || 'N/A'}</td>
       <td class="p-2">${item.name}</td>
       <td class="p-2">${item.department}</td>
       <td class="p-2">${formatCurrency(item.gross_salary)}</td>
       <td class="p-2 font-semibold">${formatCurrency(item.net_salary)}</td>
+      <td class="p-2 group-hover:opacity-100 opacity-0 transition-all">
+        <div class="flex gap-1">
+          <button onclick="event.stopPropagation(); viewPayslip('${item.staff_id}')" class="text-blue-600 hover:text-blue-800 text-xs p-1" title="View">View</button>
+          <button onclick="event.stopPropagation(); editPayroll('${item.staff_id}')" class="text-green-600 hover:text-green-800 text-xs p-1" title="Edit">Edit</button>
+          <button onclick="event.stopPropagation(); deletePayroll('${item.staff_id}')" class="text-red-600 hover:text-red-800 text-xs p-1" title="Delete">Delete</button>
+        </div>
+      </td>
     </tr>
-  `).join('') : '<tr><td colspan="4" class="p-4 text-center text-gray-500">No data</td></tr>';
-  
+    <tr class="detail-row hidden bg-blue-50">
+      <td colspan="7" class="p-4">
+        <div class="text-sm text-gray-700">
+          Month: <strong>${item.month || ''} ${item.year || ''}</strong> | 
+          Full Details: <pre>${JSON.stringify(item, null, 2)}</pre>
+        </div>
+      </td>
+    </tr>
+  `).join('') : '<tr><td colspan="7" class="p-8 text-center text-gray-500"><div class="text-lg">No payroll data found</div><div>Upload an Excel file above to get started</div></td></tr>';
   renderPagination(data.length);
 }
 
@@ -256,7 +276,7 @@ function showViewPayslipsModal() {
 }
 
 async function savePayroll() {
-  console.log('savePayroll called. currentBatchId:', currentBatchId);
+
   
   if (!currentBatchId) {
     alert('No preview data to save');
@@ -275,7 +295,7 @@ async function savePayroll() {
   status.innerHTML = '<div class="text-blue-600">Saving payroll data...</div>';
   
   try {
-    console.log('Sending save request...');
+
     const response = await fetch(API_BASE + 'upload-payroll.php', {
       method: 'POST',
       body: formData
@@ -286,7 +306,7 @@ async function savePayroll() {
     }
     
     const result = await response.json();
-    console.log('Save response:', result);
+
     
     if (result.success) {
       status.innerHTML = `<div class="text-green-600 bg-green-100 p-2 rounded">${result.message}</div>`;
@@ -339,3 +359,4 @@ function checkMonthStatus() {
   const monthSelect = document.getElementById('monthSelect');
   if (monthSelect?.value) loadPayrollData(monthSelect.value);
 }
+

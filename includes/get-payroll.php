@@ -23,7 +23,8 @@ if ($month) {
     $params[] = $month;
 }
 if ($name) {
-    $where[] = "u.name LIKE ?";
+    $where[] = "(u.name LIKE ? OR u.staff_id LIKE ?)";
+    $params[] = "%$name%";
     $params[] = "%$name%";
 }
 if ($dept) {
@@ -35,7 +36,7 @@ $whereClause = implode(' AND ', $where);
 
 // Data query
 $stmt = $conn->prepare("
-    SELECT u.name, u.department, p.gross_salary, p.net_salary, pb.month, pb.year
+SELECT u.staff_id, u.name, u.department, p.gross_salary, p.net_salary, pb.month, pb.year
     FROM payslip p
     JOIN users u ON p.user_id = u.id
     JOIN payroll_batches pb ON p.batch_id = pb.id
