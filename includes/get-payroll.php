@@ -47,12 +47,17 @@ $whereClause = implode(' AND ', $where);
 try {
     // Data query
     $stmt = $conn->prepare("
-    SELECT u.staff_id, u.name, u.department, p.gross_salary, p.net_salary, pb.month, pb.year
+    SELECT COALESCE(u.staff_id, p.user_id) as staff_id, 
+           COALESCE(u.name, 'Unknown') as name, 
+           COALESCE(u.department, 'Unknown') as department, 
+           p.gross_salary, p.net_salary, 
+           COALESCE(pb.month, 'Unknown') as month, 
+           COALESCE(pb.year, YEAR(NOW())) as year
         FROM payslip p
-        JOIN users u ON p.user_id = u.id
-        JOIN payroll_batches pb ON p.batch_id = pb.id
+        LEFT JOIN users u ON p.user_id = u.id
+        LEFT JOIN payroll_batches pb ON p.batch_id = pb.id
         WHERE $whereClause
-        ORDER BY pb.created_at DESC, u.name
+        ORDER BY COALESCE(pb.created_at, p.created_at) DESC, COALESCE(u.name, p.user_id)
         LIMIT ? OFFSET ?
     ");
     $params[] = $limit;
@@ -69,8 +74,8 @@ try {
     $countStmt = $conn->prepare("
         SELECT COUNT(*) as total
         FROM payslip p
-        JOIN users u ON p.user_id = u.id
-        JOIN payroll_batches pb ON p.batch_id = pb.id
+        LEFT JOIN users u ON p.user_id = u.id
+        LEFT JOIN payroll_batches pb ON p.batch_id = pb.id
         WHERE $whereClause
     ");
     $countStmt->execute(array_slice($params, 0, -2));
@@ -84,12 +89,12 @@ try {
     // Summary
     $sumStmt = $conn->prepare("
         SELECT 
-            COUNT(*) as total_employees,
+            COUNT(p.id) as total_employees,
             COALESCE(SUM(p.gross_salary), 0) as total_gross,
             COALESCE(SUM(p.net_salary), 0) as total_net
         FROM payslip p
-        JOIN users u ON p.user_id = u.id
-        JOIN payroll_batches pb ON p.batch_id = pb.id
+        LEFT JOIN users u ON p.user_id = u.id
+        LEFT JOIN payroll_batches pb ON p.batch_id = pb.id
         WHERE $whereClause
     ");
     $sumStmt->execute(array_slice($params, 0, -2));
@@ -101,7 +106,7 @@ try {
 
 try {
     // Months
-    $monthsStmt = $conn->query("SELECT DISTINCT CONCAT(pb.month, ' ', pb.year) as month_year FROM payroll_batches pb ORDER BY pb.year DESC, pb.month DESC LIMIT 12");
+    $monthsStmt = $conn->query("SELECT DISTINCT DATE_FORMAT(p.created_at, '%M %Y') as month_year FROM payslip p ORDER BY p.created_at DESC LIMIT 12");
     $months = $monthsStmt->fetchAll(PDO::FETCH_COLUMN);
 } catch (PDOException $e) {
     error_log("Months query failed: " . $e->getMessage());

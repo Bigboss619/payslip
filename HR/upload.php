@@ -115,17 +115,29 @@ include_once("../includes/nav.php");
           <button onclick="toggleFilters()" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 text-sm">Filters</button>
         </div>
         <div class="overflow-x-auto">
-          <table class="w-full text-sm">
-            <thead class="bg-gray-100">
+          <table class="w-full text-sm border-collapse">
+            <thead class="bg-gray-100 sticky top-0 z-10">
               <tr>
-                <th class="p-2 text-left">Name</th>
-                <th class="p-2 text-left">Department</th>
-                <th class="p-2 text-left">Gross</th>
-                <th class="p-2 text-left">Net</th>
+                <th class="p-3 text-left font-semibold border border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">Row</th>
+                <th class="p-3 text-left font-semibold border border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">Staff ID</th>
+                <th class="p-3 text-left font-semibold border border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">Name</th>
+                <th class="p-3 text-left font-semibold border border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">Department</th>
+                <th class="p-3 text-right font-semibold border border-gray-200 bg-gradient-to-r from-blue-50 to-blue-100">Gross Salary</th>
+                <th class="p-3 text-right font-semibold border border-gray-200 bg-gradient-to-r from-green-50 to-green-100">Pro-Rata</th>
+                <th class="p-3 text-center font-semibold border border-gray-200 bg-gradient-to-r from-yellow-50 to-yellow-100">Days</th>
+                <th class="p-3 text-right font-semibold border border-gray-200 bg-gradient-to-r from-indigo-50 to-indigo-100">Basic</th>
+                <th class="p-3 text-right font-semibold border border-gray-200 bg-gradient-to-r from-purple-50 to-purple-100">Housing</th>
+                <th class="p-3 text-right font-semibold border border-gray-200 bg-gradient-to-r from-orange-50 to-orange-100">Transport</th>
+                <th class="p-3 text-right font-semibold border border-gray-200 bg-gradient-to-r from-emerald-50 to-emerald-100">Medical</th>
+                <th class="p-3 text-right font-semibold border border-gray-200 bg-gradient-to-r from-cyan-50 to-cyan-100">Utility</th>
+                <th class="p-3 text-right font-semibold border border-gray-200 bg-gradient-to-r from-red-50 to-red-100">PAYE</th>
+                <th class="p-3 text-right font-semibold border border-gray-200 bg-gradient-to-r from-amber-50 to-amber-100">Deductions</th>
+                <th class="p-3 text-right font-semibold border border-gray-200 bg-gradient-to-r from-pink-50 to-pink-100">Pension</th>
+                <th class="p-3 text-right font-bold text-green-600 font-semibold border border-gray-200 bg-gradient-to-r from-green-50 to-emerald-100">Net Salary</th>
               </tr>
             </thead>
             <tbody id="payrollTableBody">
-              <tr><td colspan="4" class="p-4 text-center text-gray-500">Loading...</td></tr>
+              <tr><td colspan="16" class="p-12 text-center text-gray-500">Loading Excel payroll data...</td></tr>
             </tbody>
           </table>
         </div>

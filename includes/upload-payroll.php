@@ -15,12 +15,77 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'HR') {
     exit;
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['mode']) && $_GET['mode'] === 'get_excel') {
+    // New GET endpoint for Excel data
+    $month = $_GET['month'] ?? '';
+    $year = (int)($_GET['year'] ?? date('Y'));
+    
+    if (empty($month)) {
+        echo json_encode(['success' => false, 'error' => 'Month required']);
+        exit;
+    }
+    
+    try {
+        // Find batch with file
+        $stmt = $conn->prepare("SELECT id, file_path FROM payroll_batches WHERE month = ? AND year = ? AND status = 'completed'");
+        $stmt->execute([$month, $year]);
+        $batch = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$batch || !file_exists($batch['file_path'])) {
+            echo json_encode(['success' => false, 'error' => 'Excel file not found for ' . $month . ' ' . $year]);
+            exit;
+        }
+        
+        // Parse Excel file
+        $spreadsheet = IOFactory::load($batch['file_path']);
+        $sheet = $spreadsheet->getActiveSheet();
+        $rows = $sheet->toArray();
+        array_shift($rows); // Skip header
+        
+        $excelData = [];
+        foreach ($rows as $rowIndex => $row) {
+            if (count($row) < 16 || empty($row[1]) || trim($row[0]) === 'STAFF ID') continue;
+            
+            $excelData[] = [
+                'row_index' => $rowIndex + 2, // Excel row number
+                'staff_id' => $row[0] ?? '',
+                'name' => $row[1] ?? '',
+                'department' => $row[2] ?? '',
+                'gross_salary' => (float)($row[3] ?? 0),
+                'pro_rata' => (float)($row[4] ?? 0),
+                'days_worked' => (int)($row[5] ?? 0),
+                'basic_salary' => (float)($row[6] ?? 0),
+                'housing' => (float)($row[7] ?? 0),
+                'transport' => (float)($row[8] ?? 0),
+                'medical' => (float)($row[9] ?? 0),
+                'utility' => (float)($row[10] ?? 0),
+                'paye' => (float)($row[12] ?? 0),
+                'deductions' => (float)($row[13] ?? 0),
+                'pension' => (float)($row[14] ?? 0),
+                'net_salary' => (float)($row[15] ?? 0),
+                'raw_row' => $row // Full raw row for debugging
+            ];
+        }
+        
+        echo json_encode([
+            'success' => true,
+            'excel_data' => $excelData,
+            'total_rows' => count($excelData),
+            'batch_id' => $batch['id'],
+            'file_path' => $batch['file_path']
+        ]);
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'error' => 'Excel parse error: ' . $e->getMessage()]);
+    }
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'error' => 'Invalid method']);
     exit;
 }
 
-$mode = $_POST['mode'] ?? 'preview';
+$mode = $_POST['mode'] ?? ($_GET['mode'] ?? 'preview');
 $batch_id = $_POST['batch_id'] ?? null;
 $month = $_POST['month'] ?? '';
 $year = (int)($_POST['year'] ?? date('Y'));

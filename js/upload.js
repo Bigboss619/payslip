@@ -59,41 +59,40 @@ function debounce(func, wait) {
   };
 }
 
-async function loadPayrollData(month = '') {
+async function loadPayrollData(month = '', year = new Date().getFullYear()) {
   // Show loading
   const tbody = document.getElementById('payrollTableBody');
-  tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div><p>Loading payroll...</p></td></tr>';
+  tbody.innerHTML = '<tr><td colspan="15" class="p-8 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div><p>Loading Excel data...</p></td></tr>';
   
   try {
-    const params = new URLSearchParams({ limit: pageSize, offset: 0 });
-    if (month) params.append('month', month);
-    const response = await fetch(`${API_BASE}get-payroll.php?${params}`);
+    // Use Excel endpoint by default
+    const params = new URLSearchParams({
+      mode: 'get_excel',
+      month: month,
+      year: year,
+      limit: pageSize,
+      offset: (currentPage - 1) * pageSize
+    });
+    
+    const response = await fetch(`${API_BASE}upload-payroll.php?${params}`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     
-    const text = await response.text();
-    let result;
-    try {
-      result = JSON.parse(text);
-    } catch (jsonErr) {
-      console.error('JSON parse failed:', jsonErr);
-      console.error('Raw response:', text);
-      throw new Error('Invalid JSON response from server. Check browser console.');
-    }
+    const result = await response.json();
     
     if (result.success) {
-      currentPayrollData = result.data || [];
+      currentPayrollData = result.excel_data || [];
       filteredData = [...currentPayrollData];
-      renderPayrollTable();
-      updateSummary(result.summary || {});
-      populatePreviousMonths(result.months || []);
+      renderExcelTable(); // New Excel render function
+      updateExcelSummary(result);
+      if (result.months) populatePreviousMonths(result.months); // Keep for navigation
     } else {
-      tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-500">No data: ${result.error || 'Unknown error'}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="15" class="p-8 text-center text-gray-500">No Excel data: ${result.error || 'Unknown error'}</td></tr>`;
     }
   } catch (err) {
-    console.error('Payroll load error:', err);
-    tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-red-500">
-      <div>Error loading payroll: ${err.message}</div>
-      <div class="text-xs mt-1">Setup database or check server logs</div>
+    console.error('Excel load error:', err);
+    tbody.innerHTML = `<tr><td colspan="15" class="p-8 text-center text-red-500">
+      <div>Error loading Excel: ${err.message}</div>
+      <div class="text-xs mt-1">Ensure Excel file exists for selected month</div>
     </td></tr>`;
   }
 }
@@ -195,7 +194,7 @@ function populatePreviousMonths(months) {
   }
 }
 
-function renderPayrollTable() {
+function renderExcelTable() {
   const data = filteredData.length ? filteredData : currentPayrollData;
   const start = (currentPage - 1) * pageSize;
   const end = start + pageSize;
@@ -203,33 +202,39 @@ function renderPayrollTable() {
   
   const tbody = document.getElementById('payrollTableBody');
   tbody.innerHTML = paginated.length ? paginated.map((item, index) => `
-viewDetails(this, '${item.staff_id || ''}')">
-      <td class="p-2">
-        <input type="checkbox" class="bulk-checkbox">
-      </td>
-      <td class="p-2 font-mono text-sm">${item.staff_id || 'N/A'}</td>
-      <td class="p-2">${item.name}</td>
-      <td class="p-2">${item.department}</td>
-      <td class="p-2">${formatCurrency(item.gross_salary)}</td>
-      <td class="p-2 font-semibold">${formatCurrency(item.net_salary)}</td>
-      <td class="p-2 group-hover:opacity-100 opacity-0 transition-all">
-        <div class="flex gap-1">
-          <button onclick="event.stopPropagation(); viewPayslip('${item.staff_id}')" class="text-blue-600 hover:text-blue-800 text-xs p-1" title="View">View</button>
-          <button onclick="event.stopPropagation(); editPayroll('${item.staff_id}')" class="text-green-600 hover:text-green-800 text-xs p-1" title="Edit">Edit</button>
-          <button onclick="event.stopPropagation(); deletePayroll('${item.staff_id}')" class="text-red-600 hover:text-red-800 text-xs p-1" title="Delete">Delete</button>
-        </div>
-      </td>
+    <tr class="hover:bg-gray-50/50 border-b">
+      <td class="p-2 text-xs font-mono border-r">${item.row_index || '-'}</td>
+      <td class="p-2 font-medium border-r">${item.staff_id || ''}</td>
+      <td class="p-2 border-r">${item.name || ''}</td>
+      <td class="p-2 border-r">${item.department || ''}</td>
+      <td class="p-2 text-right font-semibold border-r">${formatCurrency(item.gross_salary)}</td>
+      <td class="p-2 text-right border-r">${formatCurrency(item.pro_rata)}</td>
+      <td class="p-2 text-center border-r">${item.days_worked || ''}</td>
+      <td class="p-2 text-right border-r">${formatCurrency(item.basic_salary)}</td>
+      <td class="p-2 text-right border-r">${formatCurrency(item.housing)}</td>
+      <td class="p-2 text-right border-r">${formatCurrency(item.transport)}</td>
+      <td class="p-2 text-right border-r">${formatCurrency(item.medical)}</td>
+      <td class="p-2 text-right border-r">${formatCurrency(item.utility)}</td>
+      <td class="p-2 text-right font-semibold border-r">${formatCurrency(item.paye)}</td>
+      <td class="p-2 text-right border-r">${formatCurrency(item.deductions)}</td>
+      <td class="p-2 text-right border-r">${formatCurrency(item.pension)}</td>
+      <td class="p-2 text-right font-bold text-green-600 border-r">${formatCurrency(item.net_salary)}</td>
     </tr>
-    <tr class="detail-row hidden bg-blue-50">
-      <td colspan="7" class="p-4">
-        <div class="text-sm text-gray-700">
-          Month: <strong>${item.month || ''} ${item.year || ''}</strong> | 
-          Full Details: <pre>${JSON.stringify(item, null, 2)}</pre>
-        </div>
-      </td>
-    </tr>
-  `).join('') : '<tr><td colspan="7" class="p-8 text-center text-gray-500"><div class="text-lg">No payroll data found</div><div>Upload an Excel file above to get started</div></td></tr>';
+  `).join('') : '<tr><td colspan="16" class="p-12 text-center text-gray-500"><div class="text-xl mb-2">📄 No Excel Data</div><div class="text-lg">Upload an Excel payroll file to view raw content</div></td></tr>';
+  
   renderPagination(data.length);
+}
+
+function updateExcelSummary(result) {
+  // Calculate summary from Excel data
+  const data = currentPayrollData;
+  const totalGross = data.reduce((sum, item) => sum + (item.gross_salary || 0), 0);
+  const totalNet = data.reduce((sum, item) => sum + (item.net_salary || 0), 0);
+  const totalRows = data.length;
+  
+  document.getElementById('total-employees')?.textContent = totalRows;
+  document.getElementById('total-gross')?.textContent = formatCurrency(totalGross);
+  document.getElementById('total-net')?.textContent = formatCurrency(totalNet);
 }
 
 function renderPagination(total) {
