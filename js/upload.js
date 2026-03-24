@@ -59,40 +59,52 @@ function debounce(func, wait) {
   };
 }
 
-async function loadPayrollData(month = '', year = new Date().getFullYear()) {
+async function loadPayrollData(month = '') {
+  const year = new Date().getFullYear();
   // Show loading
   const tbody = document.getElementById('payrollTableBody');
-  tbody.innerHTML = '<tr><td colspan="15" class="p-8 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div><p>Loading Excel data...</p></td></tr>';
+  tbody.innerHTML = '<tr><td colspan="16" class="p-12 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div><p>Loading Excel payroll data...</p></td></tr>';
   
   try {
-    // Use Excel endpoint by default
+    // Use Excel endpoint by default - simplified params
     const params = new URLSearchParams({
       mode: 'get_excel',
       month: month,
-      year: year,
-      limit: pageSize,
-      offset: (currentPage - 1) * pageSize
+      year: year
     });
     
+    console.log('Fetching Excel data:', params.toString()); // Debug log
+    
     const response = await fetch(`${API_BASE}upload-payroll.php?${params}`);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Response error:', response.status, errorText);
+      throw new Error(`HTTP ${response.status}: ${errorText}`);
+    }
     
     const result = await response.json();
+    console.log('Excel API response:', result); // Debug log
     
-    if (result.success) {
-      currentPayrollData = result.excel_data || [];
+    if (result.success && result.excel_data && result.excel_data.length > 0) {
+      currentPayrollData = result.excel_data;
       filteredData = [...currentPayrollData];
-      renderExcelTable(); // New Excel render function
+      renderExcelTable();
       updateExcelSummary(result);
-      if (result.months) populatePreviousMonths(result.months); // Keep for navigation
     } else {
-      tbody.innerHTML = `<tr><td colspan="15" class="p-8 text-center text-gray-500">No Excel data: ${result.error || 'Unknown error'}</td></tr>`;
+      console.warn('No Excel data:', result.error || 'Empty response');
+      tbody.innerHTML = `<tr><td colspan="16" class="p-12 text-center text-gray-500">
+        <div class="text-xl mb-2">📄 No Excel Data Found</div>
+        <div>${result.error || 'No payroll Excel file for selected period'}</div>
+        <div class="text-sm mt-2 text-gray-400">Upload Excel file first or select different month</div>
+      </td></tr>`;
     }
   } catch (err) {
     console.error('Excel load error:', err);
-    tbody.innerHTML = `<tr><td colspan="15" class="p-8 text-center text-red-500">
-      <div>Error loading Excel: ${err.message}</div>
-      <div class="text-xs mt-1">Ensure Excel file exists for selected month</div>
+    tbody.innerHTML = `<tr><td colspan="16" class="p-12 text-center text-red-500">
+      <div class="text-xl mb-2">❌ Error Loading Excel</div>
+      <div class="text-lg">${err.message}</div>
+      <div class="text-sm mt-2 bg-red-50 p-2 rounded text-red-700">${err.message.includes('401') ? 'HR login required' : 'Check console (F12) for details'}</div>
     </td></tr>`;
   }
 }
