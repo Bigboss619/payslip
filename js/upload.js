@@ -69,19 +69,32 @@ async function loadPayrollData(month = '') {
     if (month) params.append('month', month);
     const response = await fetch(`${API_BASE}get-payroll.php?${params}`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const result = await response.json();
+    
+    const text = await response.text();
+    let result;
+    try {
+      result = JSON.parse(text);
+    } catch (jsonErr) {
+      console.error('JSON parse failed:', jsonErr);
+      console.error('Raw response:', text);
+      throw new Error('Invalid JSON response from server. Check browser console.');
+    }
     
     if (result.success) {
-      currentPayrollData = result.data;
+      currentPayrollData = result.data || [];
       filteredData = [...currentPayrollData];
       renderPayrollTable();
       updateSummary(result.summary || {});
       populatePreviousMonths(result.months || []);
     } else {
-      tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-gray-500">No data: ' + (result.error || 'Unknown') + '</td></tr>';
+      tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-500">No data: ${result.error || 'Unknown error'}</td></tr>`;
     }
   } catch (err) {
-    tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-red-500">Error: ' + err.message + '</td></tr>';
+    console.error('Payroll load error:', err);
+    tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-red-500">
+      <div>Error loading payroll: ${err.message}</div>
+      <div class="text-xs mt-1">Setup database or check server logs</div>
+    </td></tr>`;
   }
 }
 

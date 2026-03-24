@@ -5,11 +5,12 @@
     $dbname = "nepal_payslip";
 
     try {
-        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8mb4", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
     catch(PDOException $e) {
-        echo "Connection failed: " .$e->getMessage();
+        error_log("DB Connection failed: " . $e->getMessage());
+        $conn = null;
     }
 
     define("BASE_URL","/payslip/");

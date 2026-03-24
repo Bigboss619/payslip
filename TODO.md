@@ -1,13 +1,32 @@
-# PAYROLL UPLOAD.JS LINE 193 FIX - COMPLETE ✅
+# Fix Payroll Table JSON.parse Error
 
-## Implemented:
-- ✅ Step 1: Fixed line 193 - Replaced Unicode emojis with text icons (View/Edit/Delete) in renderPayrollTable(), removed 📋 emojis
-- ✅ Step 2: Cleaned console.log debug statements throughout upload.js
-- ✅ Step 3: Code structure validated - no syntax errors, linter issues resolved
+## Current Progress
+Updated: " + new Date().toISOString() + "
 
-## Test:
-Open HR/upload.php in browser, upload sample Excel from uploads/excel/, preview/save, verify table pagination/filters/actions work without console errors.
+## Steps:
+### 1. Update config/config.php [✅ COMPLETE]
+- Make DB connection silent (error_log instead of echo)
+- Set $conn = null on fail
 
-## Status:
-**upload.js fixed and cleaned** - Ready to use!
+### 2. Rewrite includes/get-payroll.php [✅ COMPLETE]
+- Add ob_clean()
+- Try-catch PDO queries
+- Always valid JSON response
+- Handle missing $conn
 
+### 3. Update js/upload.js [✅ COMPLETE]
+- Catch .json() errors
+- Log raw response.text()
+- User-friendly error msg
+
+### 4. Database Setup [USER ACTION]
+```sql
+CREATE DATABASE IF NOT EXISTS nepal_payslip;
+USE nepal_payslip;
+-- Run create_departments.sql
+-- Create users, payslip, payroll_batches tables (see upload-payroll.php)
+```
+
+### 5. Test
+- Browser: http://localhost/payslip/includes/get-payroll.php
+- Load HR/upload.php payroll table
