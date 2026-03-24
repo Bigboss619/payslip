@@ -114,19 +114,24 @@ function renderTable(data) {
   tableBody.innerHTML = data.map(item => `
     <tr class="hover:bg-gray-50/50 transition-colors border-b border-gray-100 last:border-b-0">
       <td class="py-4 px-6 font-medium text-gray-900">${formatMonthYear(item.month, item.year)}</td>
+
       <td class="py-4 px-6">${formatCurrency(item.grossSalary)}</td>
+
       <td class="py-4 px-6 text-gray-600">${formatCurrency(item.deductions)}</td>
+
       <td class="py-4 px-6 font-semibold text-green-700">${formatCurrency(item.netSalary)}</td>
+
       <td class="py-4 px-6 text-center">
         <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusColors[item.status] || 'bg-gray-100 text-gray-700'} uppercase tracking-wide">
           ${item.status || 'Paid'}
         </span>
       </td>
+
       <td class="py-4 px-6">
         <div class="flex flex-col space-y-1 text-sm">
           <span class="font-medium text-gray-900 truncate max-w-[120px]">${item.employeeName}</span>
+
           <span class="text-xs text-gray-500 font-mono">${item.employeeId}</span>
-          <span class="text-xs text-gray-400">${item.department}</span>
         </div>
       </td>
       <td class="py-4 px-6">

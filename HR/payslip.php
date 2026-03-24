@@ -49,12 +49,17 @@
 
         <thead class="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
             <tr class="text-left font-semibold text-gray-700 text-xs uppercase tracking-wide">
-            <th class="px-6 py-4 cursor-pointer sort-header hover:text-blue-600 transition-colors select-none" onclick="handleSort('month')" data-column="month">Month</th>
-            <th class="px-6 py-4 cursor-pointer sort-header hover:text-blue-600 transition-colors select-none" onclick="handleSort('grossSalary')" data-column="grossSalary">Gross Salary</th>
-            <th class="px-6 py-4 cursor-pointer sort-header hover:text-blue-600 transition-colors select-none" onclick="handleSort('deductions')" data-column="deductions">Deductions</th>
-            <th class="px-6 py-4 cursor-pointer sort-header hover:text-blue-600 transition-colors select-none" onclick="handleSort('netSalary')" data-column="netSalary">Net Salary</th>
-            <th class="px-6 py-4 text-center">Status</th>
-            <th class="px-6 py-4 text-center">Action</th>
+                <th class="px-6 py-4 cursor-pointer sort-header hover:text-blue-600 transition-colors select-none" onclick="handleSort('month')" data-column="month">Month</th>
+
+                <th class="px-6 py-4 cursor-pointer sort-header hover:text-blue-600 transition-colors select-none" onclick="handleSort('grossSalary')" data-column="grossSalary">Gross Salary</th>
+
+                <th class="px-6 py-4 cursor-pointer sort-header hover:text-blue-600 transition-colors select-none" onclick="handleSort('deductions')" data-column="deductions">Deductions</th>
+
+                <th class="px-6 py-4 cursor-pointer sort-header hover:text-blue-600 transition-colors select-none" onclick="handleSort('netSalary')" data-column="netSalary">Net Salary</th>
+
+                <th class="px-6 py-4 text-center">Status</th>
+                <th class="px-6 py-4 text-left">Staff Name</th>
+                <th class="px-6 py-4 text-center">Action</th>
             </tr>
         </thead>
 
