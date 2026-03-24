@@ -143,7 +143,8 @@ function renderTable(data) {
               📊
             </a>` : ''
           }
-          <button onclick="downloadPayslip(${item.id})" 
+
+          <button onclick="downloadPayslip(event, ${item.id})" 
                   class="text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 p-2 rounded-xl transition-all" 
                   title="Download PDF">
             ⬇️
@@ -204,30 +205,47 @@ function handlePagination(direction) {
   }
 }
 
-function downloadPayslip(id) {
+async function downloadPayslip(event, id) {
+  event.preventDefault(); // Prevent any default action
+  
   const item = currentData.find(d => d.id == id);
-  if (item) {
-    const content = `Payslip - ${item.month} ${item.year}\n\n` +
-      `Employee: ${item.employeeName} (${item.employeeId})\n` +
-      `Department: ${item.department}\n` +
-      `Gross Salary: ${formatCurrency(item.grossSalary)}\n` +
-      `Deductions: ${formatCurrency(item.deductions)}\n` +
-      `Net Salary: ${formatCurrency(item.netSalary)}\n` +
-      `Batch: ${item.status}\n` +
-      `Date: ${item.payslip_date}`;
+  if (!item) return;
+
+  const button = event.target; // Now button is defined!
+  
+  try {
+    // Show loading
+    const originalText = button.innerHTML;
+    button.innerHTML = '⏳';
+    button.disabled = true;
+
+    // Fetch PDF from server
+    const response = await fetch(`payslip-template.php?id=${item.id}`);
+    // const response = await fetch(`payslip-pdf.php?id=${item.id}`);
     
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const blob = await response.blob();
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `payslip-${item.employeeId}-${item.month}-${item.year}.txt`;
+    a.download = `payslip-${item.employeeId}-${item.month}-${item.year}.pdf`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    
+  } catch (error) {
+    console.error('PDF download error:', error);
+    alert('Failed to download PDF. Please refresh and try again.');
+  } finally {
+    // Reset button
+    button.innerHTML = '⬇️';
+    button.disabled = false;
   }
 }
-
 // Event listeners
 const debouncedSearch = debounce(() => loadData(1), 300);
 searchInput?.addEventListener('input', debouncedSearch);
