@@ -17,13 +17,21 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'HR') {
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['mode']) && $_GET['mode'] === 'get_excel') {
     // New GET endpoint for Excel data
-    $month = $_GET['month'] ?? '';
+    $monthNum = $_GET['month'] ?? '';
     $year = (int)($_GET['year'] ?? date('Y'));
     
-    if (empty($month)) {
+    if (empty($monthNum)) {
         echo json_encode(['success' => false, 'error' => 'Month required']);
         exit;
     }
+    
+    // Map numeric month (01-12) to DB text format (January-February)
+    $monthNames = [
+        '01' => 'January', '02' => 'February', '03' => 'March', '04' => 'April',
+        '05' => 'May', '06' => 'June', '07' => 'July', '08' => 'August',
+        '09' => 'September', '10' => 'October', '11' => 'November', '12' => 'December'
+    ];
+    $month = $monthNames[$monthNum] ?? $monthNum;
     
     try {
         // Find batch with file
@@ -75,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['mode']) && $_GET['mode'
             'file_path' => $batch['file_path']
         ]);
     } catch (Exception $e) {
-        echo json_encode(['success' => false, 'error' => 'Excel parse error: ' . $e->getMessage()]);
+        echo json_encode(['success' => false, 'error' => 'Excel parse error: ' . $e->getMessage()]);  
     }
     exit;
 }
@@ -192,7 +200,7 @@ switch ($mode) {
             ]);
         } catch (Exception $e) {
             if (isset($filePath)) unlink($filePath);
-            echo json_encode(['success' => false, 'error' => 'Excel parse error: ' . $e->getMessage()]);
+            echo json_encode(['success' => false, 'error' => 'Excel parse error: ' . $e->getMessage()]);  
         }
         break;
 
@@ -217,15 +225,15 @@ switch ($mode) {
         $inserted = 0;
         $skipped = 0;
         try {
-                foreach ($previewData as $data) {
-                    $userStmt = $conn->prepare("SELECT id FROM users WHERE staff_id = ? OR name LIKE ? LIMIT 1");
-                    $userStmt->execute([$data['staff_id'], '%' . $data['name'] . '%']);
-                    $user = $userStmt->fetch(PDO::FETCH_ASSOC);
+            foreach ($previewData as $data) {
+                $userStmt = $conn->prepare("SELECT id FROM users WHERE staff_id = ? OR name LIKE ? LIMIT 1");
+                $userStmt->execute([$data['staff_id'], '%' . $data['name'] . '%']);
+                $user = $userStmt->fetch(PDO::FETCH_ASSOC);
 
-                    if (!$user) {
-                        $skipped++;
-                        continue;
-                    }
+                if (!$user) {
+                    $skipped++;
+                    continue;  
+                }
 
                 $payslipStmt = $conn->prepare("
                     INSERT INTO payslip (
@@ -278,4 +286,3 @@ switch ($mode) {
         echo json_encode(['success' => false, 'error' => "Unknown mode: $mode"]);
 }
 ?>
-
