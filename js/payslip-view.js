@@ -1,4 +1,4 @@
-
+h
         // Get payslip ID from URL
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
@@ -81,6 +81,13 @@
             document.getElementById('total-deductions').textContent = formatCurrency(data.deductions);
         }
 
+function downloadPDF() {
+            const staffId = document.getElementById('employee-id').textContent;
+            const month = document.getElementById('pay-period').textContent.split(' ')[0];
+            const year = document.getElementById('pay-period').textContent.split(' ')[1];
+            const pdfUrl = `../includes/payslip-template.php?staff_id=${encodeURIComponent(staffId)}&month=${encodeURIComponent(month)}&year=${encodeURIComponent(year)}`;
+            window.open(pdfUrl, '_blank');
+        }
         function downloadPDF() {
             // Enhanced PDF - save as HTML for printing
             const content = document.getElementById('detail-content').innerHTML;
