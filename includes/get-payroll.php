@@ -20,9 +20,9 @@ try {
     $offset = (int)($_GET['offset'] ?? 0);
     $name = $_GET['name'] ?? '';
 
-    // WHERE conditions for filters
-    $whereConditions = ['1=1'];
+    // Filter params
     $filterParams = [];
+    $whereConditions = [];
 
     if ($month) {
         $whereConditions[] = "pb.month = ?";
@@ -33,95 +33,72 @@ try {
         $filterParams[] = $year;
     }
     if ($name) {
-        $whereConditions[] = "(u.name LIKE ? OR u.staff_id LIKE ?)";
+        $whereConditions[] = "(COALESCE(u.name, '') LIKE ? OR COALESCE(u.staff_id, '') LIKE ? OR CAST(p.user_id AS CHAR) LIKE ?)";
+        $filterParams[] = "%$name%";
         $filterParams[] = "%$name%";
         $filterParams[] = "%$name%";
     }
 
-    $whereClause = implode(' AND ', $whereConditions);
+    $whereClause = $whereConditions ? 'WHERE ' . implode(' AND ', $whereConditions) : '';
 
-    // MAIN QUERY - Perfect match for your structure
-    $stmt = $conn->prepare("
+    // MAIN QUERY - LIMIT/OFFSET as raw integers (MariaDB fix)
+    $dataQuery = "
         SELECT 
             p.id,
             p.deductions,
             p.gross_salary AS grossSalary,
             p.net_salary AS netSalary,
-            p.basic_salary,
-            p.housing,
-            p.transport,
-            p.medical,
-            p.utility,
-            p.paye,
-            p.pension,
-            p.days_worked,
-            p.pro_rata,
             COALESCE(u.name, CONCAT('ID-', p.user_id)) AS employeeName,
             COALESCE(u.staff_id, p.user_id) AS employeeId,
-            
             pb.month,
             pb.year,
             pb.status,
             pb.file_path,
-            pb.created_at AS batch_date,
-            p.created_at AS payslip_date
+            pb.created_at AS batch_date
         FROM payslip p
         INNER JOIN payroll_batches pb ON p.batch_id = pb.id
         LEFT JOIN users u ON p.user_id = u.id
-        WHERE $whereClause
-        ORDER BY pb.created_at DESC, u.name ASC
-        LIMIT :limit OFFSET :offset
-    ");
+        $whereClause
+        ORDER BY pb.created_at DESC
+        LIMIT $limit OFFSET $offset
+    ";
 
-    // Bind filter parameters (positional)
-    $paramIndex = 1;
-    foreach ($filterParams as $param) {
-        $stmt->bindValue($paramIndex++, $param);
-    }
-    // Bind pagination (named)
-    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-    
-    $stmt->execute();
+    $stmt = $conn->prepare($dataQuery);
+    $stmt->execute($filterParams);
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // COUNT QUERY
-    $countStmt = $conn->prepare("
+    $countQuery = "
         SELECT COUNT(*) as total
         FROM payslip p
         INNER JOIN payroll_batches pb ON p.batch_id = pb.id
         LEFT JOIN users u ON p.user_id = u.id
-        WHERE $whereClause
-    ");
-    $paramIndex = 1;
-    foreach ($filterParams as $param) {
-        $countStmt->bindValue($paramIndex++, $param);
-    }
-    $countStmt->execute();
+        $whereClause
+    ";
+
+    $countStmt = $conn->prepare($countQuery);
+    $countStmt->execute($filterParams);
     $total = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
 
     // SUMMARY
-    $summaryStmt = $conn->prepare("
+    $summaryQuery = "
         SELECT 
-            COUNT(p.id) as total_employees,
+            COUNT(*) as total_employees,
             COALESCE(SUM(p.gross_salary), 0) as total_gross,
-            COALESCE(SUM(p.net_salary), 0) as total_net,
-            COALESCE(SUM(p.deductions), 0) as total_deductions
+            COALESCE(SUM(p.net_salary), 0) as total_net
         FROM payslip p
         INNER JOIN payroll_batches pb ON p.batch_id = pb.id
-        WHERE $whereClause
-    ");
-    $paramIndex = 1;
-    foreach ($filterParams as $param) {
-        $summaryStmt->bindValue($paramIndex++, $param);
-    }
-    $summaryStmt->execute();
+        $whereClause
+    ";
+
+    $summaryStmt = $conn->prepare($summaryQuery);
+    $summaryStmt->execute($filterParams);
     $summary = $summaryStmt->fetch(PDO::FETCH_ASSOC);
 
-    // MONTHS/YEARS for filters
+    // MONTHS
     $monthsStmt = $conn->query("
-        SELECT DISTINCT pb.month, pb.year, pb.status
-        FROM payroll_batches pb
+        SELECT DISTINCT pb.month, pb.year
+        FROM payroll_batches pb 
         INNER JOIN payslip p ON pb.id = p.batch_id
         ORDER BY pb.year DESC, pb.month ASC
         LIMIT 24
@@ -137,6 +114,7 @@ try {
     ]);
 
 } catch (Exception $e) {
+    error_log("Payslip error: " . $e->getMessage());
     http_response_code(500);
     echo json_encode([
         'success' => false,
