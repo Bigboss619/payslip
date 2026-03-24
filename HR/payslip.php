@@ -10,8 +10,8 @@
 
     <!-- PAGE TITLE -->
     <div class="mb-6">
-        <h1 class="text-2xl font-bold">Payslips</h1>
-        <p class="text-gray-500 text-sm">View and download your salary history</p>
+        <h1 class="text-2xl font-bold">All Payslips</h1>
+        <p class="text-gray-500 text-sm">View and download all employee salary history</p>
     </div>
 
     <!-- FILTERS -->

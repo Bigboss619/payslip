@@ -15,6 +15,7 @@ if (ob_get_level()) {
 }
 
 $month = $_GET['month'] ?? '';
+$year = $_GET['year'] ?? '';
 $limit = (int)($_GET['limit'] ?? 10);
 $offset = (int)($_GET['offset'] ?? 0);
 $name = $_GET['name'] ?? '';
@@ -32,6 +33,10 @@ if ($month) {
     $where[] = "pb.month = ?";
     $params[] = $month;
 }
+if ($year) {
+    $where[] = "pb.year = ?";
+    $params[] = $year;
+}
 if ($name) {
     $where[] = "(u.name LIKE ? OR u.staff_id LIKE ?)";
     $params[] = "%$name%";
@@ -47,17 +52,23 @@ $whereClause = implode(' AND ', $where);
 try {
     // Data query
     $stmt = $conn->prepare("
-    SELECT COALESCE(u.staff_id, p.user_id) as staff_id, 
-           COALESCE(u.name, 'Unknown') as name, 
-           COALESCE(u.department, 'Unknown') as department, 
-           p.gross_salary, p.net_salary, 
-           COALESCE(pb.month, 'Unknown') as month, 
-           COALESCE(pb.year, YEAR(NOW())) as year
+        SELECT p.id AS id,
+               p.deductions AS deductions,
+               p.gross_salary AS grossSalary, 
+               p.net_salary AS netSalary,
+               COALESCE(u.name, 'Unknown') AS employeeName,
+               COALESCE(u.staff_id, p.user_id) AS employeeId,
+               COALESCE(u.department, 'Unknown') AS department,
+               COALESCE(u.position, 'N/A') AS position,
+               COALESCE(pb.month, DATE_FORMAT(p.created_at, '%M')) AS month,
+               COALESCE(pb.year, YEAR(p.created_at)) AS year,
+               COALESCE(pb.status, 'Paid') AS status,
+               COALESCE(pb.created_at, p.created_at) AS date
         FROM payslip p
         LEFT JOIN users u ON p.user_id = u.id
         LEFT JOIN payroll_batches pb ON p.batch_id = pb.id
         WHERE $whereClause
-        ORDER BY COALESCE(pb.created_at, p.created_at) DESC, COALESCE(u.name, p.user_id)
+        ORDER BY date DESC, employeeName
         LIMIT ? OFFSET ?
     ");
     $params[] = $limit;
@@ -106,8 +117,14 @@ try {
 
 try {
     // Months
-    $monthsStmt = $conn->query("SELECT DISTINCT DATE_FORMAT(p.created_at, '%M %Y') as month_year FROM payslip p ORDER BY p.created_at DESC LIMIT 12");
-    $months = $monthsStmt->fetchAll(PDO::FETCH_COLUMN);
+    // Months for filter (distinct month/year pairs)
+    $monthsStmt = $conn->prepare("SELECT DISTINCT month, year FROM (
+        SELECT COALESCE(pb.month, DATE_FORMAT(p.created_at, '%M')) AS month, 
+               COALESCE(pb.year, YEAR(p.created_at)) AS year
+        FROM payslip p LEFT JOIN payroll_batches pb ON p.batch_id = pb.id
+    ) m ORDER BY year DESC, FIELD(month, 'January','February','March','April','May','June','July','August','September','October','November','December') LIMIT 24");
+    $monthsStmt->execute();
+    $months = $monthsStmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     error_log("Months query failed: " . $e->getMessage());
     $months = [];

@@ -1,21 +1,41 @@
-# Payroll Month Status Check Enhancement ✅ COMPLETED
+# HR Payslip Page Implementation - All Payslips View with Filters
 
-## Summary of Changes
-- **HR/upload.php**: Added separate **month dropdown** (`statusMonthSelect`) + **year input** (`statusYearSelect`) in "Uploaded Payroll Status" section with "Check Status" button.
-- **js/upload.js**: 
-  - New `checkPayrollStatus()` reads both fields, shows loading/feedback in #statusMsg.
-  - Updated `loadPayrollData(month, year)` with proper param handling + `month.padStart(2,'0')`.
-  - Clear feedback: ✅ "Payroll loaded: X rows for MM/YYYY" or ❌ "No payroll found for MM/YYYY: [error]".
+## Current Progress
+- [x] Planning complete and approved
 
-## Test Instructions (Verified):
-1. Login as HR → Navigate to `HR/upload.php`
-2. **Existing payroll**: Select month/year matching uploaded Excel → Payroll table populates + green success msg.
-3. **No payroll**: Select non-existing month/year → Red "No payroll found" message + empty table feedback.
-4. Error handling: Empty fields show yellow warning.
+## TODO Steps
 
-## Files Modified:
-- `HR/upload.php` (UI)
-- `js/upload.js` (logic + feedback)  
-- `TODO.md` (this file)
+1. **[COMPLETE]** Enhance `includes/get-payroll.php`:
+   - Added year filter
+   - CamelCase fields, id/status/date/position
+   - Improved months
+   - Add year filter param.
+   - Map fields to camelCase JS format in response (grossSalary, netSalary, employeeName etc.).
+   - Add derived 'status' (e.g. from batch status or 'Paid'), 'date' (batch created_at).
 
-**Task complete!** Test in browser: `http://localhost/payslip/HR/upload.php` (XAMPP)
+2. **[COMPLETE]** Create new `includes/get-payslip-detail.php`:
+   - Fetch detail by ID, full earnings/deductions, breakdowns
+   - Fetch full payslip by ID, join users/payroll_batches for employee details, month/year.
+
+3. **[COMPLETE]** Update `js/payslip.js`:
+   - Replaced mockData with AJAX to get-payroll.php
+   - Backend pagination, filters by month/year/name
+   - ID-based view links
+
+4. **[COMPLETE]** Update `js/payslip-view.js`:
+   - Parse ?id=, fetch detail API
+   - Uses real data from backend
+
+5. **[COMPLETE]** Update `HR/payslip.php`:
+   - Title "All Payslips", "all employee salary history"
+
+6. **[PENDING]** Update `HR/payslip-view.php`:
+   - Handle ?id= param for JS.
+
+7. **[PENDING]** Test:
+   - Load HR/payslip.php, verify data, filters, pagination, detail view.
+   - Check console/errors.
+
+## Next Action
+Implement step 1: Enhance includes/get-payroll.php
+

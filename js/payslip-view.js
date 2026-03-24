@@ -1,18 +1,25 @@
 
-        // Get payslip data from URL params
+        // Get payslip ID from URL
         const urlParams = new URLSearchParams(window.location.search);
-        const payslipDataParam = urlParams.get('payslipData');
+        const id = urlParams.get('id');
         
-        if (payslipDataParam) {
-            try {
-                const payslipData = JSON.parse(decodeURIComponent(payslipDataParam));
-                loadPayslipData(payslipData);
-            } catch (e) {
-                console.error('Error parsing payslip data:', e);
-                document.getElementById('loading').innerHTML = '<p class="text-red-500">Error loading payslip data</p>';
-            }
+        if (id) {
+            document.getElementById('loading').textContent = 'Loading payslip...';
+            fetch(`../includes/get-payslip-detail.php?id=${id}`)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        loadPayslipData(result.data);
+                    } else {
+                        document.getElementById('loading').innerHTML = '<p class="text-red-500">Payslip not found</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('loading').innerHTML = '<p class="text-red-500">Error loading payslip</p>';
+                });
         } else {
-            document.getElementById('loading').innerHTML = '<p class="text-gray-500">No payslip data found</p>';
+            document.getElementById('loading').innerHTML = '<p class="text-gray-500">No payslip ID found</p>';
         }
 
         function loadPayslipData(data) {
