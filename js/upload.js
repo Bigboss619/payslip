@@ -20,7 +20,8 @@ async function loadTotalEmployees() {
     const response = await fetch(`${API_BASE}get-users.php`);
     const result = await response.json();
     if (result.success) {
-      document.getElementById('total-employees').textContent = result.total_employees;
+      const totalEl = document.getElementById('total-employees');
+  if (totalEl) totalEl.textContent = result.total_employees;
     }
   } catch (err) {
     console.error('Failed to load total employees:', err);
@@ -32,9 +33,10 @@ function setupEventListeners() {
   document.getElementById('applyFilters')?.addEventListener('click', applyFilters);
   document.getElementById('viewPayslipsBtn')?.addEventListener('click', showViewPayslipsModal);
   
-  // Month select change
+// Month select change
   const monthSelect = document.getElementById('monthSelect');
   if (monthSelect) {
+    monthSelect.value = new Date().toISOString().slice(0,7);
     monthSelect.addEventListener('change', function() {
       loadPayrollData(this.value);
     });
@@ -59,7 +61,7 @@ function debounce(func, wait) {
   };
 }
 
-async function loadPayrollData(month = '') {
+async function loadPayrollData(month = new Date().toISOString().slice(0,7)) {
   const year = new Date().getFullYear();
   // Show loading
   const tbody = document.getElementById('payrollTableBody');
@@ -93,6 +95,9 @@ async function loadPayrollData(month = '') {
       updateExcelSummary(result);
     } else {
       console.warn('No Excel data:', result.error || 'Empty response');
+      // console.log('Excel Data:', result.excel_data);
+      // console.log('Length:', result.excel_data.length);
+      // console.log('Loaded Excel Data:', currentPayrollData);
       tbody.innerHTML = `<tr><td colspan="16" class="p-12 text-center text-gray-500">
         <div class="text-xl mb-2">📄 No Excel Data Found</div>
         <div>${result.error || 'No payroll Excel file for selected period'}</div>
@@ -207,7 +212,7 @@ function populatePreviousMonths(months) {
 }
 
 function renderExcelTable() {
-  const data = filteredData.length ? filteredData : currentPayrollData;
+  const data = filteredData.length > 0 ? filteredData : currentPayrollData;
   const start = (currentPage - 1) * pageSize;
   const end = start + pageSize;
   const paginated = data.slice(start, end);
@@ -244,9 +249,12 @@ function updateExcelSummary(result) {
   const totalNet = data.reduce((sum, item) => sum + (item.net_salary || 0), 0);
   const totalRows = data.length;
   
-  document.getElementById('total-employees')?.textContent = totalRows;
-  document.getElementById('total-gross')?.textContent = formatCurrency(totalGross);
-  document.getElementById('total-net')?.textContent = formatCurrency(totalNet);
+  const totalEl = document.getElementById('total-employees');
+  if (totalEl) totalEl.textContent = totalRows;
+  const grossEl = document.getElementById('total-gross');
+  if (grossEl) grossEl.textContent = formatCurrency(totalGross);
+  const netEl = document.getElementById('total-net');
+  if (netEl) netEl.textContent = formatCurrency(totalNet);
 }
 
 function renderPagination(total) {
@@ -270,7 +278,7 @@ function changePage(dir) {
   const totalPages = Math.ceil((filteredData.length || currentPayrollData.length) / pageSize);
   if (dir === 'prev' && currentPage > 1) currentPage--;
   if (dir === 'next' && currentPage < totalPages) currentPage++;
-  renderPayrollTable();
+  renderExcelTable();
 }
 
 function updateSummary(summary) {
@@ -292,7 +300,7 @@ function applyFilters() {
     (!dept || item.department === dept)
   );
   currentPage = 1;
-  renderPayrollTable();
+  renderExcelTable();
   updateSummary({});
 }
 
@@ -306,8 +314,6 @@ function showViewPayslipsModal() {
 }
 
 async function savePayroll() {
-
-  
   if (!currentBatchId) {
     alert('No preview data to save');
     return;
@@ -325,7 +331,6 @@ async function savePayroll() {
   status.innerHTML = '<div class="text-blue-600">Saving payroll data...</div>';
   
   try {
-
     const response = await fetch(API_BASE + 'upload-payroll.php', {
       method: 'POST',
       body: formData
@@ -336,7 +341,6 @@ async function savePayroll() {
     }
     
     const result = await response.json();
-
     
     if (result.success) {
       status.innerHTML = `<div class="text-green-600 bg-green-100 p-2 rounded">${result.message}</div>`;
