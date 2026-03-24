@@ -1,143 +1,146 @@
 <?php
+ob_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+
 session_start();
 header('Content-Type: application/json');
-
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'HR') {
-    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
-    exit;
-}
-
-require '../config/config.php';
-
-// Clean any prior output
-if (ob_get_level()) {
-    ob_clean();
-}
-
-$month = $_GET['month'] ?? '';
-$year = $_GET['year'] ?? '';
-$limit = (int)($_GET['limit'] ?? 10);
-$offset = (int)($_GET['offset'] ?? 0);
-$name = $_GET['name'] ?? '';
-$dept = $_GET['dept'] ?? '';
-
-if (!$conn) {
-    echo json_encode(['success' => false, 'error' => 'Database connection failed']);
-    exit;
-}
-
-$where = ['1=1'];
-$params = [];
-
-if ($month) {
-    $where[] = "pb.month = ?";
-    $params[] = $month;
-}
-if ($year) {
-    $where[] = "pb.year = ?";
-    $params[] = $year;
-}
-if ($name) {
-    $where[] = "(u.name LIKE ? OR u.staff_id LIKE ?)";
-    $params[] = "%$name%";
-    $params[] = "%$name%";
-}
-if ($dept) {
-    $where[] = "u.department = ?";
-    $params[] = $dept;
-}
-
-$whereClause = implode(' AND ', $where);
+ob_clean();
 
 try {
-    // Data query
+    if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'HR') {
+        throw new Exception('Unauthorized');
+    }
+
+    require '../config/config.php';
+
+    $month = $_GET['month'] ?? '';
+    $year = $_GET['year'] ?? '';
+    $limit = (int)($_GET['limit'] ?? 10);
+    $offset = (int)($_GET['offset'] ?? 0);
+    $name = $_GET['name'] ?? '';
+
+    // WHERE conditions for filters
+    $whereConditions = ['1=1'];
+    $filterParams = [];
+
+    if ($month) {
+        $whereConditions[] = "pb.month = ?";
+        $filterParams[] = $month;
+    }
+    if ($year) {
+        $whereConditions[] = "pb.year = ?";
+        $filterParams[] = $year;
+    }
+    if ($name) {
+        $whereConditions[] = "(u.name LIKE ? OR u.staff_id LIKE ?)";
+        $filterParams[] = "%$name%";
+        $filterParams[] = "%$name%";
+    }
+
+    $whereClause = implode(' AND ', $whereConditions);
+
+    // MAIN QUERY - Perfect match for your structure
     $stmt = $conn->prepare("
-        SELECT p.id AS id,
-               p.deductions AS deductions,
-               p.gross_salary AS grossSalary, 
-               p.net_salary AS netSalary,
-               COALESCE(u.name, 'Unknown') AS employeeName,
-               COALESCE(u.staff_id, p.user_id) AS employeeId,
-               COALESCE(u.department, 'Unknown') AS department,
-               COALESCE(u.position, 'N/A') AS position,
-               COALESCE(pb.month, DATE_FORMAT(p.created_at, '%M')) AS month,
-               COALESCE(pb.year, YEAR(p.created_at)) AS year,
-               COALESCE(pb.status, 'Paid') AS status,
-               COALESCE(pb.created_at, p.created_at) AS date
+        SELECT 
+            p.id,
+            p.deductions,
+            p.gross_salary AS grossSalary,
+            p.net_salary AS netSalary,
+            p.basic_salary,
+            p.housing,
+            p.transport,
+            p.medical,
+            p.utility,
+            p.paye,
+            p.pension,
+            p.days_worked,
+            p.pro_rata,
+            COALESCE(u.name, CONCAT('ID-', p.user_id)) AS employeeName,
+            COALESCE(u.staff_id, p.user_id) AS employeeId,
+            
+            pb.month,
+            pb.year,
+            pb.status,
+            pb.file_path,
+            pb.created_at AS batch_date,
+            p.created_at AS payslip_date
         FROM payslip p
+        INNER JOIN payroll_batches pb ON p.batch_id = pb.id
         LEFT JOIN users u ON p.user_id = u.id
-        LEFT JOIN payroll_batches pb ON p.batch_id = pb.id
         WHERE $whereClause
-        ORDER BY date DESC, employeeName
-        LIMIT ? OFFSET ?
+        ORDER BY pb.created_at DESC, u.name ASC
+        LIMIT :limit OFFSET :offset
     ");
-    $params[] = $limit;
-    $params[] = $offset;
-    $stmt->execute($params);
-    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    error_log("Data query failed: " . $e->getMessage());
-    $data = [];
-}
 
-try {
-    // Count for pagination
+    // Bind filter parameters (positional)
+    $paramIndex = 1;
+    foreach ($filterParams as $param) {
+        $stmt->bindValue($paramIndex++, $param);
+    }
+    // Bind pagination (named)
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    
+    $stmt->execute();
+    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // COUNT QUERY
     $countStmt = $conn->prepare("
         SELECT COUNT(*) as total
         FROM payslip p
+        INNER JOIN payroll_batches pb ON p.batch_id = pb.id
         LEFT JOIN users u ON p.user_id = u.id
-        LEFT JOIN payroll_batches pb ON p.batch_id = pb.id
         WHERE $whereClause
     ");
-    $countStmt->execute(array_slice($params, 0, -2));
+    $paramIndex = 1;
+    foreach ($filterParams as $param) {
+        $countStmt->bindValue($paramIndex++, $param);
+    }
+    $countStmt->execute();
     $total = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
-} catch (PDOException $e) {
-    error_log("Count query failed: " . $e->getMessage());
-    $total = 0;
-}
 
-try {
-    // Summary
-    $sumStmt = $conn->prepare("
+    // SUMMARY
+    $summaryStmt = $conn->prepare("
         SELECT 
             COUNT(p.id) as total_employees,
             COALESCE(SUM(p.gross_salary), 0) as total_gross,
-            COALESCE(SUM(p.net_salary), 0) as total_net
+            COALESCE(SUM(p.net_salary), 0) as total_net,
+            COALESCE(SUM(p.deductions), 0) as total_deductions
         FROM payslip p
-        LEFT JOIN users u ON p.user_id = u.id
-        LEFT JOIN payroll_batches pb ON p.batch_id = pb.id
+        INNER JOIN payroll_batches pb ON p.batch_id = pb.id
         WHERE $whereClause
     ");
-    $sumStmt->execute(array_slice($params, 0, -2));
-    $summary = $sumStmt->fetch(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    error_log("Summary query failed: " . $e->getMessage());
-    $summary = ['total_employees' => 0, 'total_gross' => 0, 'total_net' => 0];
-}
+    $paramIndex = 1;
+    foreach ($filterParams as $param) {
+        $summaryStmt->bindValue($paramIndex++, $param);
+    }
+    $summaryStmt->execute();
+    $summary = $summaryStmt->fetch(PDO::FETCH_ASSOC);
 
-try {
-    // Months
-    // Months for filter (distinct month/year pairs)
-    $monthsStmt = $conn->prepare("SELECT DISTINCT month, year FROM (
-        SELECT COALESCE(pb.month, DATE_FORMAT(p.created_at, '%M')) AS month, 
-               COALESCE(pb.year, YEAR(p.created_at)) AS year
-        FROM payslip p LEFT JOIN payroll_batches pb ON p.batch_id = pb.id
-    ) m ORDER BY year DESC, FIELD(month, 'January','February','March','April','May','June','July','August','September','October','November','December') LIMIT 24");
-    $monthsStmt->execute();
+    // MONTHS/YEARS for filters
+    $monthsStmt = $conn->query("
+        SELECT DISTINCT pb.month, pb.year, pb.status
+        FROM payroll_batches pb
+        INNER JOIN payslip p ON pb.id = p.batch_id
+        ORDER BY pb.year DESC, pb.month ASC
+        LIMIT 24
+    ");
     $months = $monthsStmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    error_log("Months query failed: " . $e->getMessage());
-    $months = [];
+
+    echo json_encode([
+        'success' => true,
+        'data' => $data,
+        'total' => (int)$total,
+        'summary' => $summary,
+        'months' => $months
+    ]);
+
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => $e->getMessage()
+    ]);
 }
-
-ob_clean(); // Final clean before output
-echo json_encode([
-    'success' => true,
-    'data' => $data,
-    'total' => $total,
-    'summary' => $summary,
-    'months' => $months
-]);
 ?>
-
-

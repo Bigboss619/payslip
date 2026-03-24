@@ -2,8 +2,8 @@
 let currentData = [];
 let currentPage = 1;
 const pageSize = 10;
-let currentSort = { column: 'date', direction: 'desc' };
 let totalItems = 0;
+let currentSort = { column: 'batch_date', direction: 'desc' };
 
 // DOM elements
 const tableBody = document.querySelector('#payslip-table tbody');
@@ -12,20 +12,22 @@ const pagination = document.querySelector('#pagination');
 const searchInput = document.querySelector('#search');
 const monthSelect = document.querySelector('#month-filter');
 const yearSelect = document.querySelector('#year-filter');
+const pageInfo = document.querySelector('#page-info');
 
 // Status colors
 const statusColors = {
   'Paid': 'bg-green-100 text-green-700',
   'Pending': 'bg-yellow-100 text-yellow-700',
   'Completed': 'bg-blue-100 text-blue-700',
-  'Failed': 'bg-red-100 text-red-700'
+  'Failed': 'bg-red-100 text-red-700',
+  'Processing': 'bg-indigo-100 text-indigo-700'
 };
 
 // Format currency
-const formatCurrency = (amount) => `₦${Number(amount).toLocaleString()}`;
+const formatCurrency = (amount) => `₦${Number(amount || 0).toLocaleString()}`;
 
 // Format month/year
-const formatMonthYear = (month, year) => `${month} ${year}`;
+const formatMonthYear = (month, year) => `${month || ''} ${year || ''}`.trim();
 
 // Debounce function
 const debounce = (func, delay) => {
@@ -46,7 +48,7 @@ async function loadData(page = 1) {
   // Show loading
   tableBody.innerHTML = `
     <tr>
-      <td colspan="6" class="py-12 text-center">
+      <td colspan="7" class="py-12 text-center">
         <div class="w-8 h-8 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
         <p>Loading payslips...</p>
       </td>
@@ -66,106 +68,131 @@ async function loadData(page = 1) {
     const result = await response.json();
 
     if (result.success) {
-      currentData = result.data;
-      totalItems = result.total;
+      currentData = result.data || [];
+      totalItems = result.total || 0;
       currentPage = page;
-      renderTable(result.data);
+      renderTable(result.data || []);
       populateFilters(result.months || []);
+      updatePaginationInfo();
     } else {
       console.error('API error:', result.error);
-      tableBody.innerHTML = `
-        <tr>
-          <td colspan="6" class="py-12 text-center text-red-500">Error loading data: ${result.error}</td>
-        </tr>
-      `;
+      showError(`Error: ${result.error}`);
     }
   } catch (error) {
     console.error('Fetch error:', error);
-    tableBody.innerHTML = `
-      <tr>
-        <td colspan="6" class="py-12 text-center text-red-500">Network error. Please try again.</td>
-      </tr>
-    `;
+    showError('Network error. Please try again.');
   }
+}
+
+function showError(message) {
+  tableBody.innerHTML = `
+    <tr>
+      <td colspan="7" class="py-12 text-center text-red-500">${message}</td>
+    </tr>
+  `;
+  emptyState?.classList.remove('hidden');
+  pagination?.classList.add('hidden');
 }
 
 function renderTable(data) {
   if (!data || data.length === 0) {
-    tableBody.innerHTML = '';
-    tableBody.closest('table').style.display = 'none';
-    if (emptyState) emptyState.style.display = 'flex';
-    if (pagination) pagination.style.display = 'none';
-    updatePaginationInfo(0);
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="7" class="py-12 text-center text-gray-500">
+          <p>No payslips found matching your criteria.</p>
+        </td>
+      </tr>
+    `;
+    emptyState?.classList.remove('hidden');
+    pagination?.classList.add('hidden');
     return;
   }
 
-  tableBody.closest('table').style.display = 'table';
-  if (emptyState) emptyState.style.display = 'none';
-  if (pagination) pagination.style.display = 'flex';
+  emptyState?.classList.add('hidden');
+  pagination?.classList.remove('hidden');
 
   tableBody.innerHTML = data.map(item => `
-    <tr class="hover:bg-gray-50/50 transition-colors">
+    <tr class="hover:bg-gray-50/50 transition-colors border-b border-gray-100 last:border-b-0">
       <td class="py-4 px-6 font-medium text-gray-900">${formatMonthYear(item.month, item.year)}</td>
       <td class="py-4 px-6">${formatCurrency(item.grossSalary)}</td>
       <td class="py-4 px-6 text-gray-600">${formatCurrency(item.deductions)}</td>
       <td class="py-4 px-6 font-semibold text-green-700">${formatCurrency(item.netSalary)}</td>
-      <td class="py-4 px-6">
+      <td class="py-4 px-6 text-center">
         <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusColors[item.status] || 'bg-gray-100 text-gray-700'} uppercase tracking-wide">
           ${item.status || 'Paid'}
         </span>
       </td>
       <td class="py-4 px-6">
-        <div class="flex space-x-2">
-          <a href="payslip-view.php?id=${item.id}" class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 font-medium text-sm p-2 rounded-xl transition-all duration-200 inline-block" title="View details">
-            👁️ View
+        <div class="flex flex-col space-y-1 text-sm">
+          <span class="font-medium text-gray-900 truncate max-w-[120px]">${item.employeeName}</span>
+          <span class="text-xs text-gray-500 font-mono">${item.employeeId}</span>
+          <span class="text-xs text-gray-400">${item.department}</span>
+        </div>
+      </td>
+      <td class="py-4 px-6">
+        <div class="flex items-center space-x-2">
+          <a href="payslip-view.php?id=${item.id}" 
+             class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded-xl transition-all" 
+             title="View payslip details">
+            👁️
           </a>
-          <button onclick="downloadPayslip(${item.id})" class="text-green-600 hover:text-green-800 hover:bg-green-50 font-medium text-sm p-2 rounded-xl transition-all duration-200" title="Download PDF">
-            ⬇️ Download
+          ${item.file_path ? 
+            `<a href="${item.file_path}" target="_blank" 
+               class="text-green-600 hover:text-green-800 hover:bg-green-50 p-2 rounded-xl transition-all" 
+               title="Download Excel">
+              📊
+            </a>` : ''
+          }
+          <button onclick="downloadPayslip(${item.id})" 
+                  class="text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 p-2 rounded-xl transition-all" 
+                  title="Download PDF">
+            ⬇️
           </button>
         </div>
       </td>
     </tr>
   `).join('');
 
-  updatePaginationInfo(totalItems);
+  updatePaginationInfo();
 }
 
-function handleSort(column) {
-  if (currentSort.column === column) {
-    currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
-  } else {
-    currentSort.column = column;
-    currentSort.direction = 'asc';
+function updatePaginationInfo() {
+  const totalPages = Math.ceil(totalItems / pageSize);
+  if (pageInfo) {
+    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
   }
 
-  // Local sort for current page data
-  currentData.sort((a, b) => {
-    let valA = a[column];
-    let valB = b[column];
-    if (['grossSalary', 'deductions', 'netSalary'].includes(column)) {
-      valA = Number(valA);
-      valB = Number(valB);
-    } else if (column === 'date') {
-      valA = new Date(valA);
-      valB = new Date(valB);
-    }
-    if (valA < valB) return currentSort.direction === 'asc' ? -1 : 1;
-    if (valA > valB) return currentSort.direction === 'asc' ? 1 : -1;
-    return 0;
-  });
-
-  renderTable(currentData);
-  updateSortIcons();
+  // Update prev/next buttons
+  const prevBtn = document.querySelector('#pagination button[onclick="handlePagination(\'prev\')"]');
+  const nextBtn = document.querySelector('#pagination button[onclick="handlePagination(\'next\')"]');
+  
+  if (prevBtn) prevBtn.disabled = currentPage === 1;
+  if (nextBtn) nextBtn.disabled = currentPage >= totalPages || totalPages === 0;
 }
 
-function updateSortIcons() {
-  document.querySelectorAll('.sort-header').forEach(th => {
-    let label = th.dataset.column.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-    th.innerHTML = label;
-    if (th.dataset.column === currentSort.column) {
-      th.innerHTML += currentSort.direction === 'asc' ? ' <span class="text-blue-500 font-bold">▲</span>' : ' <span class="text-blue-500 font-bold">▼</span>';
-    }
+function populateFilters(months = []) {
+  let monthHtml = '<option value="">All Months</option>';
+  let yearHtml = '<option value="">All Years</option>';
+  
+  // Group by year for better UX
+  const years = {};
+  months.forEach(m => {
+    if (!years[m.year]) years[m.year] = [];
+    years[m.year].push(m.month);
   });
+
+  // Sort years descending
+  Object.keys(years).sort((a, b) => b - a).forEach(year => {
+    yearHtml += `<option value="${year}">${year}</option>`;
+    
+    // Add months for this year
+    years[year].sort().forEach(month => {
+      monthHtml += `<option value="${month}">${month} ${year}</option>`;
+    });
+  });
+
+  monthSelect.innerHTML = monthHtml;
+  yearSelect.innerHTML = yearHtml;
 }
 
 function handlePagination(direction) {
@@ -177,72 +204,37 @@ function handlePagination(direction) {
   }
 }
 
-function updatePaginationInfo(itemsCount) {
-  const totalPages = Math.ceil(totalItems / pageSize);
-  
-  if (document.getElementById('page-info')) {
-    document.getElementById('page-info').textContent = `Page ${currentPage} of ${totalPages}`;
-  }
-
-  const prevBtn = document.querySelector('#pagination button[onclick="handlePagination(\'prev\')"]');
-  const nextBtn = document.querySelector('#pagination button[onclick="handlePagination(\'next\')"]');
-  if (prevBtn) prevBtn.disabled = currentPage === 1;
-  if (nextBtn) nextBtn.disabled = currentPage === totalPages || totalPages === 0;
-}
-
-function populateFilters(months = []) {
-  let monthHtml = '<option value="">All Months</option>';
-  let yearHtml = '<option value="">All Years</option>';
-
-  months.forEach(m => {
-    monthHtml += `<option value="${m.month}">${m.month}</option>`;
-    yearHtml += `<option value="${m.year}">${m.year}</option>`;
-  });
-
-  monthSelect.innerHTML = monthHtml;
-  yearSelect.innerHTML = yearHtml;
-}
-
 function downloadPayslip(id) {
-  const item = currentData.find(d => d.id === id);
+  const item = currentData.find(d => d.id == id);
   if (item) {
-    const content = `PayslipSys HR - ${formatMonthYear(item.month, item.year)}
-Employee: ${item.employeeName}
-ID: ${item.employeeId}
-Department: ${item.department}
-Net Pay: ${formatCurrency(item.netSalary)}
-Status: ${item.status}
-Generated: ${item.date}`;
+    const content = `Payslip - ${item.month} ${item.year}\n\n` +
+      `Employee: ${item.employeeName} (${item.employeeId})\n` +
+      `Department: ${item.department}\n` +
+      `Gross Salary: ${formatCurrency(item.grossSalary)}\n` +
+      `Deductions: ${formatCurrency(item.deductions)}\n` +
+      `Net Salary: ${formatCurrency(item.netSalary)}\n` +
+      `Batch: ${item.status}\n` +
+      `Date: ${item.payslip_date}`;
+    
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = `payslip-${item.employeeId}-${item.month}-${item.year}.txt`;
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }
 }
 
-function downloadAll() {
-  if (currentData.length === 0) return;
-  const content = currentData.map(item => `${item.employeeName}: ${formatMonthYear(item.month, item.year)} - ${formatCurrency(item.netSalary)} (${item.status})`).join('\n');
-  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `all-payslips-${new Date().toISOString().slice(0,10)}.txt`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
 // Event listeners
 const debouncedSearch = debounce(() => loadData(1), 300);
-searchInput.addEventListener('input', debouncedSearch);
-monthSelect.addEventListener('change', () => loadData(1));
-yearSelect.addEventListener('change', () => loadData(1));
+searchInput?.addEventListener('input', debouncedSearch);
+monthSelect?.addEventListener('change', () => loadData(1));
+yearSelect?.addEventListener('change', () => loadData(1));
 
 // Initial load
 document.addEventListener('DOMContentLoaded', () => {
   loadData(1);
 });
-
