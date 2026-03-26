@@ -134,7 +134,7 @@ function renderRecentPayslips(payslips = []) {
             <td class="py-3">${formatCurrency(pay.gross_salary)}</td>
             <td class="py-3 font-semibold text-green-600">${formatCurrency(pay.net_salary)}</td>
             <td class="py-3">
-                <a href="payslip-view.php?id=${pay.id || pay.batch_id || 1}" 
+                <a href="payslip" 
                    class="text-blue-600 hover:underline font-medium">
                     View →
                 </a>

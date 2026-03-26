@@ -86,7 +86,7 @@
       View Payslips
     </button>
 
-    <button class="bg-green-600 text-white px-6 py-2 rounded-lg">
+    <button class="bg-green-600 text-white px-6 py-2 rounded-lg hidden" disabled>
       Download Last Payslip
     </button>
 
