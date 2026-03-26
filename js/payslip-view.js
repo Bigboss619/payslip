@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // ✅ CORRECT PATH (adjust based on your folder structure)
-    const apiUrl = `./get-payslip-detail.php?id=${id}`; // Same folder as payslip-view.php
+    const apiUrl = `../includes/get-payslip-detail.php?id=${id}`; // Same folder as payslip-view.php
     
     console.log('🔍 Fetching:', apiUrl); // DEBUG
     
@@ -121,6 +121,6 @@ function downloadPDF() {
     const year = document.getElementById('pay-period').textContent.split(' ')[1];
     
     // ✅ CORRECT PDF URL PATH
-    const pdfUrl = `../HR/payslip-template.php?id=${encodeURIComponent(staffId)}`;
+    const pdfUrl = `../includes/payslip-template.php?id=${encodeURIComponent(staffId)}`;
     window.open(pdfUrl, '_blank');
 }

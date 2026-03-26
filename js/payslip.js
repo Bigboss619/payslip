@@ -225,7 +225,7 @@ async function downloadPayslip(event, id) {
     button.disabled = true;
 
     // Fetch PDF from server
-    const response = await fetch(`payslip-template.php?id=${item.id}`);
+    const response = await fetch(`../includes/payslip-template.php?id=${item.id}`);
     // const response = await fetch(`payslip-pdf.php?id=${item.id}`);
     
     if (!response.ok) {
