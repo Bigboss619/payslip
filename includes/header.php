@@ -5,7 +5,8 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'HR') {
   header('Location: ../index.php');
   exit;
 }
-include_once("../config/config.php"); ?>
+include_once("../config/config.php"); 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,5 +16,31 @@ include_once("../config/config.php"); ?>
 </head>
 
 <body class="bg-gray-100">
-
     <div class="flex h-screen overflow-hidden">
+
+<!-- ✅ GLOBAL SIDEBAR SCRIPT (Add before closing body) -->
+<script>
+// Sidebar active state - Works on ALL pages
+document.addEventListener('DOMContentLoaded', function() {
+    const currentPath = window.location.pathname.split('/').pop();
+    
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+        // Reset all
+        link.classList.remove('bg-blue-100', 'text-blue-600', 'font-medium');
+        link.classList.add('hover:bg-gray-100');
+        
+        // Get link path
+        const linkPath = link.getAttribute('href')?.split('/').pop() || '';
+        
+        // Active match
+        if (linkPath === currentPath) {
+            link.classList.remove('hover:bg-gray-100');
+            link.classList.add('bg-blue-100', 'text-blue-600', 'font-medium');
+            link.style.backgroundColor = '#dbeafe'; // Tailwind blue-100
+            link.style.color = '#2563eb'; // Tailwind blue-600
+        }
+    });
+});
+</script>
+
+<!-- Your existing content continues here... -->
