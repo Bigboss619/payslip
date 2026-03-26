@@ -3,6 +3,52 @@
   
   <!-- Nav Section -->
    <?php include_once("../includes/nav.php"); ?>
+   <style>
+/* PRINT STYLES - Hides everything except payslip */
+@media print {
+    /* Hide everything */
+    body * { 
+        visibility: hidden; 
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+    
+    /* Show only payslip content */
+    #payslip-detail, #payslip-detail * {
+        visibility: visible !important;
+    }
+    
+    /* Hide buttons during print */
+    button, .flex.justify-between, #loading {
+        display: none !important;
+    }
+    
+    /* Full page payslip */
+    #payslip-detail {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        max-width: 8.5in !important;
+        margin: 0 !important;
+        padding: 1in !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+    
+    /* Perfect A4 layout */
+    @page {
+        size: A4;
+        margin: 0.5in;
+    }
+    
+    /* Fix colors */
+    .bg-gradient-to-r {
+        background: linear-gradient(90deg, #eff6ff 0%, #e0e7ff 100%) !important;
+        -webkit-print-color-adjust: exact;
+    }
+}
+</style>
 
         <!-- MAIN -->
         <main class="p-6 overflow-y-auto">
@@ -17,12 +63,12 @@
                             <button onclick="window.history.back()" class="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium transition-all mr-3">
                                 ← Back to Payslips
                             </button>
-                            <button onclick="window.print()" class="inline-flex items-center px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
+                            <!-- <button onclick="window.print()" class="inline-flex items-center px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v.5" />
                                 </svg>
                                 Print Payslip
-                            </button>
+                            </button> -->
                         </div>
                     </div>
 
@@ -55,19 +101,19 @@
                                 <div class="space-y-3 text-sm">
                                     <div class="flex justify-between">
                                         <span>Name:</span>
-                                        <span class="font-semibold" id="employee-name">Emmanuel Ugochukwu</span>
+                                        <span class="font-semibold" id="employee-name"></span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span>Employee ID:</span>
-                                        <span class="font-semibold" id="employee-id">EMP001</span>
+                                        <span class="font-semibold" id="employee-id"></span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span>Department:</span>
-                                        <span class="font-semibold" id="department">IT</span>
+                                        <span class="font-semibold" id="department"></span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span>Position:</span>
-                                        <span class="font-semibold" id="position">Software Engineer</span>
+                                        <span class="font-semibold" id="position"></span>
                                     </div>
                                 </div>
                             </div>
@@ -102,23 +148,23 @@
                                     <tbody class="divide-y divide-gray-200">
                                         <tr>
                                             <td class="py-3 text-sm font-medium text-gray-900">Basic Salary (40%)</td>
-                                            <td class="py-3 text-sm text-right font-semibold text-gray-900" id="basic-salary">₦120,000</td>
+                                            <td class="py-3 text-sm text-right font-semibold text-gray-900" id="basic-salary"></td>
                                         </tr>
                                         <tr>
                                             <td class="py-3 text-sm font-medium text-gray-900">Housing Allowance (25%)</td>
-                                            <td class="py-3 text-sm text-right font-semibold text-gray-900" id="housing">₦75,000</td>
+                                            <td class="py-3 text-sm text-right font-semibold text-gray-900" id="housing"></td>
                                         </tr>
                                         <tr>
                                             <td class="py-3 text-sm font-medium text-gray-900">Transport Allowance (20%)</td>
-                                            <td class="py-3 text-sm text-right font-semibold text-gray-900" id="transport">₦60,000</td>
+                                            <td class="py-3 text-sm text-right font-semibold text-gray-900" id="transport"></td>
                                         </tr>
                                         <tr>
                                             <td class="py-3 text-sm font-medium text-gray-900">Medical Allowance (10%)</td>
-                                            <td class="py-3 text-sm text-right font-semibold text-gray-900" id="medical">₦30,000</td>
+                                            <td class="py-3 text-sm text-right font-semibold text-gray-900" id="medical"></td>
                                         </tr>
                                         <tr class="bg-gray-50">
                                             <td class="py-3 text-sm font-bold text-gray-900">Total Earnings</td>
-                                            <td class="py-3 text-sm text-right font-bold text-gray-900" id="total-earnings">₦300,000</td>
+                                            <td class="py-3 text-sm text-right font-bold text-gray-900" id="total-earnings"></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -130,11 +176,11 @@
                                     <tbody class="divide-y divide-gray-200">
                                         <tr>
                                             <td class="py-3 text-sm font-medium text-gray-900">PAYE Tax</td>
-                                            <td class="py-3 text-sm text-right font-semibold text-gray-900" id="tax">₦30,000</td>
+                                            <td class="py-3 text-sm text-right font-semibold text-gray-900" id="tax"></td>
                                         </tr>
                                         <tr>
                                             <td class="py-3 text-sm font-medium text-gray-900">Pension (8%)</td>
-                                            <td class="py-3 text-sm text-right font-semibold text-gray-900" id="pension">₦24,000</td>
+                                            <td class="py-3 text-sm text-right font-semibold text-gray-900" id="pension"></td>
                                         </tr>
                                         <tr>
                                             <td class="py-3 text-sm font-medium text-gray-900">Payroll Deductions</td>
@@ -142,7 +188,7 @@
                                         </tr>
                                         <tr class="bg-gray-50">
                                             <td class="py-3 text-sm font-bold text-gray-900">Total Deductions</td>
-                                            <td class="py-3 text-sm text-right font-bold text-gray-900" id="total-deductions">₦64,000</td>
+                                            <td class="py-3 text-sm text-right font-bold text-gray-900" id="total-deductions"></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -153,26 +199,34 @@
                         <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
                             <div class="flex justify-between items-center text-lg mb-4">
                                 <span class="font-bold text-gray-900">Gross Salary</span>
-                                <span class="font-bold text-gray-900" id="gross-salary-display">₦300,000</span>
+                                <span class="font-bold text-gray-900" id="gross-salary-display"></span>
                             </div>
                             <div class="flex justify-between items-center text-xl">
                                 <span class="font-bold text-gray-900">Net Pay</span>
-                                <span class="font-bold text-green-600 text-2xl" id="net-salary-display">₦236,000</span>
+                                <span class="font-bold text-green-600 text-2xl" id="net-salary-display"></span>
                             </div>
                             <p class="text-xs text-gray-500 mt-2 opacity-75" id="status-display">Paid ✓</p>
                         </div>
 
                         <!-- ACTION BUTTONS -->
-                        <div class="flex justify-end gap-4 mt-8 pt-6 border-t">
+                        <div class="flex justify-between gap-4 mt-8 pt-6 border-t">
                             <button onclick="window.history.back()" class="px-6 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-all font-medium">
                                 ← Back to Payslips
                             </button>
-                            <button onclick="window.print()" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
-                                🖨️ Print Payslip
-                            </button>
-                            <button onclick="downloadPDF()" class="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all ml-2">
-                                ⬇️ Download PDF
-                            </button>
+                            <div class="flex gap-2">
+                                <button onclick="printPayslip()" class="px-8 py-3 bg-blue-600 from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v.5"/>
+                                    </svg>
+                                    Print Payslip
+                                </button>
+                                <button onclick="downloadPDF()" class="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10l-5.5 5.5m0 0L7.5 18M7.5 18l1.5-1.5M12 10l5.5 5.5m0 0L16.5 18M16.5 18l-1.5-1.5"/>
+                                    </svg>
+                                    PDF
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

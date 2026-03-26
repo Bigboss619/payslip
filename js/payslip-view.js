@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // ✅ CORRECT PATH (adjust based on your folder structure)
-    const apiUrl = `../includes/get-payslip-detail.php?id=${id}`; // Same folder as payslip-view.php
+    const apiUrl = `./get-payslip-detail.php?id=${id}`; // Same folder as payslip-view.php
     
     console.log('🔍 Fetching:', apiUrl); // DEBUG
     
@@ -95,7 +95,25 @@ function loadPayslipData(data) {
     document.getElementById('payroll-deductions').textContent = formatCurrency((data.deductions || 0) - (data.paye || 0) - (data.pension || 0));
     document.getElementById('total-deductions').textContent = formatCurrency(data.deductions || 0);
 }
+// Add this function to your payslip-view.js
+function printPayslip() {
+    // ✅ Hide non-essential elements before print
+    const nonEssential = document.querySelectorAll('nav, header, footer, button:not(#printBtn)');
+    nonEssential.forEach(el => el.style.display = 'none');
+    
+    // ✅ Force print styles
+    window.print();
+    
+    // ✅ Restore after print dialog closes
+    setTimeout(() => {
+        nonEssential.forEach(el => el.style.display = '');
+    }, 100);
+}
 
+// Add click handler
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('printBtn')?.addEventListener('click', printPayslip);
+});
 // ✅ FIXED PDF Download
 function downloadPDF() {
     const staffId = document.getElementById('employee-id').textContent;
