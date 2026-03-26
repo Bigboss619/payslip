@@ -1,19 +1,7 @@
+// upload.js - CLEAN VERSION (NO DUPLICATES)
 const API_BASE = '../includes/';
-let currentPayrollData = [];
-let filteredData = [];
-let currentPage = 1;
-const pageSize = 10;
 let previewData = [];
 let currentBatchId = null;
-let selectedMonth = '';
-
-const formatCurrency = (amount) => `₦${parseFloat(amount || 0).toLocaleString()}`;
-
-document.addEventListener('DOMContentLoaded', function() {
-  loadTotalEmployees();
-  loadPayrollData();
-  setupEventListeners();
-});
 
 async function loadTotalEmployees() {
   try {
@@ -21,405 +9,383 @@ async function loadTotalEmployees() {
     const result = await response.json();
     if (result.success) {
       const totalEl = document.getElementById('total-employees');
-  if (totalEl) totalEl.textContent = result.total_employees;
+      if (totalEl) totalEl.textContent = result.total_employees;
     }
   } catch (err) {
     console.error('Failed to load total employees:', err);
   }
 }
 
-function setupEventListeners() {
-  document.getElementById('uploadForm')?.addEventListener('submit', handleFileUpload);
-  document.getElementById('applyFilters')?.addEventListener('click', applyFilters);
-  document.getElementById('viewPayslipsBtn')?.addEventListener('click', showViewPayslipsModal);
+// async function loadPayrollData(monthNum = null, year = null) {
+//   if (!monthNum || !year) {
+//     monthNum = new Date().toISOString().slice(0,7).slice(-2);
+//     year = new Date().getFullYear();
+//   }
   
-// Month select change
-  const monthSelect = document.getElementById('monthSelect');
-  if (monthSelect) {
-    monthSelect.value = new Date().toISOString().slice(0,7);
-    monthSelect.addEventListener('change', function() {
-      loadPayrollData(this.value);
-    });
-  }
+//   const tbody = document.getElementById('payrollTableBody');
+//   if (tbody) {
+//     tbody.innerHTML = '<tr><td colspan="16" class="p-12 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div><p>Loading Excel payroll data...</p></td></tr>';
+//   }
   
-  // Real-time filters
-  ['nameFilter', 'staffIdFilter', 'monthFilter', 'deptFilter'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('input', debounce(applyFilters, 300));
-  });
-}
+//   try {
+//     const params = new URLSearchParams({
+//       mode: 'get_excel',
+//       month: monthNum.padStart(2, '0'),
+//       year: year
+//     });
+    
+//     const response = await fetch(`${API_BASE}upload-payroll.php?${params}`);
+//     if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    
+//     const result = await response.json();
+//     const statusMsg = document.getElementById('statusMsg');
+    
+//     if (result.success && result.excel_data && result.excel_data.length > 0) {
+//       window.currentPayrollData = result.excel_data;
+//       window.filteredData = [...window.currentPayrollData];
+      
+//       if (window.payrollTable) {
+//         window.payrollTable.populateFilterDropdowns();
+//         window.payrollTable.renderExcelTable();
+//       }
+//       updateExcelSummary(result);
+      
+//       if (statusMsg) {
+//         statusMsg.textContent = `✅ Payroll loaded: ${result.excel_data.length} rows`;
+//         statusMsg.className = 'p-3 rounded-lg bg-green-100 text-green-800';
+//         statusMsg.classList.remove('hidden');
+//       }
+//     } else {
+//       if (statusMsg) {
+//         statusMsg.textContent = `❌ No payroll found: ${result.error || 'No data'}`;
+//         statusMsg.className = 'p-3 rounded-lg bg-red-100 text-red-800';
+//         statusMsg.classList.remove('hidden');
+//       }
+//       if (tbody) {
+//         tbody.innerHTML = `<tr><td colspan="16" class="p-12 text-center text-gray-500">
+//           <div class="text-xl mb-2">📄 No Excel Data Found</div>
+//           <div class="text-sm mt-2 text-gray-400">Upload Excel file first</div>
+//         </td></tr>`;
+//       }
+//     }
+//   } catch (err) {
+//     console.error('Load error:', err);
+//     if (tbody) {
+//       tbody.innerHTML = `<tr><td colspan="16" class="p-12 text-center text-red-500">
+//         <div class="text-xl mb-2">❌ Error Loading Excel</div>
+//         <div>${err.message}</div>
+//       </td></tr>`;
+//     }
+//   }
+// }
 
-function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-}
-
-async function loadPayrollData(month = null, year = null) {
-  if (!month || !year) {
-    month = new Date().toISOString().slice(0,7).slice(-2);
-    year = new Date().getFullYear();
+async function loadPayrollData(monthNum = null, year = null) {
+  const tbody = document.getElementById('excelTableBody');
+  if (tbody) {
+    tbody.innerHTML = '<tr><td colspan="6" class="p-12 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>Loading Excel...</td></tr>';
   }
-  // Show loading
-  const tbody = document.getElementById('payrollTableBody');
-  tbody.innerHTML = '<tr><td colspan="16" class="p-12 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div><p>Loading Excel payroll data...</p></td></tr>';
   
   try {
-    // Use Excel endpoint by default - simplified params
     const params = new URLSearchParams({
       mode: 'get_excel',
-      month: month.padStart(2, '0'),
-      year: year
+      month: (monthNum || new Date().getMonth() + 1).toString().padStart(2, '0'),
+      year: year || new Date().getFullYear()
     });
     
-    console.log('Fetching Excel data:', params.toString()); // Debug log
+    console.log('📡 Fetching Excel:', `${API_BASE}upload-payroll.php?${params}`);
     
     const response = await fetch(`${API_BASE}upload-payroll.php?${params}`);
     
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Response error:', response.status, errorText);
-      throw new Error(`HTTP ${response.status}: ${errorText}`);
-    }
-    
-    const result = await response.json();
-    console.log('Excel API response:', result); // Debug log
-    
-    const statusMsg = document.getElementById('statusMsg');
-    if (result.success && result.excel_data && result.excel_data.length > 0) {
-      currentPayrollData = result.excel_data;
-      filteredData = [...currentPayrollData];
-      renderExcelTable();
-      updateExcelSummary(result);
-      if (statusMsg) {
-        statusMsg.textContent = `✅ Payroll loaded: ${result.excel_data.length} rows for ${month.padStart(2,'0')}/${year}`;
-        statusMsg.className = 'p-3 rounded-lg bg-green-100 text-green-800';
-      }
-    } else {
-      console.warn('No Excel data:', result.error || 'Empty response');
-      const errorMsg = result.error || 'No payroll Excel file found';
-      if (statusMsg) {
-        statusMsg.textContent = `❌ No payroll found for ${month.padStart(2,'0')}/${year}: ${errorMsg}`;
-        statusMsg.className = 'p-3 rounded-lg bg-red-100 text-red-800';
-      }
-      // console.log('Excel Data:', result.excel_data);
-      // console.log('Length:', result.excel_data.length);
-      // console.log('Loaded Excel Data:', currentPayrollData);
-      tbody.innerHTML = `<tr><td colspan="16" class="p-12 text-center text-gray-500">
-        <div class="text-xl mb-2">📄 No Excel Data Found</div>
-        <div>${result.error || 'No payroll Excel file for selected period'}</div>
-        <div class="text-sm mt-2 text-gray-400">Upload Excel file first or select different month</div>
-      </td></tr>`;
-    }
-  } catch (err) {
-    console.error('Excel load error:', err);
-    tbody.innerHTML = `<tr><td colspan="16" class="p-12 text-center text-red-500">
-      <div class="text-xl mb-2">❌ Error Loading Excel</div>
-      <div class="text-lg">${err.message}</div>
-      <div class="text-sm mt-2 bg-red-50 p-2 rounded text-red-700">${err.message.includes('401') ? 'HR login required' : 'Check console (F12) for details'}</div>
-    </td></tr>`;
-  }
-}
-
-async function handleFileUpload(e) {
-  e.preventDefault();
-  const formData = new FormData(e.target);
-  formData.append('mode', 'preview');
-  const uploadBtn = document.getElementById('uploadBtn');
-  const status = document.getElementById('uploadStatus');
-  
-  uploadBtn.disabled = true;
-  uploadBtn.textContent = 'Uploading...';
-  status.classList.remove('hidden');
-  status.innerHTML = '<div class="text-blue-600">Processing...</div>';
-  
-  try {
-    const response = await fetch(API_BASE + 'upload-payroll.php', {
-      method: 'POST',
-      body: formData
-    });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const result = await response.json();
-    
-    if (result.success) {
-
-      status.innerHTML = `<div class="text-green-600">${result.message}</div>`;
-      if (result.preview_data && result.preview_data.length > 0) {
-        showPreview(result);
-        loadPayrollData();
-      } else {
-        status.innerHTML += '<div class="text-yellow-600">No data to preview</div>';
-      }
-    } else {
-      status.innerHTML = `<div class="text-red-600 bg-red-100 p-2 rounded">${result.error}</div>`;
-    }
-  } catch (err) {
-    status.innerHTML = `<div class="text-red-600 bg-red-100 p-2 rounded">Error: ${err.message}</div>`;
-  }
-  
-  uploadBtn.disabled = false;
-  uploadBtn.textContent = 'Upload & Preview';
-}
-
-function showPreview(result) {
-  currentBatchId = result.batch_id;
-  previewData = result.preview_data || result.preview || [];
-  
-  const previewSection = document.getElementById('previewSection');
-  const previewTable = document.getElementById('previewTable');
-  
-  if (!previewData || previewData.length === 0) {
-    console.warn('No preview data');
-    document.getElementById('uploadStatus').innerHTML = '<div class="text-yellow-600">No valid data found in file</div>';
-    return;
-  }
-  
-  // Show first 20 rows
-  previewTable.innerHTML = previewData.slice(0, 20).map(item => `
-    <tr>
-      <td class="p-2 border">${item.staff_id || ''}</td>
-      <td class="p-2 border">${item.name}</td>
-      <td class="p-2 border">${item.department}</td>
-      <td class="p-2 border">${formatCurrency(item.gross_salary)}</td>
-      <td class="p-2 border">${formatCurrency(item.pro_rata)}</td>
-      <td class="p-2 border">${item.days_worked || ''}</td>
-      <td class="p-2 border">${formatCurrency(item.basic_salary)}</td>
-      <td class="p-2 border">${formatCurrency(item.housing)}</td>
-      <td class="p-2 border">${formatCurrency(item.transport)}</td>
-      <td class="p-2 border">${formatCurrency(item.medical)}</td>
-      <td class="p-2 border">${formatCurrency(item.utility)}</td>
-      <td class="p-2 border">${formatCurrency(item.paye)}</td>
-      <td class="p-2 border">${formatCurrency(item.deductions)}</td>
-      <td class="p-2 border">${formatCurrency(item.pension)}</td>
-      <td class="p-2 border">${formatCurrency(item.net_salary)}</td>
-    </tr>
-  `).join('') || '<tr><td colspan="15" class="p-4 text-center">No preview data</td></tr>';
-  
-  previewSection.classList.remove('hidden');
-  const saveBtn = document.getElementById('saveBtn');
-  if (saveBtn) {
-    saveBtn.disabled = previewData.length === 0;
-
-  }
-  
-  // Show count
-  const header = previewSection.querySelector('h2');
-  if (header) {
-    header.textContent = `Preview Data (${previewData.length} rows) - Save to confirm`;
-  }
-}
-
-function populatePreviousMonths(months) {
-  const container = document.getElementById('previousMonths');
-  if (container) {
-    container.innerHTML = months.map(m => 
-      `<span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-blue-200" onclick="loadPayrollData('${m}')">${m}</span>`
-    ).join('');
-  }
-}
-
-function renderExcelTable() {
-  const data = filteredData.length > 0 ? filteredData : currentPayrollData;
-  const start = (currentPage - 1) * pageSize;
-  const end = start + pageSize;
-  const paginated = data.slice(start, end);
-  
-  const tbody = document.getElementById('payrollTableBody');
-  tbody.innerHTML = paginated.length ? paginated.map((item, index) => `
-    <tr class="hover:bg-gray-50/50 border-b">
-      <td class="p-2 text-xs font-mono border-r">${item.row_index || '-'}</td>
-      <td class="p-2 font-medium border-r">${item.staff_id || ''}</td>
-      <td class="p-2 border-r">${item.name || ''}</td>
-      <td class="p-2 border-r">${item.department || ''}</td>
-      <td class="p-2 text-right font-semibold border-r">${formatCurrency(item.gross_salary)}</td>
-      <td class="p-2 text-right border-r">${formatCurrency(item.pro_rata)}</td>
-      <td class="p-2 text-center border-r">${item.days_worked || ''}</td>
-      <td class="p-2 text-right border-r">${formatCurrency(item.basic_salary)}</td>
-      <td class="p-2 text-right border-r">${formatCurrency(item.housing)}</td>
-      <td class="p-2 text-right border-r">${formatCurrency(item.transport)}</td>
-      <td class="p-2 text-right border-r">${formatCurrency(item.medical)}</td>
-      <td class="p-2 text-right border-r">${formatCurrency(item.utility)}</td>
-      <td class="p-2 text-right font-semibold border-r">${formatCurrency(item.paye)}</td>
-      <td class="p-2 text-right border-r">${formatCurrency(item.deductions)}</td>
-      <td class="p-2 text-right border-r">${formatCurrency(item.pension)}</td>
-      <td class="p-2 text-right font-bold text-green-600 border-r">${formatCurrency(item.net_salary)}</td>
-    </tr>
-  `).join('') : '<tr><td colspan="16" class="p-12 text-center text-gray-500"><div class="text-xl mb-2">📄 No Excel Data</div><div class="text-lg">Upload an Excel payroll file to view raw content</div></td></tr>';
-  
-  renderPagination(data.length);
-}
-
-function updateExcelSummary(result) {
-  // Calculate summary from Excel data
-  const data = currentPayrollData;
-  const totalGross = data.reduce((sum, item) => sum + (item.gross_salary || 0), 0);
-  const totalNet = data.reduce((sum, item) => sum + (item.net_salary || 0), 0);
-  const totalRows = data.length;
-  
-  const totalEl = document.getElementById('total-employees');
-  if (totalEl) totalEl.textContent = totalRows;
-  const grossEl = document.getElementById('total-gross');
-  if (grossEl) grossEl.textContent = formatCurrency(totalGross);
-  const netEl = document.getElementById('total-net');
-  if (netEl) netEl.textContent = formatCurrency(totalNet);
-}
-
-function renderPagination(total) {
-  const totalPages = Math.ceil(total / pageSize);
-  const pagination = document.getElementById('payrollPagination');
-  if (pagination) {
-    pagination.innerHTML = `
-      <div class="flex items-center justify-between mt-4 px-4 py-3 bg-gray-50 rounded-lg">
-        <div class="text-sm text-gray-700">Showing ${Math.min((currentPage-1)*pageSize +1, total)}-${Math.min(currentPage*pageSize, total)} of ${total}</div>
-        <div class="flex space-x-2">
-          <button onclick="changePage('prev')" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 ${currentPage===1 ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage===1 ? 'disabled' : ''}>Previous</button>
-          <span class="px-3 py-2 text-sm font-medium">${currentPage} / ${totalPages}</span>
-          <button onclick="changePage('next')" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 ${currentPage===totalPages ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage===totalPages ? 'disabled' : ''}>Next</button>
-        </div>
-      </div>
-    `;
-  }
-}
-
-function changePage(dir) {
-  const totalPages = Math.ceil((filteredData.length || currentPayrollData.length) / pageSize);
-  if (dir === 'prev' && currentPage > 1) currentPage--;
-  if (dir === 'next' && currentPage < totalPages) currentPage++;
-  renderExcelTable();
-}
-
-function updateSummary(summary) {
-  document.getElementById('total-employees').textContent = summary.total_employees || 0;
-  document.getElementById('total-gross').textContent = formatCurrency(summary.total_gross || 0);
-  document.getElementById('total-net').textContent = formatCurrency(summary.total_net || 0);
-}
-
-function applyFilters() {
-  const name = document.getElementById('nameFilter')?.value.toLowerCase() || '';
-  const staffId = document.getElementById('staffIdFilter')?.value.toLowerCase() || '';
-  const month = document.getElementById('monthFilter')?.value || '';
-  const dept = document.getElementById('deptFilter')?.value || '';
-  
-  filteredData = currentPayrollData.filter(item => 
-    (!name || item.name.toLowerCase().includes(name)) &&
-    (!staffId || item.staff_id.toLowerCase().includes(staffId)) &&
-    (!month || item.month === month) &&
-    (!dept || item.department === dept)
-  );
-  currentPage = 1;
-  renderExcelTable();
-  updateSummary({});
-}
-
-function toggleFilters() {
-  document.getElementById('filterSection')?.classList.toggle('hidden');
-}
-
-function showViewPayslipsModal() {
-  // Implement or redirect
-  window.location.href = 'payslip.php';
-}
-
-async function savePayroll() {
-  if (!currentBatchId) {
-    alert('No preview data to save');
-    return;
-  }
-  
-  const formData = new FormData();
-  formData.append('mode', 'save');
-  formData.append('batch_id', currentBatchId);
-  
-  const status = document.getElementById('uploadStatus');
-  const saveBtn = document.getElementById('saveBtn');
-  
-  saveBtn.disabled = true;
-  saveBtn.textContent = 'Saving...';
-  status.innerHTML = '<div class="text-blue-600">Saving payroll data...</div>';
-  
-  try {
-    const response = await fetch(API_BASE + 'upload-payroll.php', {
-      method: 'POST',
-      body: formData
-    });
+    // ✅ DEBUG: Log raw response
+    const responseText = await response.text();
+    console.log('📄 Raw response:', responseText.substring(0, 200));
     
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
     
+    const result = JSON.parse(responseText);
+    
+    console.log('✅ Excel result:', result);
+    
+    if (result.success && result.excel_data && result.excel_data.length > 0) {
+      window.currentExcelData = result.excel_data;  // ✅ Use correct global var
+      window.filteredExcelData = [...window.currentExcelData];
+      
+      if (window.payrollTable) {
+        window.payrollTable.renderExcelTable();
+      }
+      
+      const statusMsg = document.getElementById('statusMsg');
+      if (statusMsg) {
+        statusMsg.textContent = `✅ Excel loaded: ${result.excel_data.length} rows`;
+        statusMsg.className = 'p-3 rounded-lg bg-green-100 text-green-800';
+        statusMsg.classList.remove('hidden');
+      }
+    } else {
+      console.log('❌ No Excel data:', result);
+      window.currentExcelData = [];
+      window.filteredExcelData = [];
+      
+      if (tbody) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-12 text-center text-gray-500">
+          <div class="text-xl mb-2">📄 No Excel Data Found</div>
+          <div class="text-sm mt-2 text-gray-400">${result.error || 'Upload Excel file first'}</div>
+        </td></tr>`;
+      }
+    }
+  } catch (err) {
+    console.error('❌ Excel load error:', err);
+    if (tbody) {
+      tbody.innerHTML = `<tr><td colspan="6" class="p-12 text-center text-red-500">
+        <div class="text-xl mb-2">❌ Error: ${err.message}</div>
+      </td></tr>`;
+    }
+  }
+}
+
+// async function handleFileUpload(e) {
+//   e.preventDefault();
+  
+//   const form = e.target;
+//   const formData = new FormData(form);
+//   const uploadBtn = document.getElementById('uploadBtn');
+//   const uploadStatus = document.getElementById('uploadStatus');
+  
+//   uploadBtn.disabled = true;
+//   uploadBtn.textContent = 'Uploading...';
+//   uploadStatus.classList.remove('hidden');
+//   uploadStatus.innerHTML = '<div class="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600 inline-block mr-2"></div>Uploading Excel file...';
+  
+//   try {
+//     const response = await fetch(`${API_BASE}upload-payroll.php`, {
+//       method: 'POST',
+//       body: formData
+//     });
+    
+//     const result = await response.json();
+    
+//     if (result.success) {
+//       uploadStatus.innerHTML = '<span class="text-green-600">✅ File uploaded successfully!</span>';
+//       showPreview(result.excel_data);
+//       loadPayrollData();
+//     } else {
+//       uploadStatus.innerHTML = `<span class="text-red-600">❌ ${result.error || 'Upload failed'}</span>`;
+//     }
+//   } catch (error) {
+//     uploadStatus.innerHTML = `<span class="text-red-600">❌ Network error: ${error.message}</span>`;
+//   } finally {
+//     uploadBtn.disabled = false;
+//     uploadBtn.textContent = 'Upload & Preview';
+//     setTimeout(() => uploadStatus.classList.add('hidden'), 3000);
+//   }
+// }
+// ✅ FIXED VERSION - Replace your handleFileUpload function
+async function handleFileUpload(e) {
+  e.preventDefault();
+  
+  const form = e.target;
+  const formData = new FormData(form);
+  
+  // ✅ CRITICAL: Ensure mode=preview is sent
+  formData.append('mode', 'preview');
+  
+  const uploadBtn = document.getElementById('uploadBtn');
+  const uploadStatus = document.getElementById('uploadStatus');
+  
+  uploadBtn.disabled = true;
+  uploadBtn.textContent = 'Uploading...';
+  uploadStatus.classList.remove('hidden');
+  uploadStatus.innerHTML = '<div class="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600 inline-block mr-2"></div>Uploading...';
+  
+  try {
+    console.log('📤 Uploading to:', `${API_BASE}upload-payroll.php`);
+    
+    const response = await fetch(`${API_BASE}upload-payroll.php`, {
+      method: 'POST',
+      body: formData  // ✅ FormData handles multipart automatically
+    });
+    
+    const result = await response.json();
+    console.log('✅ Upload result:', result);
+    
+    if (result.success) {
+      uploadStatus.innerHTML = `<span class="text-green-600">✅ ${result.message}</span>`;
+      currentBatchId = result.batch_id;
+      document.getElementById('saveBtn').disabled = false;
+      
+      // ✅ Show preview + reload Excel table
+      if (result.preview_data) {
+        showPreview(result.preview_data);
+      }
+      
+      // ✅ Reload Excel data immediately
+      loadPayrollData(
+        document.getElementById('monthSelectUpload')?.value ? 
+        Object.keys({
+          'January': '01', 'February': '02', 'March': '03', 'April': '04',
+          'May': '05', 'June': '06', 'July': '07', 'August': '08',
+          'September': '09', 'October': '10', 'November': '11', 'December': '12'
+        })[document.getElementById('monthSelectUpload')?.value] : null,
+        document.getElementById('yearSelect')?.value
+      );
+      
+      updateExcelSummary({excel_data: result.preview_data});
+      
+    } else {
+      uploadStatus.innerHTML = `<span class="text-red-600">❌ ${result.error}</span>`;
+    }
+  } catch (error) {
+    console.error('❌ Upload error:', error);
+    uploadStatus.innerHTML = `<span class="text-red-600">❌ ${error.message}</span>`;
+  } finally {
+    setTimeout(() => {
+      uploadBtn.disabled = false;
+      uploadBtn.textContent = 'Upload & Preview';
+      uploadStatus.classList.add('hidden');
+    }, 2000);
+  }
+}
+function showPreview(data) {
+  previewData = data;
+  const previewSection = document.getElementById('previewSection');
+  const previewTable = document.getElementById('previewTable');
+  const saveBtn = document.getElementById('saveBtn');
+  
+  if (previewTable) {
+    previewTable.innerHTML = data.map((row) => `
+      <tr class="hover:bg-gray-50">
+        <td class="p-2 border">${row.staff_id || ''}</td>
+        <td class="p-2 border">${row.name || ''}</td>
+        <td class="p-2 border">${row.department || ''}</td>
+        <td class="p-2 border text-right">${formatAmount(row.gross_salary)}</td>
+        <td class="p-2 border text-right">${formatAmount(row.pro_rata)}</td>
+        <td class="p-2 border text-center">${row.days_worked || ''}</td>
+        <td class="p-2 border text-right">${formatAmount(row.basic_salary)}</td>
+        <td class="p-2 border text-right">${formatAmount(row.housing)}</td>
+        <td class="p-2 border text-right">${formatAmount(row.transport)}</td>
+        <td class="p-2 border text-right">${formatAmount(row.medical)}</td>
+        <td class="p-2 border text-right">${formatAmount(row.utility)}</td>
+        <td class="p-2 border text-right">${formatAmount(row.paye)}</td>
+        <td class="p-2 border text-right">${formatAmount(row.deductions)}</td>
+        <td class="p-2 border text-right">${formatAmount(row.pension)}</td>
+        <td class="p-2 border text-right font-bold text-green-600">${formatAmount(row.net_salary)}</td>
+      </tr>
+    `).join('');
+  }
+  
+  previewSection.classList.remove('hidden');
+  saveBtn.disabled = false;
+}
+
+// ✅ Helper function (different name to avoid conflict)
+function formatAmount(amount) {
+  return `₦${parseFloat(amount || 0).toLocaleString()}`;
+}
+
+function updateExcelSummary(result) {
+  const data = window.currentPayrollData || [];
+  const totalGross = data.reduce((sum, item) => sum + parseFloat(item.gross_salary || 0), 0);
+  const totalNet = data.reduce((sum, item) => sum + parseFloat(item.net_salary || 0), 0);
+  
+  const totalEl = document.getElementById('total-employees');
+  const grossEl = document.getElementById('total-gross');
+  const netEl = document.getElementById('total-net');
+  
+  if (totalEl) totalEl.textContent = data.length;
+  if (grossEl) grossEl.textContent = formatAmount(totalGross);
+  if (netEl) netEl.textContent = formatAmount(totalNet);
+}
+
+function cancelPreview() {
+  document.getElementById('previewSection').classList.add('hidden');
+}
+// ✅ ADD THIS - Replace your savePayroll function
+async function savePayroll() {
+  if (!currentBatchId) {
+    alert('No preview data to save!');
+    return;
+  }
+  
+  const saveBtn = document.getElementById('saveBtn');
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Saving...';
+  
+  const formData = new FormData();
+  formData.append('mode', 'save');
+  formData.append('batch_id', currentBatchId);
+  
+  try {
+    const response = await fetch(`${API_BASE}upload-payroll.php`, {
+      method: 'POST',
+      body: formData
+    });
+    
     const result = await response.json();
     
     if (result.success) {
-      status.innerHTML = `<div class="text-green-600 bg-green-100 p-2 rounded">${result.message}</div>`;
+      alert(`✅ Success! ${result.message}`);
+      
+      // ✅ Hide preview + reload everything
       document.getElementById('previewSection').classList.add('hidden');
+      
+      // Reload Excel + Payslip tables
       loadPayrollData();
-      document.getElementById('uploadForm')?.reset();
-      currentBatchId = null;
+      window.payrollTable.loadPayslipRecords();
+      
     } else {
-      throw new Error(result.error || 'Save failed');
+      alert(`❌ Save failed: ${result.error}`);
     }
-  } catch (err) {
-    console.error('Save payroll error:', err);
-    status.innerHTML = `<div class="text-red-600 bg-red-100 p-2 rounded">Save failed: ${err.message}</div>`;
-    alert(`Save failed: ${err.message}. Check console for details.`);
+  } catch (error) {
+    alert(`❌ Network error: ${error.message}`);
   } finally {
     saveBtn.disabled = false;
     saveBtn.textContent = 'Save Payroll';
   }
 }
 
+// ✅ ADD Cancel function
 async function cancelPreview() {
-  if (!currentBatchId) {
-    document.getElementById('previewSection').classList.add('hidden');
-    document.getElementById('uploadForm')?.reset();
-    return;
-  }
+  if (!currentBatchId) return;
   
   const formData = new FormData();
   formData.append('mode', 'cancel');
   formData.append('batch_id', currentBatchId);
   
   try {
-    const response = await fetch(API_BASE + 'upload-payroll.php', {
+    const response = await fetch(`${API_BASE}upload-payroll.php`, {
       method: 'POST',
       body: formData
     });
     const result = await response.json();
-    // Ignore result, just cleanup
-  } catch (err) {
-    console.error('Cancel error:', err);
+    
+    if (result.success) {
+      document.getElementById('previewSection').classList.add('hidden');
+      currentBatchId = null;
+    }
+  } catch (error) {
+    console.error('Cancel error:', error);
   }
-  
-  document.getElementById('previewSection').classList.add('hidden');
-  document.getElementById('uploadForm')?.reset();
-  currentBatchId = null;
 }
 
-// Init
 function checkPayrollStatus() {
-  const monthEl = document.getElementById('statusMonthSelect');
-  const yearEl = document.getElementById('statusYearSelect');
-  const statusMsg = document.getElementById('statusMsg');
-  
-  if (!monthEl.value || !yearEl.value) {
-    statusMsg.textContent = 'Please select month and year';
-    statusMsg.classList.remove('hidden');
-    statusMsg.className = 'p-3 rounded-lg bg-yellow-100 text-yellow-800';
-    return;
+  const month = document.getElementById('statusMonthSelect').value;
+  const year = document.getElementById('statusYearSelect').value;
+  if (month && year) {
+    loadPayrollData(month, year);
   }
-  
-  const monthNum = monthEl.value;
-  const year = yearEl.value;
-  statusMsg.classList.remove('hidden');
-  statusMsg.textContent = 'Checking payroll status...';
-  statusMsg.className = 'p-3 rounded-lg bg-blue-100 text-blue-800';
-  
-  loadPayrollData(monthNum, year);
 }
 
+function showViewPayslipsModal() {
+  alert('View payslips modal - implement modal logic here');
+}
+
+// ✅ EXPORT
+window.uploadManager = {
+  loadTotalEmployees,
+  loadPayrollData,
+  handleFileUpload,
+  showPreview,
+  updateExcelSummary,
+  showViewPayslipsModal
+};
