@@ -47,6 +47,7 @@ try {
         echo json_encode(['success' => false, 'error' => 'Payslip not found']);
         exit;
     }
+    
 
     echo json_encode([
         'success' => true,

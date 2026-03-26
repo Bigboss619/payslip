@@ -1,4 +1,3 @@
-// ✅ FIXED: Correct path + Error handling
 document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
@@ -8,21 +7,18 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
     
-    // ✅ CORRECT PATH (adjust based on your folder structure)
-    const apiUrl = `../includes/get-payslip-detail.php?id=${id}`; // Same folder as payslip-view.php
+    const apiUrl = `../includes/get-payslip-detail.php?id=${id}`; 
     
-    console.log('🔍 Fetching:', apiUrl); // DEBUG
+    console.log('🔍 Fetching:', apiUrl);
     
     fetch(apiUrl)
         .then(response => {
-            console.log('📡 Response status:', response.status); // DEBUG
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
+            console.log('📡 Response status:', response.status);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             return response.json();
         })
         .then(result => {
-            console.log('✅ Data received:', result); // DEBUG
+            console.log('✅ Data received:', result);
             if (result.success) {
                 loadPayslipData(result.data);
             } else {
@@ -41,86 +37,60 @@ function showError(message) {
         <div class="text-center py-12">
             <div class="w-16 h-16 border-4 border-red-200 border-t-red-500 rounded-full animate-spin mx-auto mb-4"></div>
             <p class="text-red-500 font-medium">${message}</p>
-            <button onclick="window.history.back()" class="mt-4 px-6 py-2 bg-red-100 text-red-700 rounded-xl hover:bg-red-200 transition-all">
-                ← Go Back
-            </button>
+            <button onclick="window.history.back()" class="mt-4 px-6 py-2 bg-red-100 text-red-700 rounded-xl hover:bg-red-200">← Go Back</button>
         </div>
     `;
 }
 
 function loadPayslipData(data) {
-    console.log('🎨 Loading data:', data); // DEBUG
+    console.log('🎨 Raw data:', data); // DEBUG
     
     document.getElementById('loading').style.display = 'none';
     document.getElementById('detail-content').classList.remove('hidden');
     
-    const formatCurrency = (amount) => `₦${parseFloat(amount || 0).toLocaleString()}`;
-    
-    // Header
-    document.getElementById('payslip-period').textContent = `${data.month} ${data.year}`;
-    document.getElementById('company-period').textContent = `${data.month} ${data.year}`;
-    document.getElementById('pay-period').textContent = `${data.month} ${data.year}`;
-    document.getElementById('generated-date').textContent = data.generatedDate || 'N/A';
-    
-    // Employee info
-    document.getElementById('employee-name').textContent = data.employeeName || 'N/A';
-    document.getElementById('employee-id').textContent = data.employeeId || 'N/A';
-    document.getElementById('department').textContent = data.department || 'N/A';
-    document.getElementById('position').textContent = data.position || 'N/A';
-    
-    // Summary
-    document.getElementById('gross-salary-display').textContent = formatCurrency(data.grossSalary);
-    document.getElementById('net-salary-display').textContent = formatCurrency(data.netSalary);
-    
-    // Status
-    const statusBadge = document.getElementById('status-badge');
-    statusBadge.textContent = data.status || 'Unknown';
-    const statusColors = {
-        'Paid': 'bg-green-100 text-green-800',
-        'Pending': 'bg-yellow-100 text-yellow-800',
-        'Failed': 'bg-red-100 text-red-800'
+    // ✅ FORMAT CURRENCY FUNCTION (MOVED INSIDE)
+    const formatCurrency = (amount) => {
+        return `₦${parseFloat(amount || 0).toLocaleString('en-NG', {minimumFractionDigits: 0, maximumFractionDigits: 2})}`;
     };
-    statusBadge.className = `font-semibold px-2 py-1 rounded-full text-xs ${statusColors[data.status] || 'bg-gray-100 text-gray-800'}`;
     
-    // Earnings (use actual data if available)
-    document.getElementById('basic-salary').textContent = formatCurrency(data.basic_salary || 0);
-    document.getElementById('housing').textContent = formatCurrency(data.housing || 0);
-    document.getElementById('transport').textContent = formatCurrency(data.transport || 0);
-    document.getElementById('medical').textContent = formatCurrency(data.medical || 0);
-    document.getElementById('total-earnings').textContent = formatCurrency(data.grossSalary);
+    // ✅ BASIC INFO (Working)
+    document.getElementById('pdf-period').textContent = `${data.month || 'January'} ${data.year || new Date().getFullYear()}`;
+    document.getElementById('pdf-employee-name').textContent = data.employeeName || data.name || 'Unknown';
+    document.getElementById('pdf-department').textContent = data.department || 'Unknown';
+    document.getElementById('pdf-days-worked').textContent = data.days_worked || 22;
     
-    // Deductions
-    document.getElementById('tax').textContent = formatCurrency(data.paye || 0);
-    document.getElementById('pension').textContent = formatCurrency(data.pension || 0);
-    document.getElementById('payroll-deductions').textContent = formatCurrency((data.deductions || 0) - (data.paye || 0) - (data.pension || 0));
-    document.getElementById('total-deductions').textContent = formatCurrency(data.deductions || 0);
-}
-// Add this function to your payslip-view.js
-function printPayslip() {
-    // ✅ Hide non-essential elements before print
-    const nonEssential = document.querySelectorAll('nav, header, footer, button:not(#printBtn)');
-    nonEssential.forEach(el => el.style.display = 'none');
+    // ✅ EARNINGS (MATCH YOUR DB EXACTLY)
+    document.getElementById('pdf-basic').textContent = formatCurrency(data.basic_salary);
+    document.getElementById('pdf-housing').textContent = formatCurrency(data.housing);
+    document.getElementById('pdf-transport').textContent = formatCurrency(data.transport);
+    document.getElementById('pdf-medical').textContent = formatCurrency(data.medical);
+    document.getElementById('pdf-utility').textContent = formatCurrency(data.utility);
     
-    // ✅ Force print styles
-    window.print();
+    // ✅ DEDUCTIONS (MATCH YOUR DB EXACTLY)
+    document.getElementById('pdf-pension').textContent = formatCurrency(data.pension);
+    document.getElementById('pdf-paye').textContent = formatCurrency(data.paye);
+    document.getElementById('pdf-deductions').textContent = formatCurrency(data.deductions);
     
-    // ✅ Restore after print dialog closes
-    setTimeout(() => {
-        nonEssential.forEach(el => el.style.display = '');
-    }, 100);
+    // ✅ TOTALS (Always have these)
+    document.getElementById('pdf-gross-total').textContent = formatCurrency(data.gross_salary || data.grossSalary);
+    document.getElementById('pdf-total-deduction').textContent = formatCurrency(data.deductions);
+    document.getElementById('pdf-net-pay').textContent = formatCurrency(data.net_salary || data.netSalary);
+    
+    console.log('✅ All fields updated!'); // DEBUG
 }
 
-// Add click handler
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('printBtn')?.addEventListener('click', printPayslip);
-});
-// ✅ FIXED PDF Download
+function printPayslip() {
+    const nonEssential = document.querySelectorAll('nav, header, footer, button');
+    nonEssential.forEach(el => el.style.display = 'none');
+    window.print();
+    setTimeout(() => {
+        nonEssential.forEach(el => el.style.display = '');
+    }, 500);
+}
+
+// PDF Download (Fixed ID from URL)
 function downloadPDF() {
-    const staffId = document.getElementById('employee-id').textContent;
-    const month = document.getElementById('pay-period').textContent.split(' ')[0];
-    const year = document.getElementById('pay-period').textContent.split(' ')[1];
-    
-    // ✅ CORRECT PDF URL PATH
-    const pdfUrl = `../includes/payslip-template.php?id=${encodeURIComponent(staffId)}`;
-    window.open(pdfUrl, '_blank');
+    const urlParams = new URLSearchParams(window.location.search);
+    const payslipId = urlParams.get('id');
+    window.open(`../includes/payslip-template.php?id=${payslipId}`, '_blank');
 }

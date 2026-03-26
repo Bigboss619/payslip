@@ -54,23 +54,6 @@
         <main class="p-6 overflow-y-auto">
             <div class="max-w-4xl mx-auto">
                 <div id="payslip-detail" class="bg-white shadow-2xl rounded-3xl p-8 border border-gray-100">
-                    <div class="flex justify-between items-start mb-8">
-                        <div>
-                            <h1 class="text-2xl font-bold text-gray-900 mb-1">Payslip Detail</h1>
-<p id="payslip-period" class="text-lg text-gray-600 font-medium">Loading...</p>
-                        </div>
-                        <div class="text-right">
-                            <button onclick="window.history.back()" class="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium transition-all mr-3">
-                                ← Back to Payslips
-                            </button>
-                            <!-- <button onclick="window.print()" class="inline-flex items-center px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v.5" />
-                                </svg>
-                                Print Payslip
-                            </button> -->
-                        </div>
-                    </div>
 
                     <!-- LOADING -->
                     <div id="loading" class="flex flex-col items-center justify-center py-20 text-gray-500">
@@ -80,154 +63,121 @@
 
                     <!-- PAYSLOP DETAIL -->
                     <div id="detail-content" class="hidden">
-
-                        <!-- COMPANY & PERIOD -->
-                        <div class="flex justify-between items-start border-b pb-6 mb-8">
-                            <div>
-        <h2 class="text-2xl font-bold text-gray-900 mb-1" id="company-name">PayslipSys HR</h2>
-
-                                <p class="text-lg text-gray-600 font-semibold" id="company-period"></p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-sm text-gray-500 mb-1">Date Generated</p>
-                                <p class="font-semibold text-gray-900" id="generated-date"></p>
-                            </div>
-                        </div>
-
-                        <!-- EMPLOYEE INFO -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                            <div>
-                                <p class="text-sm text-gray-500 font-medium uppercase tracking-wide mb-2">Employee Information</p>
-                                <div class="space-y-3 text-sm">
-                                    <div class="flex justify-between">
-                                        <span>Name:</span>
-                                        <span class="font-semibold" id="employee-name"></span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span>Employee ID:</span>
-                                        <span class="font-semibold" id="employee-id"></span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span>Department:</span>
-                                        <span class="font-semibold" id="department"></span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span>Position:</span>
-                                        <span class="font-semibold" id="position"></span>
-                                    </div>
+                        
+                                <!-- ✅ SAME HEADER AS PDF -->
+                                <div style="text-align: center; margin-bottom: 6px;">
+                                    <img src="../uploads/company-logo/logo.png" class="flex justify-center" alt="Company Logo" style="height: 120px;" id="pdf-logo">
+                                    <h1 style="font-size: 28px; font-weight: bold; margin: 0; color: #1f2937;">PAYSLIP</h1>
                                 </div>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-500 font-medium uppercase tracking-wide mb-2">Pay Period</p>
-                                <div class="space-y-3 text-sm">
-                                    <div class="flex justify-between">
-                                        <span>Period:</span>
-                                        <span class="font-semibold" id="pay-period"></span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span>Status:</span>
-                                        <span class="font-semibold px-2 py-1 rounded-full text-xs" id="status-badge">Paid</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span>Days Worked:</span>
-                                        <span class="font-semibold">22/22</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span>Pro-rata:</span>
-                                        <span class="font-semibold">Full Month</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- EARNINGS & DEDUCTIONS -->
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                            <div>
-                                <h3 class="text-lg font-bold text-gray-900 mb-4">Earnings</h3>
-                                <table class="w-full">
-                                    <tbody class="divide-y divide-gray-200">
+                                <!-- ✅ SAME TOP INFO TABLE -->
+                                <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 14px;" id="info-table">
+                                    <tr>
+                                        <td style="padding: 12px; border: 2px solid #000; background: #f3f4f6; font-weight: bold; width: 25%;">Pay Type</td>
+                                        <td style="padding: 12px; border: 2px solid #000;">Monthly</td>
+                                        <td style="padding: 12px; border: 2px solid #000; background: #f3f4f6; font-weight: bold; width: 25%;">Period</td>
+                                        <td style="padding: 12px; border: 2px solid #000;" id="pdf-period"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 12px; border: 2px solid #000; background: #f3f4f6; font-weight: bold;">Worked Days</td>
+                                        <td style="padding: 12px; border: 2px solid #000;" id="pdf-days-worked">22</td>
+                                        <td style="padding: 12px; border: 2px solid #000; background: #f3f4f6; font-weight: bold;">Payer ID</td>
+                                        <td style="padding: 12px; border: 2px solid #000;">N-21897635</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 12px; border: 2px solid #000; background: #f3f4f6; font-weight: bold;">Employee Name</td>
+                                        <td style="padding: 12px; border: 2px solid #000;" id="pdf-employee-name"></td>
+                                        <td style="padding: 12px; border: 2px solid #000; background: #f3f4f6; font-weight: bold;">Designation</td>
+                                        <td style="padding: 12px; border: 2px solid #000;" id="pdf-position">HR Manager</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 12px; border: 2px solid #000; background: #f3f4f6; font-weight: bold;">Department</td>
+                                        <td style="padding: 12px; border: 2px solid #000;" id="pdf-department"></td>
+                                        <td style="padding: 12px; border: 2px solid #000; background: #f3f4f6; font-weight: bold;">SBU</td>
+                                        <td style="padding: 12px; border: 2px solid #000;">Corporate Services</td>
+                                    </tr>
+                                </table>
+
+                                <!-- ✅ SAME EARNINGS/DEDUCTIONS TABLE -->
+                                <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px;" id="salary-table">
+                                    <thead>
                                         <tr>
-                                            <td class="py-3 text-sm font-medium text-gray-900">Basic Salary (40%)</td>
-                                            <td class="py-3 text-sm text-right font-semibold text-gray-900" id="basic-salary"></td>
+                                            <th style="border: 2px solid #000; padding: 12px; background: #e5e7eb; text-align: center; font-weight: bold;">Earnings</th>
+                                            <th style="border: 2px solid #000; padding: 12px; background: #e5e7eb; text-align: center; font-weight: bold;">Amount (₦)</th>
+                                            <th style="border: 2px solid #000; padding: 12px; background: #e5e7eb; text-align: center; font-weight: bold;">Deductions</th>
+                                            <th style="border: 2px solid #000; padding: 12px; background: #e5e7eb; text-align: center; font-weight: bold;">Amount (₦)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="padding: 10px; border: 2px solid #000;">Basic Salary</td>
+                                            <td style="padding: 10px; border: 2px solid #000; text-align: right; font-weight: bold;" id="pdf-basic">0.00</td>
+                                            <td style="padding: 10px; border: 2px solid #000;">Pension</td>
+                                            <td style="padding: 10px; border: 2px solid #000; text-align: right; font-weight: bold;" id="pdf-pension">0.00</td>
                                         </tr>
                                         <tr>
-                                            <td class="py-3 text-sm font-medium text-gray-900">Housing Allowance (25%)</td>
-                                            <td class="py-3 text-sm text-right font-semibold text-gray-900" id="housing"></td>
+                                            <td style="padding: 10px; border: 2px solid #000;">Housing</td>
+                                            <td style="padding: 10px; border: 2px solid #000; text-align: right; font-weight: bold;" id="pdf-housing">0.00</td>
+                                            <td style="padding: 10px; border: 2px solid #000;">PAYE</td>
+                                            <td style="padding: 10px; border: 2px solid #000; text-align: right; font-weight: bold;" id="pdf-paye">0.00</td>
                                         </tr>
                                         <tr>
-                                            <td class="py-3 text-sm font-medium text-gray-900">Transport Allowance (20%)</td>
-                                            <td class="py-3 text-sm text-right font-semibold text-gray-900" id="transport"></td>
+                                            <td style="padding: 10px; border: 2px solid #000;">Transport</td>
+                                            <td style="padding: 10px; border: 2px solid #000; text-align: right; font-weight: bold;" id="pdf-transport">0.00</td>
+                                            <td style="padding: 10px; border: 2px solid #000;">Other Deductions</td>
+                                            <td style="padding: 10px; border: 2px solid #000; text-align: right; font-weight: bold;" id="pdf-deductions">0.00</td>
                                         </tr>
                                         <tr>
-                                            <td class="py-3 text-sm font-medium text-gray-900">Medical Allowance (10%)</td>
-                                            <td class="py-3 text-sm text-right font-semibold text-gray-900" id="medical"></td>
+                                            <td style="padding: 10px; border: 2px solid #000;">Medical</td>
+                                            <td style="padding: 10px; border: 2px solid #000; text-align: right; font-weight: bold;" id="pdf-medical">0.00</td>
+                                            <td style="padding: 10px; border: 2px solid #000;"></td>
+                                            <td style="padding: 10px; border: 2px solid #000;"></td>
                                         </tr>
-                                        <tr class="bg-gray-50">
-                                            <td class="py-3 text-sm font-bold text-gray-900">Total Earnings</td>
-                                            <td class="py-3 text-sm text-right font-bold text-gray-900" id="total-earnings"></td>
+                                        <tr>
+                                            <td style="padding: 10px; border: 2px solid #000;">Utility</td>
+                                            <td style="padding: 10px; border: 2px solid #000; text-align: right; font-weight: bold;" id="pdf-utility">0.00</td>
+                                            <td style="padding: 10px; border: 2px solid #000;"></td>
+                                            <td style="padding: 10px; border: 2px solid #000;"></td>
+                                        </tr>
+                                        <!-- TOTALS -->
+                                        <tr style="font-weight: bold; font-size: 14px;">
+                                            <td style="padding: 12px; border: 2px solid #000;">Gross Pay</td>
+                                            <td style="padding: 12px; border: 2px solid #000; text-align: right;" id="pdf-gross-total">0.00</td>
+                                            <td style="padding: 12px; border: 2px solid #000;">Total Deduction</td>
+                                            <td style="padding: 12px; border: 2px solid #000; text-align: right;" id="pdf-total-deduction">0.00</td>
+                                        </tr>
+                                        <tr style="background: #d1fae5; font-weight: bold; font-size: 16px;">
+                                            <td colspan="2" style="padding: 15px; border: 2px solid #000;">Net Pay</td>
+                                            <td colspan="2" style="padding: 15px; border: 2px solid #000; text-align: right;" id="pdf-net-pay">0.00</td>
                                         </tr>
                                     </tbody>
                                 </table>
-                            </div>
 
-                            <div>
-                                <h3 class="text-lg font-bold text-gray-900 mb-4">Deductions</h3>
-                                <table class="w-full">
-                                    <tbody class="divide-y divide-gray-200">
-                                        <tr>
-                                            <td class="py-3 text-sm font-medium text-gray-900">PAYE Tax</td>
-                                            <td class="py-3 text-sm text-right font-semibold text-gray-900" id="tax"></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="py-3 text-sm font-medium text-gray-900">Pension (8%)</td>
-                                            <td class="py-3 text-sm text-right font-semibold text-gray-900" id="pension"></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="py-3 text-sm font-medium text-gray-900">Payroll Deductions</td>
-                                            <td class="py-3 text-sm text-right font-semibold text-gray-900" id="payroll-deductions"></td>
-                                        </tr>
-                                        <tr class="bg-gray-50">
-                                            <td class="py-3 text-sm font-bold text-gray-900">Total Deductions</td>
-                                            <td class="py-3 text-sm text-right font-bold text-gray-900" id="total-deductions"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                                <!-- ✅ SAME FOOTER -->
+                                <div style="margin-top: 35px; font-size: 11px; text-align: center; color: #666;">
+                                    This is a system-generated payslip | Generated on <span id="pdf-generated-date"><?= date('d M Y H:i') ?></span>
+                                </div>
 
-                        <!-- SUMMARY -->
-                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
-                            <div class="flex justify-between items-center text-lg mb-4">
-                                <span class="font-bold text-gray-900">Gross Salary</span>
-                                <span class="font-bold text-gray-900" id="gross-salary-display"></span>
-                            </div>
-                            <div class="flex justify-between items-center text-xl">
-                                <span class="font-bold text-gray-900">Net Pay</span>
-                                <span class="font-bold text-green-600 text-2xl" id="net-salary-display"></span>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-2 opacity-75" id="status-display">Paid ✓</p>
-                        </div>
-
-                        <!-- ACTION BUTTONS -->
-                        <div class="flex justify-between gap-4 mt-8 pt-6 border-t">
-                            <button onclick="window.history.back()" class="px-6 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-all font-medium">
-                                ← Back to Payslips
-                            </button>
-                            <div class="flex gap-2">
-                                <button onclick="printPayslip()" class="px-8 py-3 bg-blue-600 from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v.5"/>
-                                    </svg>
-                                    Print Payslip
-                                </button>
-                                <button onclick="downloadPDF()" class="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10l-5.5 5.5m0 0L7.5 18M7.5 18l1.5-1.5M12 10l5.5 5.5m0 0L16.5 18M16.5 18l-1.5-1.5"/>
-                                    </svg>
-                                    PDF
-                                </button>
-                            </div>
-                        </div>
+                                <!-- ACTION BUTTONS (Outside template for print hiding) -->
+                                <div class="flex justify-between gap-4 mt-12 pt-8 border-t border-gray-200">
+                                    <button onclick="window.history.back()" class="px-8 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-all font-semibold">
+                                        ← Back to Payslips
+                                    </button>
+                                    <div class="flex gap-3">
+                                        <button onclick="printPayslip()" class="px-10 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center">
+                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v.5"/>
+                                            </svg>
+                                            Print
+                                        </button>
+                                            <a href="../includes/payslip-template.php?id=<?= urlencode($id) ?>" target="_blank"         class="px-10 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center">
+                                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10l-5.5 5.5m0 0L7.5 18M7.5 18l1.5-1.5M12 10l5.5 5.5m0 0L16.5 18M16.5 18l-1.5-1.5"/>
+                                                    </svg>
+                                                PDF
+                                            </a>
+                                    </div>
+                                </div>
                     </div>
                 </div>
             </div>
