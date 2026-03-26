@@ -93,46 +93,27 @@
   </div>
 
   <!-- RECENT PAYSLIPS -->
-  <div class="bg-white rounded-xl shadow p-6">
-
+ <!-- RECENT PAYSLIPS - FIXED -->
+<div class="bg-white rounded-xl shadow p-6">
     <h2 class="text-lg font-semibold mb-4">Recent Payslips</h2>
-
-    <table class="w-full text-sm">
-
-      <thead>
-        <tr class="border-b text-left">
-          <th class="py-2">Month</th>
-          <th class="py-2">Gross</th>
-          <th class="py-2">Net</th>
-          <th class="py-2">Action</th>
-        </tr>
-      </thead>
-
-      <tbody>
-
-        <tr class="border-b">
-          <td class="py-2">February 2026</td>
-          <td>₦300,000</td>
-          <td class="font-semibold">₦250,000</td>
-          <td>
-            <button class="text-blue-600 hover:underline">View</button>
-          </td>
-        </tr>
-
-        <tr>
-          <td class="py-2">January 2026</td>
-          <td>₦300,000</td>
-          <td class="font-semibold">₦245,000</td>
-          <td>
-            <button class="text-blue-600 hover:underline">View</button>
-          </td>
-        </tr>
-
-      </tbody>
-
-    </table>
-
-  </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="border-b text-left">
+                    <th class="py-2">Month</th>
+                    <th class="py-2">Gross</th>
+                    <th class="py-2">Net</th>
+                    <th class="py-2">Action</th>
+                </tr>
+            </thead>
+            <tbody id="recent-tbody">  <!-- ✅ REQUIRED ID -->
+                <tr>
+                    <td colspan="4" class="py-12 text-center text-gray-500">Loading...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 
 </main>
 
