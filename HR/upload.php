@@ -174,8 +174,9 @@ include_once("../includes/nav.php");
   <div class="flex flex-wrap gap-4 items-end">
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-1">Month</label>
-      <select id="payslipMonth" class="border p-3 rounded-lg w-32">
-        <option value="">All Months</option>
+      <select id="filterMonth" class="border p-3 rounded-lg w-32">
+         <option value="<?php echo sprintf('%02d', date('m')); ?>">Current (<?php echo date('F'); ?>)</option>
+        <option value="">Latest</option>
         <option value="01">Jan</option><option value="02">Feb</option><option value="03">Mar</option>
         <option value="04">Apr</option><option value="05">May</option><option value="06">Jun</option>
         <option value="07">Jul</option><option value="08">Aug</option><option value="09">Sep</option>
@@ -184,16 +185,16 @@ include_once("../includes/nav.php");
     </div>
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-1">Year</label>
-      <input type="number" id="payslipYear" value="<?php echo date('Y'); ?>" 
+      <input type="number" id="filterYear" value="<?php echo date('Y'); ?>" 
              class="border p-3 rounded-lg w-28" min="2020" max="2030">
     </div>
-    <button onclick="refreshPayslips()" 
+    <button onclick="loadFilteredPayroll()" 
             class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 font-medium flex items-center gap-2">
       🔄 Load Payslips
     </button>
-    <button onclick="window.payrollTable.renderPayslipTable()" 
+    <button onclick="loadLatestPayroll()" 
             class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium">
-      📊 Refresh Table
+      📊 Latest Upload
     </button>
   </div>
 </div>

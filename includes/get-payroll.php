@@ -11,9 +11,24 @@ try {
     if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'HR') {
         throw new Exception('Unauthorized');
     }
+    
 
     require '../config/config.php';
-
+// ✅ ADD THIS at top of get-payroll.php (after session check)
+if (isset($_GET['get_latest'])) {
+    $latestStmt = $conn->query("
+        SELECT month, year FROM payroll_batches 
+        ORDER BY created_at DESC LIMIT 1
+    ");
+    $latest = $latestStmt->fetch(PDO::FETCH_ASSOC);
+    
+    echo json_encode([
+        'success' => true,
+        // ✅ Change this line (around line 25):
+'latest' => $latest ?: ['month' => sprintf('%02d', date('m')), 'year' => date('Y')]
+    ]);
+    exit;
+}
     $month = $_GET['month'] ?? '';
     $year = $_GET['year'] ?? '';
     $limit = (int)($_GET['limit'] ?? 10);
