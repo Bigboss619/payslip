@@ -112,24 +112,6 @@ include_once("../includes/nav.php");
         </div>
       </div>
 
-      <!-- FILTERS - Move this ABOVE the payroll table -->
-      <div id="filterSection" class="bg-white rounded-xl shadow p-6 mb-6 hidden">
-        <h3 class="text-lg font-semibold mb-4">Filters</h3>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <input id="nameFilter" placeholder="Filter by Name..." class="border p-3 rounded-lg">
-          <input id="staffIdFilter" placeholder="Staff ID..." class="border p-3 rounded-lg">
-          <select id="monthFilter" class="border p-3 rounded-lg">
-            <option value="">All Months</option>
-          </select>
-          <select id="deptFilter" class="border p-3 rounded-lg">
-            <option value="">All Departments</option>
-          </select>
-        </div>
-        <div class="flex gap-2 mt-4">
-          <button id="applyFilters" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Apply Filters</button>
-          <button id="clearFilters" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">Clear</button>
-        </div>
-      </div>
 
 <!-- PAYROLL TABLE -->
 <!-- <div class="bg-white rounded-xl shadow p-6"> -->
@@ -182,7 +164,7 @@ include_once("../includes/nav.php");
   <!-- </div> -->
 
   <!-- ✅ PAYSIP FILTER -->
-<div class="bg-white p-6 rounded-xl shadow mb-6">
+<div id="filterSection" class="bg-white p-6 rounded-xl shadow mb-6 hidden">
   <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
