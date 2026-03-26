@@ -51,9 +51,9 @@
 </style>
 
         <!-- MAIN -->
-        <main class="p-6 overflow-y-auto">
-            <div class="max-w-4xl mx-auto">
-                <div id="payslip-detail" class="bg-white shadow-2xl rounded-3xl p-8 border border-gray-100">
+        <main class="flex-1 p-4 overflow-y-auto">
+            <div class="max-w-4xl mx-auto h-full flex flex-col">
+                <div id="payslip-detail" class="flex-1 bg-white shadow-2xl rounded-3xl p-8 border border-gray-100 overflow-y-auto">
 
                     <!-- LOADING -->
                     <div id="loading" class="flex flex-col items-center justify-center py-20 text-gray-500">
