@@ -154,7 +154,7 @@
                                 </table>
 
                                 <!-- ✅ SAME FOOTER -->
-                                <div style="margin-top: 35px; font-size: 11px; text-align: center; color: #666;">
+                                <div style="margin-top: 35px; margin-bottom: 20px; font-size: 11px; text-align: center; color: #666;">
                                     This is a system-generated payslip | Generated on <span id="pdf-generated-date"><?= date('d M Y H:i') ?></span>
                                 </div>
 
@@ -164,18 +164,18 @@
                                         ← Back to Payslips
                                     </button>
                                     <div class="flex gap-3">
-                                        <button onclick="printPayslip()" class="px-10 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center">
+                                        <button onclick="printPayslip()" class=" bg-blue-600 from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl px-4 py-4 transition-all flex items-center">
                                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v.5"/>
                                             </svg>
                                             Print
                                         </button>
-                                            <a href="../includes/payslip-template.php?id=<?= urlencode($id) ?>" target="_blank"         class="px-10 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center">
-                                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <!-- <a href="../includes/payslip-template.php?id=<?= urlencode($id) ?>" target="_blank"         class="px-4 py-4 bg-green-600 from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center">
+                                                    <svg class="w-9 h-9 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10l-5.5 5.5m0 0L7.5 18M7.5 18l1.5-1.5M12 10l5.5 5.5m0 0L16.5 18M16.5 18l-1.5-1.5"/>
                                                     </svg>
                                                 PDF
-                                            </a>
+                                            </a> -->
                                     </div>
                                 </div>
                     </div>
