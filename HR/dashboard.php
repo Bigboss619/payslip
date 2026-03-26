@@ -28,7 +28,7 @@
           </h1>
 
           <div class="flex items-center space-x-3">
-            <span class="text-sm text-gray-600">Welcome, Emmanuel</span>
+            <span class="text-sm text-gray-600">Welcome,</span>
             <div class="w-8 h-8 bg-blue-500 text-white flex items-center justify-center rounded-full">
               E
             </div>
