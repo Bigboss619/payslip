@@ -113,23 +113,23 @@ include_once("../includes/nav.php");
       </div>
 
       <!-- FILTERS - Move this ABOVE the payroll table -->
-<div id="filterSection" class="bg-white rounded-xl shadow p-6 mb-6 hidden">
-  <h3 class="text-lg font-semibold mb-4">Filters</h3>
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-    <input id="nameFilter" placeholder="Filter by Name..." class="border p-3 rounded-lg">
-    <input id="staffIdFilter" placeholder="Staff ID..." class="border p-3 rounded-lg">
-    <select id="monthFilter" class="border p-3 rounded-lg">
-      <option value="">All Months</option>
-    </select>
-    <select id="deptFilter" class="border p-3 rounded-lg">
-      <option value="">All Departments</option>
-    </select>
-  </div>
-  <div class="flex gap-2 mt-4">
-    <button id="applyFilters" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Apply Filters</button>
-    <button id="clearFilters" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">Clear</button>
-  </div>
-</div>
+      <div id="filterSection" class="bg-white rounded-xl shadow p-6 mb-6 hidden">
+        <h3 class="text-lg font-semibold mb-4">Filters</h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <input id="nameFilter" placeholder="Filter by Name..." class="border p-3 rounded-lg">
+          <input id="staffIdFilter" placeholder="Staff ID..." class="border p-3 rounded-lg">
+          <select id="monthFilter" class="border p-3 rounded-lg">
+            <option value="">All Months</option>
+          </select>
+          <select id="deptFilter" class="border p-3 rounded-lg">
+            <option value="">All Departments</option>
+          </select>
+        </div>
+        <div class="flex gap-2 mt-4">
+          <button id="applyFilters" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Apply Filters</button>
+          <button id="clearFilters" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">Clear</button>
+        </div>
+      </div>
 
 <!-- PAYROLL TABLE -->
 <!-- <div class="bg-white rounded-xl shadow p-6"> -->
