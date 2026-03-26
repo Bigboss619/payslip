@@ -46,7 +46,7 @@
   </div>
 
   <!-- STATS -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+  <!-- <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
 
     <div class="bg-white p-6 rounded-xl shadow">
       <h2 class="text-sm text-gray-500">Total Payslips</h2>
@@ -63,8 +63,22 @@
       <p class="text-2xl font-bold mt-2">March 2026</p>
     </div>
 
-  </div>
-
+  </div> -->
+<!-- STATS - Add data-stat attributes -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+    <div class="bg-white p-6 rounded-xl shadow">
+        <h2 class="text-sm text-gray-500">Total Payslips</h2>
+        <p class="text-2xl font-bold mt-2" data-stat="total_payslips">Loading...</p>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow">
+        <h2 class="text-sm text-gray-500">Last Salary</h2>
+        <p class="text-2xl font-bold mt-2" data-stat="last_salary">Loading...</p>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow">
+        <h2 class="text-sm text-gray-500">Current Month</h2>
+        <p class="text-2xl font-bold mt-2" data-stat="current_month">Loading...</p>
+    </div>
+</div>
   <!-- QUICK ACTIONS -->
   <div class="bg-white p-6 rounded-xl shadow mb-6 flex flex-wrap gap-4">
 

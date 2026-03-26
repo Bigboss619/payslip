@@ -1,53 +1,71 @@
-// pages/dashboard.js - Collapsible Sidebar
-document.addEventListener('DOMContentLoaded', () => {
-  const sidebar = document.getElementById('sidebar');
-  const toggleBtns = document.querySelectorAll('.sidebar-toggle');
-  
-  let isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-  
-  // Set initial width
-  if (isCollapsed) {
-    sidebar.classList.add('w-16');
-    sidebar.classList.remove('w-64');
-  } else {
-    sidebar.classList.add('w-64');
-    sidebar.classList.remove('w-16');
-  }
-  
-  // Toggle function
-  function toggleSidebar() {
-    isCollapsed = !isCollapsed;
-    localStorage.setItem('sidebarCollapsed', isCollapsed);
-    
-    if (isCollapsed) {
-      sidebar.classList.remove('w-64');
-      sidebar.classList.add('w-16');
-      
-      // Hide text, center icons
-      const spans = sidebar.querySelectorAll('nav span');
-      spans.forEach(span => span.style.display = 'none');
-      const links = sidebar.querySelectorAll('.sidebar-link');
-      links.forEach(link => {
-        link.style.justifyContent = 'center';
-        link.style.padding = '0.75rem 1rem';
-      });
-    } else {
-      sidebar.classList.remove('w-16');
-      sidebar.classList.add('w-64');
-      
-      // Show text
-      const spans = sidebar.querySelectorAll('nav span');
-      spans.forEach(span => span.style.display = 'inline');
-      const links = sidebar.querySelectorAll('.sidebar-link');
-      links.forEach(link => {
-        link.style.justifyContent = 'flex-start';
-        link.style.padding = '0.75rem 1rem';
-      });
-    }
-  }
-  
-  // Add event listeners to all toggle buttons
-  toggleBtns.forEach(btn => {
-    btn.addEventListener('click', toggleSidebar);
-  });
+// ✅ Complete Dashboard Logic
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadDashboardData();
+    setupEventListeners();
 });
+
+async function loadDashboardData() {
+    try {
+        const response = await fetch('../includes/dashboard.php');
+        const result = await response.json();
+        
+        if (result.success) {
+            renderStats(result.stats, result.user_name);
+            renderRecentPayslips(result.recent_payslips);
+        } else {
+            console.error('Dashboard load error:', result.error);
+        }
+    } catch (error) {
+        console.error('Dashboard fetch error:', error);
+    }
+}
+
+function renderStats(stats, userName) {
+    // Update welcome
+    document.querySelector('h1').textContent = `Welcome, ${userName} 👋`;
+    
+    // Update stats cards
+    if (stats.total_payslips !== undefined) {
+        document.querySelectorAll('.grid [data-stat="total_payslips"]')?.forEach(el => el.textContent = stats.total_payslips);
+    }
+    if (stats.last_salary !== undefined) {
+        document.querySelectorAll('.grid [data-stat="last_salary"]')?.forEach(el => el.textContent = formatCurrency(stats.last_salary));
+    }
+    if (stats.current_month !== undefined) {
+        document.querySelectorAll('.grid [data-stat="current_month"]')?.forEach(el => el.textContent = stats.current_month);
+    }
+}
+
+function renderRecentPayslips(payslips) {
+    const tbody = document.querySelector('table tbody');
+    if (!tbody || payslips.length === 0) return;
+    
+    tbody.innerHTML = payslips.map(pay => `
+        <tr class="border-b hover:bg-gray-50">
+            <td class="py-3 font-medium">${pay.month} ${pay.year}</td>
+            <td class="py-3">${formatCurrency(pay.gross_salary)}</td>
+            <td class="py-3 font-semibold text-green-600">${formatCurrency(pay.net_salary)}</td>
+            <td class="py-3">
+                <a href="payslip-view.php?id=${pay.id || pay.batch_id}" 
+                   class="text-blue-600 hover:underline font-medium">
+                    View
+                </a>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function formatCurrency(amount) {
+    return `₦${parseFloat(amount || 0).toLocaleString('en-NG')}`;
+}
+
+function setupEventListeners() {
+    // Quick actions
+    document.querySelector('.bg-blue-600')?.addEventListener('click', () => {
+        window.location.href = 'payslip.php';
+    });
+    
+    document.querySelector('.bg-green-600')?.addEventListener('click', () => {
+        window.location.href = 'payslip-view.php?id=1'; // Last payslip
+    });
+}
