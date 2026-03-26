@@ -1,104 +1,108 @@
-h
-        // Get payslip ID from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const id = urlParams.get('id');
-        
-        if (id) {
-            document.getElementById('loading').textContent = 'Loading payslip...';
-            fetch(`../includes/get-payslip-detail.php?id=${id}`)
-                .then(response => response.json())
-                .then(result => {
-                    if (result.success) {
-                        loadPayslipData(result.data);
-                    } else {
-                        document.getElementById('loading').innerHTML = '<p class="text-red-500">Payslip not found</p>';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('loading').innerHTML = '<p class="text-red-500">Error loading payslip</p>';
-                });
-        } else {
-            document.getElementById('loading').innerHTML = '<p class="text-gray-500">No payslip ID found</p>';
-        }
+// ✅ FIXED: Correct path + Error handling
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    
+    if (!id) {
+        showError('No payslip ID in URL');
+        return;
+    }
+    
+    // ✅ CORRECT PATH (adjust based on your folder structure)
+    const apiUrl = `../includes/get-payslip-detail.php?id=${id}`; // Same folder as payslip-view.php
+    
+    console.log('🔍 Fetching:', apiUrl); // DEBUG
+    
+    fetch(apiUrl)
+        .then(response => {
+            console.log('📡 Response status:', response.status); // DEBUG
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(result => {
+            console.log('✅ Data received:', result); // DEBUG
+            if (result.success) {
+                loadPayslipData(result.data);
+            } else {
+                showError(result.error || 'Unknown error');
+            }
+        })
+        .catch(error => {
+            console.error('❌ Fetch error:', error);
+            showError(`Failed to load: ${error.message}`);
+        });
+});
 
-        function loadPayslipData(data) {
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('detail-content').style.display = 'block';
-            
-            const formatCurrency = (amount) => `₦${amount.toLocaleString()}`;
-            const formatMonthYear = (month, year) => `${month} ${year}`;
-            
-            // Update header
-            document.getElementById('payslip-period').textContent = formatMonthYear(data.month, data.year);
-            document.getElementById('company-period').textContent = formatMonthYear(data.month, data.year);
-            document.getElementById('pay-period').textContent = formatMonthYear(data.month, data.year);
-            document.getElementById('generated-date').textContent = data.date;
-            
-            // Employee details from data
-            if (data.employeeName) document.getElementById('employee-name').textContent = data.employeeName;
-            if (data.employeeId) document.getElementById('employee-id').textContent = data.employeeId;
-            if (data.department) document.getElementById('department').textContent = data.department;
-            if (data.position) document.getElementById('position').textContent = data.position;
-            
-            // Summary
-            document.getElementById('gross-salary-display').textContent = formatCurrency(data.grossSalary);
-            document.getElementById('net-salary-display').textContent = formatCurrency(data.netSalary);
-            
-            // Status with colors
-            const statusBadge = document.getElementById('status-badge');
-            const statusDisplay = document.getElementById('status-display');
-            statusBadge.textContent = data.status;
-            statusDisplay.textContent = `${data.status} ✓`;
-            const statusColors = {
-              'Paid': 'bg-green-100 text-green-800',
-              'Pending': 'bg-yellow-100 text-yellow-800',
-              'Failed': 'bg-red-100 text-red-800'
-            };
-            const statusClass = statusColors[data.status] || 'bg-gray-100 text-gray-800';
-            statusBadge.className = `font-semibold px-2 py-1 rounded-full text-xs ${statusClass}`;
-            
-            // Earnings breakdown
-            const basic = Math.round(data.grossSalary * 0.75);
-            const housing = Math.round(data.grossSalary * 0.15);
-            const transport = Math.round(data.grossSalary * 0.07);
-            const medical = Math.round(data.grossSalary * 0.03);
-            
-            document.getElementById('basic-salary').textContent = formatCurrency(basic);
-            document.getElementById('housing').textContent = formatCurrency(housing);
-            document.getElementById('transport').textContent = formatCurrency(transport);
-            document.getElementById('medical').textContent = formatCurrency(medical);
-            document.getElementById('total-earnings').textContent = formatCurrency(data.grossSalary);
-            
-            // Deduction breakdown (simplified to match total)
-            const tax = Math.round(data.deductions * 0.5);
-            const pension = Math.round(data.grossSalary * 0.08);
-            const payrollDeductions = data.deductions - tax - pension;
-            
-            document.getElementById('tax').textContent = formatCurrency(tax);
-            document.getElementById('pension').textContent = formatCurrency(pension);
-            document.getElementById('payroll-deductions').textContent = formatCurrency(payrollDeductions);
-            document.getElementById('total-deductions').textContent = formatCurrency(data.deductions);
-        }
+function showError(message) {
+    const loadingEl = document.getElementById('loading');
+    loadingEl.innerHTML = `
+        <div class="text-center py-12">
+            <div class="w-16 h-16 border-4 border-red-200 border-t-red-500 rounded-full animate-spin mx-auto mb-4"></div>
+            <p class="text-red-500 font-medium">${message}</p>
+            <button onclick="window.history.back()" class="mt-4 px-6 py-2 bg-red-100 text-red-700 rounded-xl hover:bg-red-200 transition-all">
+                ← Go Back
+            </button>
+        </div>
+    `;
+}
 
+function loadPayslipData(data) {
+    console.log('🎨 Loading data:', data); // DEBUG
+    
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('detail-content').classList.remove('hidden');
+    
+    const formatCurrency = (amount) => `₦${parseFloat(amount || 0).toLocaleString()}`;
+    
+    // Header
+    document.getElementById('payslip-period').textContent = `${data.month} ${data.year}`;
+    document.getElementById('company-period').textContent = `${data.month} ${data.year}`;
+    document.getElementById('pay-period').textContent = `${data.month} ${data.year}`;
+    document.getElementById('generated-date').textContent = data.generatedDate || 'N/A';
+    
+    // Employee info
+    document.getElementById('employee-name').textContent = data.employeeName || 'N/A';
+    document.getElementById('employee-id').textContent = data.employeeId || 'N/A';
+    document.getElementById('department').textContent = data.department || 'N/A';
+    document.getElementById('position').textContent = data.position || 'N/A';
+    
+    // Summary
+    document.getElementById('gross-salary-display').textContent = formatCurrency(data.grossSalary);
+    document.getElementById('net-salary-display').textContent = formatCurrency(data.netSalary);
+    
+    // Status
+    const statusBadge = document.getElementById('status-badge');
+    statusBadge.textContent = data.status || 'Unknown';
+    const statusColors = {
+        'Paid': 'bg-green-100 text-green-800',
+        'Pending': 'bg-yellow-100 text-yellow-800',
+        'Failed': 'bg-red-100 text-red-800'
+    };
+    statusBadge.className = `font-semibold px-2 py-1 rounded-full text-xs ${statusColors[data.status] || 'bg-gray-100 text-gray-800'}`;
+    
+    // Earnings (use actual data if available)
+    document.getElementById('basic-salary').textContent = formatCurrency(data.basic_salary || 0);
+    document.getElementById('housing').textContent = formatCurrency(data.housing || 0);
+    document.getElementById('transport').textContent = formatCurrency(data.transport || 0);
+    document.getElementById('medical').textContent = formatCurrency(data.medical || 0);
+    document.getElementById('total-earnings').textContent = formatCurrency(data.grossSalary);
+    
+    // Deductions
+    document.getElementById('tax').textContent = formatCurrency(data.paye || 0);
+    document.getElementById('pension').textContent = formatCurrency(data.pension || 0);
+    document.getElementById('payroll-deductions').textContent = formatCurrency((data.deductions || 0) - (data.paye || 0) - (data.pension || 0));
+    document.getElementById('total-deductions').textContent = formatCurrency(data.deductions || 0);
+}
+
+// ✅ FIXED PDF Download
 function downloadPDF() {
-            const staffId = document.getElementById('employee-id').textContent;
-            const month = document.getElementById('pay-period').textContent.split(' ')[0];
-            const year = document.getElementById('pay-period').textContent.split(' ')[1];
-            const pdfUrl = `../includes/payslip-template.php?staff_id=${encodeURIComponent(staffId)}&month=${encodeURIComponent(month)}&year=${encodeURIComponent(year)}`;
-            window.open(pdfUrl, '_blank');
-        }
-        function downloadPDF() {
-            // Enhanced PDF - save as HTML for printing
-            const content = document.getElementById('detail-content').innerHTML;
-            const blob = new Blob([content], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `payslip-${new Date().toISOString().slice(0,10)}.php`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            window.print(); // Also open print dialog
-        }
+    const staffId = document.getElementById('employee-id').textContent;
+    const month = document.getElementById('pay-period').textContent.split(' ')[0];
+    const year = document.getElementById('pay-period').textContent.split(' ')[1];
+    
+    // ✅ CORRECT PDF URL PATH
+    const pdfUrl = `../HR/payslip-template.php?id=${encodeURIComponent(staffId)}`;
+    window.open(pdfUrl, '_blank');
+}
