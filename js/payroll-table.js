@@ -103,7 +103,9 @@ function getMonthName(monthNum) {
 }
 
 function renderExcelTable() {
+  console.log('📊 [renderExcelTable] Data check - currentExcelData:', currentExcelData?.length || 0, 'filteredExcelData:', filteredExcelData?.length || 0);
   const data = filteredExcelData.length > 0 ? filteredExcelData : currentExcelData;
+  console.log('📊 Using data length:', data.length);
   const start = (currentPage - 1) * pageSize;
   const end = start + pageSize;
   const paginated = data.slice(start, end);
@@ -129,12 +131,14 @@ function renderExcelTable() {
         <td class="p-3 border-r">${item.name || ''}</td>
         <td class="p-3 border-r">${item.department || ''}</td>
         <td class="p-3 text-right font-semibold border-r">${formatCurrency(item.gross_salary)}</td>
-        <td class="p-3 text-right font-bold text-green-600 border-r">${formatCurrency(item.net_salary)}</td>
+        <td class="p-3 text-right font-bold text-green-600 border-r">${formatCurrency(item.net_salary || 0)}</td>
       </tr>
     `).join('');
   }
   
   renderPagination(data.length);
+  
+  console.log('✅ [payroll-table] Rendered Excel table with', data.length, 'rows');
 }
 
 // ✅ Keep your existing loadPayslipRecords, renderPayslipTable, etc. (unchanged)
@@ -258,7 +262,7 @@ function toggleFilters() {
   filterSection.classList.toggle('hidden');
 }
 
-// ✅ Auto-sync Month/Year changes with Excel tab
+// ✅ Auto-sync Month/Year changes with Excel tab + Excel Data Listener
 document.addEventListener('DOMContentLoaded', function() {
   const monthSelect = document.getElementById('statusMonthSelect');
   const yearSelect = document.getElementById('statusYearSelect');
@@ -274,7 +278,23 @@ document.addEventListener('DOMContentLoaded', function() {
       if (currentView === 'excel') loadExcelDataForCurrentMonth();
     });
   }
+  
+  // ✅ NEW: Listen for data loaded from upload.js
+window.addEventListener('excelDataLoaded', function() {
+    console.log('🔄 [payroll-table] Excel data event received');
+    
+    // ✅ Sync window globals to local vars
+    currentExcelData = window.currentExcelData || [];
+    filteredExcelData = window.filteredExcelData || [];
+    console.log('🔄 Synced local data:', currentExcelData.length, 'rows');
+    
+    renderExcelTable();
+  });
 });
+
+// ✅ Make render function globally accessible
+window.renderExcelTableGlobal = renderExcelTable;
+
 
 // ✅ EXPORTS (unchanged)
 window.formatCurrency = formatCurrency;
@@ -291,3 +311,8 @@ window.payrollTable = {
   renderPayslipTable,
   toggleFilters
 };
+
+// ✅ Global access for upload.js
+window.renderExcelTable = renderExcelTable;
+window.currentExcelData = [];
+window.filteredExcelData = [];

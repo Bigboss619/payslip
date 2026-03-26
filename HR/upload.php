@@ -242,7 +242,7 @@ include_once("../includes/nav.php");
 
   <!-- ✅ TWO TABLES -->
   <!-- Excel Preview Table -->
-  <div id="excelTableContainer" class="table-container active">
+  <div id="excelTableContainer" class="table-container active block">
     <div class="overflow-x-auto">
       <table class="w-full text-sm border-collapse">
         <thead class="bg-gray-100 sticky top-0 z-10">
@@ -285,6 +285,14 @@ include_once("../includes/nav.php");
 
   <div id="payrollPagination" class="mt-6"></div>
 </div>
+<style>
+.table-container {
+  display: none;
+}
+.table-container.active {
+  display: block !important;
+}
+</style>
 <script src="../js/payroll-table.js"></script>
 <script src="../js/upload.js"></script>
 <script>

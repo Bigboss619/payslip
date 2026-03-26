@@ -48,10 +48,16 @@ async function loadPayrollData(monthNum = null, year = null) {
       window.currentExcelData = result.excel_data;
       window.filteredExcelData = [...window.currentExcelData];
       
-      // ✅ CRITICAL: Force table re-render
+      // ✅ CRITICAL: Force table re-render (multiple fallbacks)
       if (window.payrollTable?.renderExcelTable) {
         window.payrollTable.renderExcelTable();
+      } else if (window.renderExcelTable) {
+        window.renderExcelTable();
       }
+      
+      // ✅ Dispatch event for payroll-table.js listener
+      console.log('🚀 [upload.js] Dispatching excelDataLoaded event');
+      window.dispatchEvent(new CustomEvent('excelDataLoaded'));
       
       // ✅ Update summary cards
       updateExcelSummary(result);
@@ -80,6 +86,9 @@ async function loadPayrollData(monthNum = null, year = null) {
       console.log('❌ No Excel data:', result);
       window.currentExcelData = [];
       window.filteredExcelData = [];
+      
+      // ✅ Trigger re-render even on empty data
+      window.dispatchEvent(new CustomEvent('excelDataLoaded'));
       
       if (tbody) {
         tbody.innerHTML = `<tr><td colspan="6" class="p-12 text-center text-gray-500">
@@ -307,3 +316,7 @@ window.uploadManager = {
   cancelPreview,
   checkPayrollStatus
 };
+
+// ✅ Ensure globals exist for payroll-table.js
+window.currentExcelData = window.currentExcelData || [];
+window.filteredExcelData = window.filteredExcelData || [];
