@@ -112,77 +112,8 @@ include_once("../includes/nav.php");
         </div>
       </div>
 
-      <!-- FILTERS - Move this ABOVE the payroll table -->
-      <div id="filterSection" class="bg-white rounded-xl shadow p-6 mb-6 hidden">
-        <h3 class="text-lg font-semibold mb-4">Filters</h3>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <input id="nameFilter" placeholder="Filter by Name..." class="border p-3 rounded-lg">
-          <input id="staffIdFilter" placeholder="Staff ID..." class="border p-3 rounded-lg">
-          <select id="monthFilter" class="border p-3 rounded-lg">
-            <option value="">All Months</option>
-          </select>
-          <select id="deptFilter" class="border p-3 rounded-lg">
-            <option value="">All Departments</option>
-          </select>
-        </div>
-        <div class="flex gap-2 mt-4">
-          <button id="applyFilters" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Apply Filters</button>
-          <button id="clearFilters" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">Clear</button>
-        </div>
-      </div>
-
-<!-- PAYROLL TABLE -->
-<!-- <div class="bg-white rounded-xl shadow p-6"> -->
-  <!-- <div class="flex justify-between items-center mb-4">
-    <h2 class="text-lg font-semibold">Uploaded Payroll 
-      <span id="filterCount" class="ml-2 bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm hidden"></span>
-    </h2>
-    <button onclick="toggleFilters()" id="filterToggleBtn" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 text-sm flex items-center gap-1">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
-      Filters
-    </button>
-  </div> -->
-      <!-- Rest of your table remains the same -->
-        <!-- <div class="overflow-x-auto">
-          <table class="w-full text-sm border-collapse">
-            <thead class="bg-gray-100 sticky top-0 z-10">
-              <tr>
-                <th class="p-3 text-left font-semibold border border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">Row</th>
-                <th class="p-3 text-left font-semibold border border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">Staff ID</th>
-                <th class="p-3 text-left font-semibold border border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">Name</th>
-                <th class="p-3 text-left font-semibold border border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">Department</th>
-                <th class="p-3 text-right font-semibold border border-gray-200 bg-gradient-to-r from-blue-50 to-blue-100">Gross Salary</th>
-                <th class="p-3 text-right font-semibold border border-gray-200 bg-gradient-to-r from-green-50 to-green-100">Pro-Rata</th>
-                <th class="p-3 text-center font-semibold border border-gray-200 bg-gradient-to-r from-yellow-50 to-yellow-100">Days</th>
-                <th class="p-3 text-right font-semibold border border-gray-200 bg-gradient-to-r from-indigo-50 to-indigo-100">Basic</th>
-                <th class="p-3 text-right font-semibold border border-gray-200 bg-gradient-to-r from-purple-50 to-purple-100">Housing</th>
-                <th class="p-3 text-right font-semibold border border-gray-200 bg-gradient-to-r from-orange-50 to-orange-100">Transport</th>
-                <th class="p-3 text-right font-semibold border border-gray-200 bg-gradient-to-r from-emerald-50 to-emerald-100">Medical</th>
-                <th class="p-3 text-right font-semibold border border-gray-200 bg-gradient-to-r from-cyan-50 to-cyan-100">Utility</th>
-                <th class="p-3 text-right font-semibold border border-gray-200 bg-gradient-to-r from-red-50 to-red-100">PAYE</th>
-                <th class="p-3 text-right font-semibold border border-gray-200 bg-gradient-to-r from-amber-50 to-amber-100">Deductions</th>
-                <th class="p-3 text-right font-semibold border border-gray-200 bg-gradient-to-r from-pink-50 to-pink-100">Pension</th>
-                <th class="p-3 text-right font-bold text-green-600 font-semibold border border-gray-200 bg-gradient-to-r from-green-50 to-emerald-100">Net Salary</th>
-              </tr>
-            </thead>
-            <tbody id="payrollTableBody">
-              <tr><td colspan="16" class="p-12 text-center text-gray-500">Loading Excel payroll data...</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div id="payrollPagination"></div>
-        </div> -->
-
-      <!-- ACTIONS -->
-      <!-- <div class="flex gap-4 mt-6">
-        <button id="viewPayslipsBtn" class="bg-blue-600 text-white px-6 py-2 rounded-lg">View Payslips</button>
-        <button class="bg-gray-200 px-6 py-2 rounded-lg">Upload Another</button>
-      </div>
-    </main> -->
-  <!-- </div> -->
-
   <!-- ✅ PAYSIP FILTER -->
-<div class="bg-white p-6 rounded-xl shadow mb-6">
+<div id="filterSection" class="bg-white p-6 rounded-xl shadow mb-6 hidden">
   <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
