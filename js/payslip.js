@@ -64,7 +64,8 @@ async function loadData(page = 1) {
       name: name || ''
     });
     
-    const response = await fetch(`../includes/get-payroll.php?${params}`);
+    // const endpoint = window.payslipEndpoint || 'get-payroll.php';
+    const response = await fetch(`${window.PAYSLOP_API}?${params}`);
     const result = await response.json();
 
     if (result.success) {

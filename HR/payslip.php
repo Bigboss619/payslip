@@ -99,6 +99,17 @@
         </main>
 
     </div>
+    <!-- <script>
+      window.payslipEndpoint = <?= json_encode($_SESSION['role'] === 'HR' ? 'get-payroll.php' : 'user-get-payroll.php') ?>;
+    </script> -->
+    <script>
+// 🛠️ Smart API endpoint selector
+window.PAYSLOP_API = <?php 
+    echo $_SESSION['role'] === 'HR' 
+        ? json_encode('../includes/get-payroll.php') 
+        : json_encode('../includes/user-get-payroll.php'); 
+?>;
+</script>
     <script src="../js/payslip.js"></script>
 </body>
 </html>
