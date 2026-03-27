@@ -72,18 +72,27 @@ include_once("../includes/nav.php");
         <h2 class="text-lg font-semibold mb-4">Uploaded Payroll Status</h2>
 <div class="flex flex-col md:flex-row gap-4 items-center mb-4">
 <select id="statusMonthSelect" class="border p-3 rounded-lg w-full md:w-48">
-              <?php 
-              $currentMonth = date('m'); 
+<?php
+              // Get LATEST payroll batch for auto-select  
+              $stmt = $conn->query("SELECT month, year FROM payroll_batches ORDER BY id DESC LIMIT 1");
+
+              $latest = $stmt->fetch(PDO::FETCH_ASSOC);
               $months = [
                 '01'=>'January', '02'=>'February', '03'=>'March', '04'=>'April',
                 '05'=>'May', '06'=>'June', '07'=>'July', '08'=>'August',
                 '09'=>'September', '10'=>'October', '11'=>'November', '12'=>'December'
-              ];
+              ]; 
+              $monthMap = array_flip($months);
+              $latestMonthNum = $latest ? $monthMap[$latest['month']] : date('m');
+
+              $latestYear = $latest ? $latest['year'] : date('Y');
+              $latestMonthName = isset($months[$latestMonthNum]) ? $months[$latestMonthNum] : date('F');
               foreach($months as $val => $name): ?>
-                <option value="<?php echo $val; ?>" <?php echo $val == $currentMonth ? 'selected' : ''; ?>><?php echo $name; ?></option>
+                <option value="<?php echo $val; ?>" <?php echo $val == $latestMonthNum ? 'selected' : ''; ?>><?php echo $name; ?></option>
               <?php endforeach; ?>
             </select>
-            <input type="number" id="statusYearSelect" class="border p-3 rounded-lg w-32" min="2020" max="2030" value="<?php echo date('Y'); ?>" placeholder="Year">
+            <input type="number" id="statusYearSelect" class="border p-3 rounded-lg w-32" min="2020" max="2030" value="<?php echo $latestYear; ?>" placeholder="Year">
+
             <button onclick="checkPayrollStatus()" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700">Check Status</button>
             <button onclick="loadExcelPreview()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 ml-2">
                 📊  Load Excel Preview
@@ -92,6 +101,7 @@ include_once("../includes/nav.php");
         <div id="previousMonths" class="flex flex-wrap gap-2 mb-4"></div>
         <div id="statusMsg" class="p-3 rounded-lg hidden"></div>
       </div>
+
 
       <!-- SUMMARY -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -187,8 +197,12 @@ include_once("../includes/nav.php");
 <div class="bg-white rounded-xl shadow p-6">
   <div class="flex justify-between items-center mb-6">
     <h2 class="text-lg font-semibold">Payroll Data 
+      <span id="latestBadge" class="ml-2 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+        Latest: <?php echo $latestMonthName; ?> <?php echo $latestYear; ?>
+      </span>
       <span id="filterCount" class="ml-2 bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm hidden"></span>
     </h2>
+
     
     <!-- ✅ TOGGLE BUTTONS -->
     <div class="flex gap-2 bg-gray-100 p-2 rounded-lg">
@@ -267,10 +281,12 @@ document.addEventListener('DOMContentLoaded', function() {
   // ✅ Connect JS to form
   document.getElementById('uploadForm').addEventListener('submit', window.uploadManager.handleFileUpload);
   
-  // Load initial data
+  // Load initial data with LATEST payroll
   window.uploadManager.loadTotalEmployees();
   window.payrollTable.init();
+  window.uploadManager.loadPayrollData('<?php echo $latestMonthNum; ?>', '<?php echo $latestYear; ?>');
 });
+
 </script>
 </body>
 </html>
