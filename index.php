@@ -58,8 +58,16 @@
 
                 <div class="mb-4">
                     <label class="text-sm font-medium">Staff ID</label>
-                    <input name="staff_id" id="signupName" type="text" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none invalid:border-red-500 invalid:focus:ring-red-500">
-                    <p id="signupNameError" class="mt-1 text-sm text-red-600 hidden">Name must be at least 2 characters.</p>
+                    <input name="staff_id" id="signupStaffId" type="text" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none invalid:border-red-500 invalid:focus:ring-red-500">
+                    <p id="signupStaffIdError" class="mt-1 text-sm text-red-600 hidden">Staff ID must be at least 2 characters.</p>
+                </div>
+
+                <div class="mb-4">
+                    <label class="text-sm font-medium">Department</label>
+                    <select name="department" id="signupDepartment" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none invalid:border-red-500 invalid:focus:ring-red-500" required>
+                        <option value="">Select Department</option>
+                    </select>
+                    <p id="signupDepartmentError" class="mt-1 text-sm text-red-600 hidden">Please select a department.</p>
                 </div>
 
                 <div class="mb-4">

@@ -1,18 +1,20 @@
-# Payroll Auto-Load Latest Data - Implementation Steps
+# Payslip Signup Department & Role Enhancement - TODO
 
-**Status: ✅ COMPLETE**
+## Overall Goal
+Add department dropdown to signup (fetch names from DB, save ID to users.department_id). Role auto-set to 'user' (already done).
 
-## ✅ 1. Created TODO.md with steps
-## ✅ 2. Edited HR/upload.php - Added PHP latest batch query + pre-select dropdowns (Fixed syntax)
-## ✅ 3. Added UI "Latest: Month Year" badge  
-## ✅ 4. Added JS auto-load after DOMContentLoaded → `loadPayrollData(latestMonth, latestYear)`
-## ✅ 5. Verified: Dropdown shows latest payroll month/year + table auto-loads data
-## ✅ 6. New uploads will auto-select on refresh
+## Steps (to be checked off as completed)
 
-**Changes:**
-- HR/upload.php: Latest payroll batch query + pre-select + auto JS load
-- Visual "Latest: [Month] [Year]" badge
-- Auto table refresh with latest data on page load
+### 1. ✅ Create TODO.md (this file)
+### 2. ✅ Create new endpoint: `includes/get-departments.php` for AJAX fetch
+### 3. ✅ Update frontend: `index.php` - Add department dropdown HTML (fixed Staff ID id="signupStaffId", added dropdown)
+### 4. ✅ Update JS: `js/login-new.js` - Populate dropdown on form load + validation
+### 5. ✅ Update backend: `includes/resub.php` - Handle department_name → department_id + DB insert
+### 6. Test signup flow end-to-end
+### 7. Update TODO.md with test results
+### 8. attempt_completion
 
-**Test:** Visit HR/upload.php → see latest month auto-selected + Excel table loads automatically
+**Current Progress: Steps 1-5 ✅ complete. Step 6: Testing...**
 
+## Test Results
+TBD after manual test in browser/DB.

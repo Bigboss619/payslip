@@ -181,8 +181,38 @@ function toggleForm() {
   }
 }
 
+// Load departments for signup form
+async function loadDepartments() {
+  try {
+    const response = await fetch('includes/get-departments.php');
+    const departments = await response.json();
+    const select = document.getElementById('signupDepartment');
+    select.innerHTML = '<option value="">Select Department</option>';
+    departments.forEach(dept => {
+      const option = document.createElement('option');
+      option.value = dept;
+      option.textContent = dept;
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error('Failed to load departments:', error);
+    showToast('Failed to load departments', 'error');
+  }
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
   addRealTimeValidation();
+  loadDepartments();
+});
+
+// Real-time validation for signup fields (optional client-side)
+['signupName', 'signupStaffId', 'signupEmail', 'signupDepartment', 'signupPassword'].forEach(id => {
+  const input = document.getElementById(id);
+  if (input) {
+    input.addEventListener('input', () => {
+      clearError(id, `${id}Error`);
+    });
+  }
 });
 
