@@ -5,9 +5,8 @@ header('Access-Control-Allow-Origin: *'); // ✅ CORS
 header('Access-Control-Allow-Methods: GET');
 header('Access-Control-Allow-Headers: Content-Type');
 
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'HR') {
-    http_response_code(403);
-    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+if (!isset($_SESSION['role'])) {
+    echo json_encode(['success' => false, 'error' => 'Not logged in']);
     exit;
 }
 

@@ -5,12 +5,10 @@ use Dompdf\Options;
 require '../config/config.php';
 
 $id = $_GET['id'] ?? 0;
-if (!$id || !isset($_SESSION['role']) || $_SESSION['role'] !== 'HR') {
-    http_response_code(403);
-    header('Content-Type: text/plain');
-    die('Access denied');
+if (!isset($_SESSION['role'])) {
+    echo json_encode(['success' => false, 'error' => 'Not logged in']);
+    exit;
 }
-
 // Fetch payslip data
 // ✅ FIXED: Fetch department name via JOIN
 $stmt = $conn->prepare("

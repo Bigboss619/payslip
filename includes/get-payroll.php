@@ -5,8 +5,8 @@ header('Content-Type: application/json');
 // 🔍 FORCE DEBUG - Log ALL GET params
 error_log("🔍 ALL GET PARAMS: " . json_encode($_GET));
 
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'HR') {
-    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+if (!isset($_SESSION['role'])) {
+    echo json_encode(['success' => false, 'error' => 'Not logged in']);
     exit;
 }
 
@@ -46,6 +46,8 @@ $whereClause = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereCond
 error_log("🔍 Final WHERE: $whereClause");
 error_log("🔍 Params: " . json_encode($filterParams));
 
+$userFilter = ($_SESSION['role'] === 'HR') ? '' : "AND p.user_id = {$_SESSION['user_id']}";
+
 $dataQuery = "
     SELECT 
         p.id, p.deductions, p.gross_salary AS grossSalary, p.net_salary AS netSalary,
@@ -55,7 +57,7 @@ $dataQuery = "
     FROM payslip p
     INNER JOIN payroll_batches pb ON p.batch_id = pb.id
     LEFT JOIN users u ON p.user_id = u.id
-    $whereClause
+    $whereClause $userFilter
     ORDER BY pb.created_at DESC
     LIMIT $limit OFFSET $offset
 ";
