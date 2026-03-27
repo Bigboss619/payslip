@@ -26,42 +26,6 @@ function setupToggleButtons() {
   document.getElementById('payslipToggle')?.addEventListener('click', () => switchView('payslip'));
 }
 
-// function switchView(view) {
-//   currentView = view;
-//   currentPage = 1;
-  
-//   // Update buttons
-//   document.querySelectorAll('.toggle-btn').forEach(btn => {
-//     btn.classList.remove('active', 'bg-blue-600', 'text-white');
-//     btn.classList.add('bg-gray-200', 'text-gray-700');
-//   });
-//   const activeBtn = document.getElementById(view + 'Toggle');
-//   if (activeBtn) {
-//     activeBtn.classList.add('active', 'bg-blue-600', 'text-white');
-//     activeBtn.classList.remove('bg-gray-200', 'text-gray-700');
-//   }
-  
-//   // Update containers
-//   document.getElementById('excelTableContainer')?.classList.toggle('active', view === 'excel');
-//   document.getElementById('excelTableContainer')?.classList.toggle('hidden', view !== 'excel');
-//   document.getElementById('payslipTableContainer')?.classList.toggle('active', view === 'payslip');
-//   document.getElementById('payslipTableContainer')?.classList.toggle('hidden', view !== 'payslip');
-  
-//   // ✅ CRITICAL: AUTO-LOAD EXCEL WHEN SWITCHING TO EXCEL TAB
-//   if (view === 'excel') {
-//     loadExcelDataForCurrentMonth();
-//   } else {
-//     renderPayslipTable();
-//   }
-// }
-
-// function renderCurrentView() {
-//   if (currentView === 'excel') {
-//     renderExcelTable();
-//   } else {
-//     renderPayslipTable();
-//   }
-// }
 function switchView(view) {
   currentView = view;
   currentPage = 1;
@@ -104,7 +68,7 @@ async function loadExcelDataForCurrentMonth() {
   const month = monthSelect?.value || '01'; // Default January
   const year = parseInt(yearSelect?.value) || new Date().getFullYear();
   
-  console.log('📊 [Excel Tab] Auto-loading Excel for Month:', month, 'Year:', year);
+  // console.log('📊 [Excel Tab] Auto-loading Excel for Month:', month, 'Year:', year);
   
   const tbody = document.getElementById('excelTableBody');
   if (tbody) {
@@ -119,7 +83,7 @@ async function loadExcelDataForCurrentMonth() {
       throw new Error('uploadManager not loaded');
     }
   } catch (error) {
-    console.error('❌ Excel load failed:', error);
+    // console.error('❌ Excel load failed:', error);
     if (tbody) {
       tbody.innerHTML = `<tr><td colspan="6" class="p-12 text-center text-red-500">
         <div class="text-xl mb-2">❌ No Excel File</div>
@@ -139,7 +103,12 @@ function getMonthName(monthNum) {
 }
 
 function renderExcelTable() {
-  console.log('📊 [renderExcelTable] Data check - currentExcelData:', currentExcelData?.length || 0, 'filteredExcelData:', filteredExcelData?.length || 0);
+  console.log('🔍 DEBUG RENDER - currentExcelData:', currentExcelData.length);
+  console.log('🔍 DEBUG RENDER - filteredExcelData:', filteredExcelData.length);
+  console.log('🔍 DEBUG RENDER - window.currentExcelData:', window.currentExcelData?.length);
+  
+
+  // console.log('📊 [renderExcelTable] Data check - currentExcelData:', currentExcelData?.length || 0, 'filteredExcelData:', filteredExcelData?.length || 0);
   const data = filteredExcelData.length > 0 ? filteredExcelData : currentExcelData;
   console.log('📊 Using data length:', data.length);
   const start = (currentPage - 1) * pageSize;
@@ -174,58 +143,9 @@ function renderExcelTable() {
   
   renderPagination(data.length);
   
-  console.log('✅ [payroll-table] Rendered Excel table with', data.length, 'rows');
+  // console.log('✅ [payroll-table] Rendered Excel table with', data.length, 'rows');
 }
 
-// ✅ Keep your existing loadPayslipRecords, renderPayslipTable, etc. (unchanged)
-// async function loadPayslipRecords(month = null, year = null) {
-//   // Your existing code stays exactly the same...
-//   const tbody = document.getElementById('payslipTableBody');
-//   if (tbody) {
-//     tbody.innerHTML = '<tr><td colspan="6" class="p-12 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-2"></div><p>Loading payslip records...</p></td></tr>';
-//   }
-  
-//   try {
-//     const params = new URLSearchParams({
-//       month: month || '',
-//       year: year || '',
-//       limit: 1000,
-//       offset: 0
-//     });
-    
-//     const response = await fetch(`../includes/get-payroll.php?${params}`);
-//     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    
-//     const result = await response.json();
-    
-//     if (result.success && result.data) {
-//       currentPayslipData = result.data.map(item => ({
-//         staff_id: item.employeeId,
-//         name: item.employeeName,
-//         month: `${item.month} ${item.year}`,
-//         gross_salary: item.grossSalary,
-//         net_salary: item.netSalary,
-//         status: item.status || 'Pending'
-//       }));
-      
-//       filteredPayslipData = [...currentPayslipData];
-//       renderPayslipTable();
-//     } else {
-//       currentPayslipData = [];
-//       filteredPayslipData = [];
-//       if (tbody) {
-//         tbody.innerHTML = `<tr><td colspan="6" class="p-12 text-center text-yellow-500">
-//           <div class="text-xl mb-2">📋 No Payslip Records</div>
-//         </td></tr>`;
-//       }
-//     }
-//   } catch (err) {
-//     console.error('Payslip error:', err);
-//     if (tbody) {
-//       tbody.innerHTML = `<tr><td colspan="6" class="p-12 text-center text-red-500">❌ Error: ${err.message}</td></tr>`;
-//     }
-//   }
-// }
 
 // ✅ Update your existing loadPayslipRecords to use global filters
 async function loadPayslipRecords(month = filteredMonth, year = filteredYear) {
@@ -272,48 +192,12 @@ async function loadPayslipRecords(month = filteredMonth, year = filteredYear) {
       updateFilterCount();
     }
   } catch (err) {
-    console.error('Payslip error:', err);
+    // console.error('Payslip error:', err);
     if (tbody) {
       tbody.innerHTML = `<tr><td colspan="6" class="p-12 text-center text-red-500">❌ Error: ${err.message}</td></tr>`;
     }
   }
 }
-
-// function renderPayslipTable() {
-//   // Your existing code stays exactly the same...
-//   const data = filteredPayslipData.length > 0 ? filteredPayslipData : currentPayslipData;
-//   const start = (currentPage - 1) * pageSize;
-//   const end = start + pageSize;
-//   const paginated = data.slice(start, end);
-  
-//   const tbody = document.getElementById('payslipTableBody');
-//   if (!tbody) return;
-  
-//   if (paginated.length === 0) {
-//     tbody.innerHTML = `<tr><td colspan="6" class="p-12 text-center text-gray-500 bg-gray-50"><div class="text-3xl mb-4">💰 No Payslip Records</div></td></tr>`;
-//   } else {
-//     tbody.innerHTML = paginated.map((item, index) => `
-//       <tr class="hover:bg-green-50/50 border-b transition-colors">
-//         <td class="p-3 font-medium border-r">${item.staff_id}</td>
-//         <td class="p-3 border-r">${item.name}</td>
-//         <td class="p-3 text-right border-r">${item.month}</td>
-//         <td class="p-3 text-right font-semibold border-r">${formatCurrency(item.gross_salary)}</td>
-//         <td class="p-3 text-right font-bold text-green-600 border-r">${formatCurrency(item.net_salary)}</td>
-//         <td class="p-3 text-center border-r">
-//           <span class="px-2 py-1 rounded-full text-xs font-medium ${
-//             item.status === 'Paid' ? 'bg-green-100 text-green-800' : 
-//             item.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
-//             'bg-gray-100 text-gray-800'
-//           }">${item.status}</span>
-//         </td>
-//       </tr>
-//     `).join('');
-//   }
-  
-//   renderPagination(data.length);
-// }
-
-// Keep all your existing functions unchanged: renderPagination, changePage, toggleFilters
 
 // ✅ Update renderPayslipTable to show filter info
 function renderPayslipTable() {
@@ -400,29 +284,57 @@ document.addEventListener('DOMContentLoaded', function() {
   const monthSelect = document.getElementById('statusMonthSelect');
   const yearSelect = document.getElementById('statusYearSelect');
   
+  // ✅ Set default month to current
+  const now = new Date();
+  const currentMonth = (now.getMonth() + 1).toString().padStart(2, '0');
+  if (monthSelect && !monthSelect.value) {
+    monthSelect.value = currentMonth;
+    loadExcelDataForCurrentMonth(); // Initial load with current month
+  }
+  
   if (monthSelect) {
     monthSelect.addEventListener('change', function() {
-      if (currentView === 'excel') loadExcelDataForCurrentMonth();
+      console.log('📅 Month changed to:', this.value, 'Excel view:', currentView === 'excel');
+      if (currentView === 'excel') {
+        loadExcelDataForCurrentMonth();
+      }
     });
   }
   
   if (yearSelect) {
     yearSelect.addEventListener('change', function() {
-      if (currentView === 'excel') loadExcelDataForCurrentMonth();
+      console.log('📅 Year changed to:', this.value, 'Excel view:', currentView === 'excel');
+      if (currentView === 'excel') {
+        loadExcelDataForCurrentMonth();
+      }
     });
   }
   
-  // ✅ NEW: Listen for data loaded from upload.js
-window.addEventListener('excelDataLoaded', function() {
-    console.log('🔄 [payroll-table] Excel data event received');
+// ✅ Listen for data loaded from upload.js - FIXED to always render
+  window.addEventListener('excelDataLoaded', function(e) {
+    console.log('🎉 [payroll-table] excelDataLoaded received');
     
-    // ✅ Sync window globals to local vars
+    // Sync window globals to local vars
     currentExcelData = window.currentExcelData || [];
-    filteredExcelData = window.filteredExcelData || [];
-    console.log('🔄 Synced local data:', currentExcelData.length, 'rows');
+    filteredExcelData = window.filteredExcelData || [...currentExcelData];
     
+    console.log('🔄 Synced data:', currentExcelData.length, 'rows');
+    
+    // Force render regardless of tab (Excel tab will show it)
     renderExcelTable();
+    
+    // Update filter count display
+    const countEl = document.getElementById('filterCount');
+    if (countEl && currentView === 'excel') {
+      countEl.textContent = `${currentExcelData.length} Excel rows`;
+      countEl.classList.remove('hidden');
+    }
   });
+  
+  // Initial payroll table setup
+  if (window.payrollTable) {
+    window.payrollTable.init();
+  }
 });
 
 // ✅ Make render function globally accessible
@@ -431,135 +343,7 @@ window.renderExcelTableGlobal = renderExcelTable;
 
 // ✅ EXPORTS (unchanged)
 window.formatCurrency = formatCurrency;
-// window.refreshPayslips = function() {
-//   const month = document.getElementById('payslipMonth')?.value;
-//   const year = document.getElementById('payslipYear')?.value;
-//   window.payrollTable.loadPayslipRecords(month, year);
-// };
-// window.refreshPayslips = async function() {
-//   const monthEl = document.getElementById('payslipMonth');
-//   const yearEl = document.getElementById('payslipYear');
-  
-//   filteredMonth = monthEl ? monthEl.value : '';
-//   filteredYear = yearEl ? yearEl.value : '';
-  
-//   console.log('🔍 Filter values:', { month: filteredMonth, year: filteredYear });
-  
-//   // Validate selection
-//   if (!filteredMonth && !filteredYear) {
-//     console.log('⚠️ No filter selected - loading all');
-//     await loadPayslipRecords('', '');
-//     return;
-//   }
-  
-//   const tbody = document.getElementById('payslipTableBody');
-//   tbody.innerHTML = '<tr><td colspan="6" class="p-12 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-2"></div>Filtering...</td></tr>';
-  
-//   try {
-//     // ✅ FORCE params to be strings
-//     const params = new URLSearchParams();
-//     if (filteredMonth) params.append('month', filteredMonth);
-//     if (filteredYear) params.append('year', filteredYear);
-//     params.append('limit', '1000');
-//     params.append('offset', '0');
-    
-//     const url = `../includes/get-payroll.php?${params.toString()}`;
-//     console.log('🔗 Fetch URL:', url);
-    
-//     const response = await fetch(url);
-//     const result = await response.json();
-    
-//     console.log('📊 Response:', {
-//       success: result.success,
-//       dataCount: result.data?.length || 0,
-//       debug: result.debug,
-//       url: url
-//     });
-    
-//     if (result.success && result.data) {
-//       currentPayslipData = result.data.map(item => ({
-//         staff_id: item.employeeId,
-//         name: item.employeeName,
-//         month: `${item.month} ${item.year}`,
-//         gross_salary: item.grossSalary,
-//         net_salary: item.netSalary,
-//         status: item.status || 'Pending'
-//       }));
-      
-//       filteredPayslipData = [...currentPayslipData];
-      
-//       if (filteredPayslipData.length === 0) {
-//         tbody.innerHTML = `<tr><td colspan="6" class="p-12 text-center text-yellow-500">
-//           <div class="text-2xl mb-2">📭 No payslips found</div>
-//           <div class="text-sm text-gray-600 mb-4">for ${getMonthName(filteredMonth)} ${filteredYear}</div>
-//           <button onclick="clearPayslipFilters()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Clear Filters</button>
-//         </td></tr>`;
-//       } else {
-//         renderPayslipTable();
-//         updateFilterCount();
-//       }
-//     }
-//   } catch (error) {
-//     console.error('💥 Error:', error);
-//   }
-// };
-// window.refreshPayslips = async function() {
-//   // Get values
-//   const monthSelect = document.getElementById('payslipMonth');
-//   const yearInput = document.getElementById('payslipYear');
-  
-//   const month = monthSelect ? monthSelect.value.trim() : '';
-//   const year = yearInput ? yearInput.value.trim() : '';
-  
-//   console.log('🔍 Values:', { month, year });
-  
-//   // Validate
-//   if (!month && !year) {
-//     alert('Please select month and/or year');
-//     return;
-//   }
-  
-//   const tbody = document.getElementById('payslipTableBody');
-//   tbody.innerHTML = '<tr><td colspan="6" class="p-12 text-center">🔄 Filtering ' + month + ' ' + year + '...</td></tr>';
-  
-//   // ✅ BULLETPROOF URL BUILDING
-//   const params = new URLSearchParams();
-//   params.append('month', month);
-//   params.append('year', year);
-  
-//   const url = '../includes/filter-payslips.php?' + params.toString();
-//   console.log('🔗 FINAL URL:', url);
-  
-//   try {
-//     const response = await fetch(url);
-//     const text = await response.text();
-//     console.log('📄 RAW Response:', text.substring(0, 200)); // First 200 chars
-    
-//     const result = JSON.parse(text);
-//     console.log('✅ Parsed JSON:', result);
-    
-//     if (result.success && result.data) {
-//       currentPayslipData = result.data.map(item => ({
-//         staff_id: item.employeeId || 'N/A',
-//         name: item.employeeName || 'Unknown',
-//         month: `${item.month} ${item.year}`,
-//         gross_salary: item.grossSalary,
-//         net_salary: item.netSalary,
-//         status: item.status || 'Pending'
-//       }));
-      
-//       renderPayslipTable();
-      
-//       document.getElementById('filterStatus').textContent = 
-//         `${result.count} payslip${result.count !== 1 ? 's' : ''} found`;
-//     } else {
-//       console.error('❌ API Error:', result);
-//     }
-//   } catch (error) {
-//     console.error('💥 Error:', error);
-//     tbody.innerHTML = '<tr><td colspan="6" class="p-12 text-center text-red-500">Error: ' + error.message + '</td></tr>';
-//   }
-// };
+
 window.refreshPayslips = async function() {
   const monthSelect = document.getElementById('payslipMonth');
   const yearInput = document.getElementById('payslipYear');
@@ -567,7 +351,7 @@ window.refreshPayslips = async function() {
   const month = monthSelect?.value?.trim() || '';
   const year = yearInput?.value?.trim() || '';
   
-  console.log('🔍 [refreshPayslips] Values:', { month, year });
+  // console.log('🔍 [refreshPayslips] Values:', { month, year });
   
   if (!month || !year) {
     alert('Please select both month and year');
@@ -587,7 +371,7 @@ window.refreshPayslips = async function() {
     });
     
     const url = `../includes/filter-payslips.php?${params.toString()}`;
-    console.log('🔗 [refreshPayslips] Fetching:', url);
+    // console.log('🔗 [refreshPayslips] Fetching:', url);
     
     const response = await fetch(url, {
       method: 'GET',
@@ -599,7 +383,7 @@ window.refreshPayslips = async function() {
     });
     
     // ✅ DEBUG: Check response details
-    console.log('📊 [Response] Status:', response.status, 'Type:', response.headers.get('content-type'));
+    // console.log('📊 [Response] Status:', response.status, 'Type:', response.headers.get('content-type'));
     
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -609,12 +393,12 @@ window.refreshPayslips = async function() {
     const contentType = response.headers.get('content-type');
     if (!contentType?.includes('application/json')) {
       const htmlText = await response.text();
-      console.error('❌ [HTML Response] Not JSON:', htmlText.substring(0, 300));
+      // console.error('❌ [HTML Response] Not JSON:', htmlText.substring(0, 300));
       throw new Error('Server returned HTML instead of JSON - check login/session');
     }
     
     const result = await response.json();
-    console.log('✅ [refreshPayslips] Result:', result);
+    // console.log('✅ [refreshPayslips] Result:', result);
     
     if (result.success && result.data) {
       // ✅ Map data with correct field names (match your PHP)
@@ -637,7 +421,7 @@ window.refreshPayslips = async function() {
       }
       
     } else {
-      console.error('❌ API Error:', result?.error || 'Unknown error');
+      // console.error('❌ API Error:', result?.error || 'Unknown error');
       if (tbody) {
         tbody.innerHTML = `<tr><td colspan="6" class="p-12 text-center text-yellow-500">
           <div class="text-xl mb-2">📭 ${result?.error || 'No payslips found'}</div>
@@ -647,7 +431,7 @@ window.refreshPayslips = async function() {
     }
     
   } catch (error) {
-    console.error('💥 [refreshPayslips] Error:', error);
+    // console.error('💥 [refreshPayslips] Error:', error);
     
     if (tbody) {
       tbody.innerHTML = `<tr><td colspan="6" class="p-12 text-center text-red-500">
@@ -689,56 +473,7 @@ window.payrollTable = {
   renderPayslipTable,
   toggleFilters
 };
-// window.refreshPayslips = async function() {
-//   filteredMonth = document.getElementById('payslipMonth')?.value || '';
-//   filteredYear = document.getElementById('payslipYear')?.value || '';
-  
-//   console.log('🔍 DEBUG - Filter values:', { month: filteredMonth, year: filteredYear });
-// }
-// window.refreshPayslips = async function() {
-//   const month = document.getElementById('payslipMonth').value;
-//   const year = document.getElementById('payslipYear').value;
-  
-//   console.log('Filtering payslips:', month, year);
-  
-//   const tbody = document.getElementById('payslipTableBody');
-//   tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center">🔄 Filtering...</td></tr>';
-  
-//   try {
-//     const response = await fetch(`../includes/filter-payslips.php?month=${month}&year=${year}`);
-//     credentials: 'include'
-//     const result = await response.json();
-    
-//     console.log('Filter result:', result);
-    
-//     if (result.success) {
-//       currentPayslipData = result.data.map(item => ({
-//         staff_id: item.employeeId,
-//         name: item.employeeName,
-//         month: `${item.month} ${item.year}`,
-//         gross_salary: item.gross_salary,
-//         net_salary: item.netSalary,
-//         status: item.status || 'Pending'
-//       }));
-      
-//       renderPayslipTable();
-//       // ✅ Show count
-//       const filterStatus = document.getElementById('filterStatus');
-//       if (filterStatus) {
-//         filterStatus.textContent = `${result.count || 0} payslip${result.count !== 1 ? 's' : ''} found`;
-//         filterStatus.classList.remove('hidden');
-//       }
-//       if (result.data.length === 0) {
-//         tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-yellow-600">No payslips for this month</td></tr>';
-//       }
-//     } else {
-//       console.error('Filter error:', result.error);
-//     }
-//   } catch (error) {
-//     console.error('Fetch error:', error);
-//     tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-red-600">Error loading data</td></tr>';
-//   }
-// };
+
   // ... rest of your code
 window.refreshPayslips = async function() {
   const monthSelect = document.getElementById('payslipMonth');
@@ -747,7 +482,7 @@ window.refreshPayslips = async function() {
   const month = monthSelect?.value?.trim() || '';
   const year = yearInput?.value?.trim() || '';
   
-  console.log('🔍 Filtering:', month, year);
+  // console.log('🔍 Filtering:', month, year);
   
   if (!month || !year) {
     alert('Please select month and year');
@@ -763,7 +498,7 @@ window.refreshPayslips = async function() {
     });
     
     const result = await response.json();
-    console.log('✅ FULL RESULT:', result); // ← Check this in console!
+    // console.log('✅ FULL RESULT:', result); // ← Check this in console!
     
     if (result.success && result.data) {
       // ✅ FIXED: Match PHP field names EXACTLY
@@ -779,7 +514,7 @@ window.refreshPayslips = async function() {
       
       filteredPayslipData = [...currentPayslipData];
       
-      console.log('✅ Mapped data:', currentPayslipData[0]); // ← Check first row
+      // console.log('✅ Mapped data:', currentPayslipData[0]); // ← Check first row
       
       renderPayslipTable();
       
@@ -791,14 +526,14 @@ window.refreshPayslips = async function() {
       }
       
     } else {
-      console.error('❌ No data:', result);
+      // console.error('❌ No data:', result);
       tbody.innerHTML = `<tr><td colspan="6" class="p-12 text-center text-yellow-500">
         📭 No payslips for ${month}/${year}<br>
         <small>${result.error || 'Unknown error'}</small>
       </td></tr>`;
     }
   } catch (error) {
-    console.error('💥 Error:', error);
+    // console.error('💥 Error:', error);
     tbody.innerHTML = `<tr><td colspan="6" class="p-12 text-center text-red-500">
       ❌ ${error.message}
     </td></tr>`;

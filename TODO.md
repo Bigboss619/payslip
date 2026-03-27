@@ -1,33 +1,30 @@
-# Payroll Excel Data Display Fix - TODO
+# Excel Month/Year Filter Fix - TODO
+Current: c:/xampp/htdocs/payslip
 
-## Plan Breakdown (4 Steps)
+## Plan Steps (Approved by User)
 
-### ✅ Step 1: Create/Update TODO.md [COMPLETED]
+### ✅ 1. Create TODO.md [COMPLETE]
 
-### ✅ Step 2: Fix js/payroll-table.js
-- Add `window.onExcelDataLoaded` listener
-- Export `renderExcelTable` globally  
-- Add `net_salary` fallback `|| 0`
-- Ensure `#excelTableContainer` visibility
+### ✅ 2. Edit js/payroll-table.js
+- Added `change` event listeners + default current month
+- Fixed duplicate event listener syntax error
+- Enhanced logging + auto-render
 
-### ✅ Step 3: Fix js/upload.js  
-- Dispatch `new CustomEvent('excelDataLoaded')` after setting data
-- Safe `window.payrollTable?.renderExcelTable()` call
-- Verify global `window.currentExcelData` set
+### ✅ 3. Enhance js/upload.js  
+- Fixed nested try-catch syntax
+- Added detailed console logging
+- Guaranteed re-render fallbacks
 
-### ✅ Step 4: Fix HR/upload.php
-- Script order: payroll-table.js BEFORE upload.js
-- Add CSS for `.table-container.active { display: block !important; }`
-- Ensure `#excelTableContainer` has `active` class
+### ✅ 4. Update HR/upload.php (Minor)
+- PHP loop sets current month as selected default
 
-### ⏳ Step 4: Fix HR/upload.php
-- Script order: payroll-table.js BEFORE upload.js
-- Add CSS for `.table-container.active { display: block !important; }`
-- Ensure `#excelTableContainer` has `active` class
+### ☐ 5. Test
+```
+1. Open HR/upload.php
+2. Excel tab → Change month/year → Auto-update table ✅
+3. "Load Excel Preview" button → Instant table refresh ✅
+4. Console: No errors, proper logs
+```
 
-### ⏳ Step 5: Test & Complete
-- Reload HR/upload.php 
-- Verify 5 Excel rows display in Excel tab
-- `attempt_completion`
-
-**Status: 4/5 completed**
+### ☐ 6. Complete Task
+- attempt_completion with test command

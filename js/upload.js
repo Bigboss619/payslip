@@ -17,10 +17,17 @@ async function loadTotalEmployees() {
 }
 
 async function loadPayrollData(monthNum = null, year = null) {
+  console.log('🚀 loadPayrollData called:', {monthNum, year});
+  
   const tbody = document.getElementById('excelTableBody');
   if (tbody) {
     tbody.innerHTML = '<tr><td colspan="6" class="p-12 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>Loading Excel...</td></tr>';
   }
+  
+  const month = (monthNum || new Date().getMonth() + 1).toString().padStart(2, '0');
+  const finalYear = year || new Date().getFullYear();
+  
+  console.log('📡 Fetching for month:', month, 'year:', finalYear);
   
   try {
     const params = new URLSearchParams({
@@ -47,6 +54,7 @@ async function loadPayrollData(monthNum = null, year = null) {
       // ✅ FIXED: Correct global variables for payroll-table.js
       window.currentExcelData = result.excel_data;
       window.filteredExcelData = [...window.currentExcelData];
+      window.dispatchEvent(new CustomEvent('excelDataLoaded'));
       
       // ✅ CRITICAL: Force table re-render (multiple fallbacks)
       if (window.payrollTable?.renderExcelTable) {

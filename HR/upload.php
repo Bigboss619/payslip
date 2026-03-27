@@ -71,20 +71,17 @@ include_once("../includes/nav.php");
       <div id="monthSection" class="bg-white p-6 rounded-xl shadow mb-6">
         <h2 class="text-lg font-semibold mb-4">Uploaded Payroll Status</h2>
 <div class="flex flex-col md:flex-row gap-4 items-center mb-4">
-            <select id="statusMonthSelect" class="border p-3 rounded-lg w-full md:w-48">
-              <option value="">Select Month...</option>
-              <option value="01">January</option>
-              <option value="02">February</option>
-              <option value="03">March</option>
-              <option value="04">April</option>
-              <option value="05">May</option>
-              <option value="06">June</option>
-              <option value="07">July</option>
-              <option value="08">August</option>
-              <option value="09">September</option>
-              <option value="10">October</option>
-              <option value="11">November</option>
-              <option value="12">December</option>
+<select id="statusMonthSelect" class="border p-3 rounded-lg w-full md:w-48">
+              <?php 
+              $currentMonth = date('m'); 
+              $months = [
+                '01'=>'January', '02'=>'February', '03'=>'March', '04'=>'April',
+                '05'=>'May', '06'=>'June', '07'=>'July', '08'=>'August',
+                '09'=>'September', '10'=>'October', '11'=>'November', '12'=>'December'
+              ];
+              foreach($months as $val => $name): ?>
+                <option value="<?php echo $val; ?>" <?php echo $val == $currentMonth ? 'selected' : ''; ?>><?php echo $name; ?></option>
+              <?php endforeach; ?>
             </select>
             <input type="number" id="statusYearSelect" class="border p-3 rounded-lg w-32" min="2020" max="2030" value="<?php echo date('Y'); ?>" placeholder="Year">
             <button onclick="checkPayrollStatus()" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700">Check Status</button>
@@ -211,7 +208,7 @@ include_once("../includes/nav.php");
   </div>
 
   <!-- ✅ TWO TABLES -->
-  <!-- Excel Preview Table -->
+  <!-- Excel Record Table -->
   <div id="excelTableContainer" class="table-container active block">
     <div class="overflow-x-auto">
       <table class="w-full text-sm border-collapse">
