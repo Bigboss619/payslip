@@ -112,6 +112,24 @@ include_once("../includes/nav.php");
         </div>
       </div>
 
+      <!-- FILTERS - Move this ABOVE the payroll table -->
+      <div id="filterSection" class="bg-white rounded-xl shadow p-6 mb-6 hidden">
+        <h3 class="text-lg font-semibold mb-4">Filters</h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <input id="nameFilter" placeholder="Filter by Name..." class="border p-3 rounded-lg">
+          <input id="staffIdFilter" placeholder="Staff ID..." class="border p-3 rounded-lg">
+          <select id="monthFilter" class="border p-3 rounded-lg">
+            <option value="">All Months</option>
+          </select>
+          <select id="deptFilter" class="border p-3 rounded-lg">
+            <option value="">All Departments</option>
+          </select>
+        </div>
+        <div class="flex gap-2 mt-4">
+          <button id="applyFilters" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Apply Filters</button>
+          <button id="clearFilters" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">Clear</button>
+        </div>
+      </div>
 
 <!-- PAYROLL TABLE -->
 <!-- <div class="bg-white rounded-xl shadow p-6"> -->
@@ -164,7 +182,7 @@ include_once("../includes/nav.php");
   <!-- </div> -->
 
   <!-- ✅ PAYSIP FILTER -->
-<div id="filterSection" class="bg-white p-6 rounded-xl shadow mb-6 hidden">
+<div class="bg-white p-6 rounded-xl shadow mb-6">
   <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
@@ -174,9 +192,8 @@ include_once("../includes/nav.php");
   <div class="flex flex-wrap gap-4 items-end">
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-1">Month</label>
-      <select id="filterMonth" class="border p-3 rounded-lg w-32">
-         <option value="<?php echo sprintf('%02d', date('m')); ?>">Current (<?php echo date('F'); ?>)</option>
-        <option value="">Latest</option>
+      <select id="payslipMonth" class="border p-3 rounded-lg w-32">
+        <option value="">All Months</option>
         <option value="01">Jan</option><option value="02">Feb</option><option value="03">Mar</option>
         <option value="04">Apr</option><option value="05">May</option><option value="06">Jun</option>
         <option value="07">Jul</option><option value="08">Aug</option><option value="09">Sep</option>
@@ -185,16 +202,16 @@ include_once("../includes/nav.php");
     </div>
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-1">Year</label>
-      <input type="number" id="filterYear" value="<?php echo date('Y'); ?>" 
+      <input type="number" id="payslipYear" value="<?php echo date('Y'); ?>" 
              class="border p-3 rounded-lg w-28" min="2020" max="2030">
     </div>
-    <button onclick="loadFilteredPayroll()" 
+    <button onclick="refreshPayslips()" 
             class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 font-medium flex items-center gap-2">
       🔄 Load Payslips
     </button>
-    <button onclick="loadLatestPayroll()" 
+    <button onclick="window.payrollTable.renderPayslipTable()" 
             class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium">
-      📊 Latest Upload
+      📊 Refresh Table
     </button>
   </div>
 </div>
