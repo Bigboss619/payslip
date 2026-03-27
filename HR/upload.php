@@ -1,9 +1,8 @@
 <?php
-session_start();
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'HR') {
-  header('Location: dashboard.php?error=hr_only');
-  exit;
-}
+// if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'HR') {
+//   header('Location: dashboard.php?error=hr_only');
+//   exit;
+// }
 
 include_once("../includes/header.php");
 include_once("../includes/nav.php");
