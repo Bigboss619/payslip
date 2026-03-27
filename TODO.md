@@ -18,13 +18,14 @@ Current: c:/xampp/htdocs/payslip
 ### ✅ 4. Update HR/upload.php (Minor)
 - PHP loop sets current month as selected default
 
-### ☐ 5. Test
+### ✅ 5. Test & Pagination Fix
 ```
-1. Open HR/upload.php
-2. Excel tab → Change month/year → Auto-update table ✅
-3. "Load Excel Preview" button → Instant table refresh ✅
-4. Console: No errors, proper logs
+1. Open HR/upload.php → Excel tab loads current month
+2. Change month/year → Auto-update ✅
+3. Pagination Previous/Next buttons → Navigate pages ✅
+4. Console: Clean logs, no errors
 ```
 
-### ☐ 6. Complete Task
-- attempt_completion with test command
+### ✅ 6. Complete Task
+- Fixed pagination: `changePage()` now renders correct table
+- All features working: Month/Year filter + Pagination ✅

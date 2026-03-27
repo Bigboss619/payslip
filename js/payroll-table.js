@@ -270,8 +270,16 @@ function changePage(dir) {
   
   if (dir === 'prev' && currentPage > 1) currentPage--;
   if (dir === 'next' && currentPage < totalPages) currentPage++;
-  renderCurrentView();
+  
+  // Render correct table based on current view
+  if (currentView === 'excel') {
+    renderExcelTable();
+  } else {
+    renderPayslipTable();
+  }
 }
+
+window.changePage = changePage; // Make global for HTML onclick
 
 function toggleFilters() {
   const filterSection = document.getElementById('filterSection');
