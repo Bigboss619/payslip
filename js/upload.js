@@ -185,7 +185,6 @@ function showPreview(data) {
   if (previewTable) {
     previewTable.innerHTML = data.map((row, index) => `
       <tr class="hover:bg-gray-50 border-b">
-        <td class="p-2 border font-mono text-sm">${index + 1}</td>
         <td class="p-2 border font-medium">${row.staff_id || ''}</td>
         <td class="p-2 border">${row.name || ''}</td>
         <td class="p-2 border">${row.department || ''}</td>
