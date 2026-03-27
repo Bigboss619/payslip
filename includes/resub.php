@@ -9,6 +9,7 @@ if (isset($_POST['register'])) {
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
     $department_name = trim($_POST['department'] ?? '');
+    $role = 'STAFF';
 
     $errors = [];
 
@@ -63,8 +64,8 @@ if (isset($_POST['register'])) {
 
             // Real insert with hashed password
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $conn->prepare("INSERT INTO users (name, staff_id, email, password, role, department_id) VALUES (?, ?, ?, ?, 'user', ?)");
-            $stmt->execute([$fullname, $staff_id, $email, $hashed_password, $department_id]);
+            $stmt = $conn->prepare("INSERT INTO users (name, staff_id, email, password, role, department_id) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$fullname, $staff_id, $email, $hashed_password, $role, $department_id]);
             
             echo json_encode([
                 'success' => true,

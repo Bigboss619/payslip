@@ -1,4 +1,9 @@
 <?php
+session_start();
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'HR') {
+  header('Location: dashboard.php?error=hr_only');
+  exit;
+}
 
 include_once("../includes/header.php");
 include_once("../includes/nav.php");
@@ -8,6 +13,9 @@ include_once("../includes/nav.php");
       <!-- TITLE -->
       <div class="mb-6">
         <h1 class="text-2xl font-bold">Upload Payroll</h1>
+        <?php if(isset($_GET['error'])): ?>
+        <p class="text-red-600 text-sm mt-2">HR access only. <a href="dashboard.php" class="underline">Back to Dashboard</a></p>
+        <?php endif; ?>
         <p class="text-gray-500 text-sm">Upload staff salary Excel file</p>
       </div>
 

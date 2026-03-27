@@ -41,8 +41,12 @@
 
   <!-- WELCOME -->
   <div class="mb-6">
-    <h1 class="text-2xl font-bold">Welcome, Emmanuel 👋</h1>
+    <h1 class="text-2xl font-bold">Welcome, <?php echo htmlspecialchars($_SESSION['name'] ?? 'User'); ?> 👋</h1>
+    <?php if($_SESSION['role'] === 'HR'): ?>
+    <p class="text-gray-500 text-sm">Manage payroll and employee salaries</p>
+    <?php else: ?>
     <p class="text-gray-500 text-sm">Here’s your salary overview</p>
+    <?php endif; ?>
   </div>
 
   <!-- STATS -->
@@ -81,15 +85,19 @@
 </div>
   <!-- QUICK ACTIONS -->
   <div class="bg-white p-6 rounded-xl shadow mb-6 flex flex-wrap gap-4">
-
-    <button class="bg-blue-600 text-white px-6 py-2 rounded-lg">
-      View Payslips
+    <?php if($_SESSION['role'] === 'HR'): ?>
+    <a href="upload.php" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+      📤 Upload Payroll
+    </a>
+    <?php endif; ?>
+    <a href="payslip.php" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+      👀 View Payslips
+    </a>
+    <?php if($_SESSION['role'] !== 'HR'): ?>
+    <button class="bg-green-600 text-white px-6 py-2 rounded-lg hidden" disabled data-stat="has-download">
+      ⬇️ Download Last Payslip
     </button>
-
-    <button class="bg-green-600 text-white px-6 py-2 rounded-lg hidden" disabled>
-      Download Last Payslip
-    </button>
-
+    <?php endif; ?>
   </div>
 
   <!-- RECENT PAYSLIPS -->

@@ -44,7 +44,7 @@ if (isset($_POST['login'])) {
             $_SESSION['role'] = $user['role'];
 
             // Role-based redirect
-            $redirect_url = ($user['role'] === 'HR') ? 'HR/dashboard.php' : 'pages/dashboard.html';
+$redirect_url = 'HR/dashboard.php'; // Unified shared dashboard for all roles
 
             echo json_encode([
                 'success' => true,

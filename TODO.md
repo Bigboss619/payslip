@@ -1,20 +1,16 @@
-# Payslip Signup Department & Role Enhancement - TODO
+# Shared Dashboard Implementation Plan
 
-## Overall Goal
-Add department dropdown to signup (fetch names from DB, save ID to users.department_id). Role auto-set to 'user' (already done).
+## Steps to Complete:
 
-## Steps (to be checked off as completed)
+### 1. [x] Create TODO.md 
+### 2. [x] Edit includes/header.php - Remove strict HR redirect
+### 3. [x] Edit includes/nav.php - Add conditional rendering for HR nav items (Upload + Department hidden for users)
+### 4. [x] Edit HR/upload.php - Add non-HR redirect protection
+### 5. [x] Edit HR/dashboard.php - Add role-based UI elements (welcome, quick actions)
+### 6. [x] Test HR access (full nav + upload)
+### 7. [x] Test User access (limited nav, no upload)
+### 8. [x] Update TODO.md with completion
+### 9. [x] Final cleanup: Unified login redirect to HR/dashboard.php
 
-### 1. ✅ Create TODO.md (this file)
-### 2. ✅ Create new endpoint: `includes/get-departments.php` for AJAX fetch
-### 3. ✅ Update frontend: `index.php` - Add department dropdown HTML (fixed Staff ID id="signupStaffId", added dropdown)
-### 4. ✅ Update JS: `js/login-new.js` - Populate dropdown on form load + validation
-### 5. ✅ Update backend: `includes/resub.php` - Handle department_name → department_id + DB insert
-### 6. Test signup flow end-to-end
-### 7. Update TODO.md with test results
-### 8. attempt_completion
+**Status**: Core protection + nav implemented. header.php syntax fixed.
 
-**Current Progress: Steps 1-5 ✅ complete. Step 6: Testing...**
-
-## Test Results
-TBD after manual test in browser/DB.
