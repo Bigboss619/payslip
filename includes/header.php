@@ -16,6 +16,10 @@ include_once("../config/config.php");
 <head>
   <meta charset="UTF-8">
   <title>Dashboard</title>
+  
+  <!-- Company Logo Favicon -->
+  <link rel="icon" type="image/png" href="../uploads/company-logo/nepal-logo.png">
+  
   <link rel="stylesheet" href="../src/output.css">
 </head>
 
