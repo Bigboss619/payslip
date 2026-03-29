@@ -15,6 +15,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // Profile picture upload UX
+  const avatarInput = document.getElementById('avatar');
+  const filePreview = document.getElementById('file-preview');
+  const uploadBtn = document.getElementById('upload-btn');
+  const profilePicForm = document.getElementById('profile-pic-form');
+
+  if (avatarInput) {
+    avatarInput.addEventListener('change', () => {
+      const file = avatarInput.files[0];
+      if (file) {
+        filePreview.textContent = file.name;
+        filePreview.classList.remove('hidden');
+        uploadBtn.classList.remove('hidden');
+      } else {
+        filePreview.classList.add('hidden');
+        uploadBtn.classList.add('hidden');
+      }
+    });
+  }
+
   // Forms AJAX
   const forms = document.querySelectorAll('form[action*="/hrprofile.php"]');
   forms.forEach(form => {

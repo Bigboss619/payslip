@@ -50,16 +50,52 @@ include_once("../includes/header.php"); ?>
             <!-- PROFILE CARD -->
             <div class="bg-white p-6 rounded-xl shadow text-center">
 
-              <div class="w-24 h-24 mx-auto bg-blue-500 text-white flex items-center justify-center rounded-full text-3xl font-bold mb-4">
-                <?php echo strtoupper(substr($_SESSION['name'], 0, 1)); ?>
-              </div>
+              <?php $photo = $_SESSION['photo'] ?? ''; ?>
+              <?php if ($photo && file_exists('../uploads/dp/' . $photo)): ?>
+                <div class="relative w-24 h-24 mx-auto shadow-lg ring-4 ring-gray-200/50 hover:ring-blue-200/80 transition-all duration-200 group">
+                  <img src="../uploads/dp/<?= htmlspecialchars($photo) ?>" alt="Profile Picture" class="w-24 h-24 mx-auto rounded-full object-cover">
+                  <!-- Hover camera icon overlay -->
+                  <div class="absolute inset-0 bg-black/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                      <circle cx="12" cy="13" r="3"></circle>
+                    </svg>
+                  </div>
+                </div>
+              <?php else: ?>
+                <div class="relative w-24 h-24 mx-auto bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center rounded-full text-3xl font-bold mb-4 shadow-lg ring-4 ring-gray-200/50 hover:ring-blue-200/80 transition-all duration-200 group">
+                  <?= strtoupper(substr($_SESSION['name'], 0, 1)) ?>
+                  <!-- Hover camera icon overlay -->
+                  <div class="absolute inset-0 bg-black/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                      <circle cx="12" cy="13" r="3"></circle>
+                    </svg>
+                  </div>
+                </div>
+              <?php endif; ?>
 
               <h2 class="text-lg font-semibold"><?php echo $_SESSION['name']; ?></h2>
               <p class="text-gray-500 text-sm">HR Department</p>
 
-              <button class="mt-4 bg-gray-200 px-4 py-2 rounded-lg text-sm">
+
+              <!-- <button class="mt-4 bg-gray-200 px-4 py-2 rounded-lg text-sm">
                 Change Avatar
-              </button>
+              </button> -->
+
+              <form id="profile-pic-form" method="post" action="../includes/hrprofile.php" enctype="multipart/form-data" class="mt-6 space-y-2">
+                <input type="hidden" name="update_profile_picture" value="1">
+                <label for="avatar" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-xl shadow-lg hover:shadow-xl hover:from-blue-600 hover:to-blue-700 transform hover:-translate-y-0.5 transition-all duration-200 gap-2 cursor-pointer block">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                    <circle cx="12" cy="13" r="3"></circle>
+                  </svg>
+                  Change Profile Picture
+                  <input type="file" name="photo" id="avatar" accept="image/*" class="hidden">
+                </label>
+                <p id="file-preview" class="text-sm text-gray-600 hidden ml-1 mt-1">No file selected</p>
+                <button type="submit" id="upload-btn" class="hidden px-6 py-2 bg-green-600 text-white font-medium rounded-xl shadow-lg hover:shadow-xl hover:bg-green-700 transition-all duration-200 ml-1">Save Photo</button>
+              </form>
 
             </div>
 

@@ -76,6 +76,8 @@ if (isset($_POST['update_profile'])) {
                 'message' => 'Current password incorrect.'
             ]);
         }
+
+        
     } else {
         echo json_encode([
             'success' => false,
@@ -83,6 +85,40 @@ if (isset($_POST['update_profile'])) {
         ]);
     }
     exit;
+}
+
+if(isset($_POST['update_profile_picture'])) {
+    // Update a Photo
+        $path = $_FILES['photo']['name'];
+        $path_tmp = $_FILES['photo']['tmp_name'];
+        if(!empty($path)){
+            $ext = pathinfo($path, PATHINFO_EXTENSION);
+            $allowed_ext = ['jpg', 'jpeg', 'png', 'gif'];
+            if (!in_array($ext, $allowed_ext)) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Invalid file type.'
+                ]);
+                exit;
+            }
+            $new_name = 'profile_' . $user_id . '.' . $ext;
+            $upload_dir = '../uploads/dp/';
+            if (move_uploaded_file($path_tmp, $upload_dir . $new_name)) {
+                $stmt = $conn->prepare("UPDATE users SET photo = ? WHERE id = ?");
+                $stmt->execute([$new_name, $user_id]);
+                
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Profile photo updated successfully!'
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Failed to upload photo.'
+                ]);
+            }
+
+        }
 }
 
 echo json_encode(['success' => false, 'message' => 'Invalid request.']);
