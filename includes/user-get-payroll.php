@@ -96,11 +96,24 @@ try {
     $countStmt->execute($params);
     $total = $countStmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
 
+    // 📅 UNIQUE MONTHS FOR FILTERS
+    $monthsSql = "
+        SELECT DISTINCT pb.year, pb.month
+        FROM payroll_batches pb
+        INNER JOIN payslip p ON p.batch_id = pb.id
+        WHERE p.user_id = ?
+        ORDER BY pb.year DESC, pb.month DESC
+    ";
+    $monthsStmt = $conn->prepare($monthsSql);
+    $monthsStmt->execute([$userId]);
+    $months = $monthsStmt->fetchAll(PDO::FETCH_ASSOC);
+
     // ✅ RESPONSE
     echo json_encode([
         'success' => true,
         'data' => $data,
-        'total' => (int)$total
+        'total' => (int)$total,
+        'months' => $months
     ]);
 
 } catch (Exception $e) {

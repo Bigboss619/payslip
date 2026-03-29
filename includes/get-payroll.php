@@ -86,16 +86,30 @@ $countStmt = $conn->prepare($countSql);
 $countStmt->execute($filterParams);
 $total = $countStmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
 
+// 📅 UNIQUE MONTHS FOR FILTERS
+$monthsSql = "
+    SELECT DISTINCT pb.year, pb.month
+    FROM payroll_batches pb
+    INNER JOIN payslip p ON pb.id = p.batch_id
+    $userFilter
+    ORDER BY pb.year DESC, pb.month DESC
+";
+$monthsStmt = $conn->prepare($monthsSql);
+$monthsStmt->execute([]);
+$months = $monthsStmt->fetchAll(PDO::FETCH_ASSOC);
+
 echo json_encode([
     'success' => true,
     'data' => $data,
     'total' => (int)$total,
+    'months' => $months,
     'debug' => [
         'raw_month' => $month,
         'mapped_month' => $monthMap[$month] ?? 'unknown',
         'raw_year' => $year,
         'name_search' => $name,
         'where_clause' => $whereClause,
+        'months_count' => count($months),
         'params_count' => count($filterParams),
         'record_count' => count($data),
         'total_count' => $total
