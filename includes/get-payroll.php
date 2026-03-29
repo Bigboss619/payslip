@@ -19,6 +19,7 @@ $offset = (int)($_GET['offset'] ?? 0);
 
 error_log("🔍 RAW INPUT - Month: '$month', Year: '$year'");
 
+
 // Month mapping: dropdown "01" → DB "January"
 $monthMap = [
     '01' => 'January', '02' => 'February', '03' => 'March', '04' => 'April',
@@ -28,6 +29,12 @@ $monthMap = [
 
 $filterParams = [];
 $whereConditions = [];
+
+$name = trim($_GET['name'] ?? '');
+if (!empty($name)) {
+    $whereConditions[] = "COALESCE(u.name, '') LIKE ?";
+    $filterParams[] = "%$name%";
+}
 
 if (!empty($month)) {
     $targetMonth = $monthMap[$month] ?? $month;
@@ -66,16 +73,32 @@ $stmt = $conn->prepare($dataQuery);
 $stmt->execute($filterParams);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// TOTAL COUNT QUERY
+$countSql = "
+    SELECT COUNT(*) as total
+    FROM payslip p
+    INNER JOIN payroll_batches pb ON p.batch_id = pb.id
+    LEFT JOIN users u ON p.user_id = u.id
+    $whereClause $userFilter
+";
+
+$countStmt = $conn->prepare($countSql);
+$countStmt->execute($filterParams);
+$total = $countStmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
+
 echo json_encode([
     'success' => true,
     'data' => $data,
+    'total' => (int)$total,
     'debug' => [
         'raw_month' => $month,
         'mapped_month' => $monthMap[$month] ?? 'unknown',
         'raw_year' => $year,
+        'name_search' => $name,
         'where_clause' => $whereClause,
         'params_count' => count($filterParams),
-        'record_count' => count($data)
+        'record_count' => count($data),
+        'total_count' => $total
     ]
 ]);
 ?>

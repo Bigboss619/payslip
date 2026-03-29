@@ -28,7 +28,7 @@
 
             <input id="search"
                 type="text" 
-                placeholder="Search by month, amount..." 
+                placeholder="Search by Name" 
                 class="flex-1 bg-white shadow-sm border border-gray-200 px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
             >
         </div>
