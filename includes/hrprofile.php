@@ -30,13 +30,27 @@ if (isset($_POST['update_profile'])) {
             $stmt = $conn->prepare("UPDATE users SET name = ?, email = ? WHERE id = ?");
             $stmt->execute([$name, $email, $user_id]);
             
-            $_SESSION['name'] = $name;
-            $_SESSION['email'] = $email;
+            // Reload full user data to refresh session
+            $reload_stmt = $conn->prepare("SELECT name, email, staff_id, pension_id, tax_id, account_number, bank_name, photo FROM users WHERE id = ?");
+            $reload_stmt->execute([$user_id]);
+            $user_data = $reload_stmt->fetch(PDO::FETCH_ASSOC);
+            if ($user_data) {
+                $_SESSION['name'] = $user_data['name'];
+                $_SESSION['email'] = $user_data['email'];
+                $_SESSION['staff_id'] = $user_data['staff_id'];
+                $_SESSION['pension_id'] = $user_data['pension_id'];
+                $_SESSION['tax_id'] = $user_data['tax_id'];
+                $_SESSION['account_number'] = $user_data['account_number'];
+                $_SESSION['bank_name'] = $user_data['bank_name'];
+                $_SESSION['department'] = $user_data['bank_name'];
+                $_SESSION['photo'] = $user_data['photo'];
+            }
             
             echo json_encode([
                 'success' => true,
                 'message' => 'Profile updated successfully!'
             ]);
+
         } else {
             echo json_encode([
                 'success' => false,
@@ -66,10 +80,26 @@ if (isset($_POST['update_profile'])) {
             $stmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
             $stmt->execute([$hashed_new, $user_id]);
             
+            // Reload full user data to refresh session (no password)
+            $reload_stmt = $conn->prepare("SELECT name, email, staff_id, pension_id, tax_id, account_number, bank_name, photo FROM users WHERE id = ?");
+            $reload_stmt->execute([$user_id]);
+            $user_data = $reload_stmt->fetch(PDO::FETCH_ASSOC);
+            if ($user_data) {
+                $_SESSION['name'] = $user_data['name'];
+                $_SESSION['email'] = $user_data['email'];
+                $_SESSION['staff_id'] = $user_data['staff_id'];
+                $_SESSION['pension_id'] = $user_data['pension_id'];
+                $_SESSION['tax_id'] = $user_data['tax_id'];
+                $_SESSION['account_number'] = $user_data['account_number'];
+                $_SESSION['bank_name'] = $user_data['bank_name'];
+                $_SESSION['photo'] = $user_data['photo'];
+            }
+            
             echo json_encode([
                 'success' => true,
                 'message' => 'Password updated successfully!'
             ]);
+
         } else {
             echo json_encode([
                 'success' => false,
@@ -114,15 +144,30 @@ if(isset($_POST['update_profile_picture'])) {
         mkdir($upload_dir, 0755, true);
     }
     
-    if (move_uploaded_file($path_tmp, $upload_dir . $new_name)) {
+        if (move_uploaded_file($path_tmp, $upload_dir . $new_name)) {
         $stmt = $conn->prepare("UPDATE users SET photo = ? WHERE id = ?");
         $stmt->execute([$new_name, $user_id]);
-        $_SESSION['photo'] = $new_name; // Update session immediately
+        
+        // Reload full user data to refresh session
+        $reload_stmt = $conn->prepare("SELECT name, email, staff_id, pension_id, tax_id, account_number, bank_name, photo FROM users WHERE id = ?");
+        $reload_stmt->execute([$user_id]);
+        $user_data = $reload_stmt->fetch(PDO::FETCH_ASSOC);
+        if ($user_data) {
+            $_SESSION['name'] = $user_data['name'];
+            $_SESSION['email'] = $user_data['email'];
+            $_SESSION['staff_id'] = $user_data['staff_id'];
+            $_SESSION['pension_id'] = $user_data['pension_id'];
+            $_SESSION['tax_id'] = $user_data['tax_id'];
+            $_SESSION['account_number'] = $user_data['account_number'];
+            $_SESSION['bank_name'] = $user_data['bank_name'];
+            $_SESSION['photo'] = $user_data['photo'];
+        }
         
         echo json_encode([
             'success' => true,
             'message' => 'Profile photo updated successfully!'
         ]);
+
     } else {
         echo json_encode([
             'success' => false,

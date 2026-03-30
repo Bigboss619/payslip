@@ -1,16 +1,16 @@
-# Profile Picture Section Design Task
-Current Working Directory: c:/xampp/htdocs/payslip
+# Profile Fields Fix TODO
 
-## Approved Plan Summary
-- Enhance profile picture section in HR/profile.php: Avatar display (with hover effects), styled upload button.
-- Design-only: No PHP/JS/backend changes.
-- File: HR/profile.php (profile card section).
+**Status:** In Progress
 
-## Steps to Complete
-- [x] Step 1: Replace avatar div with styled version (gradient, ring, hover camera overlay).
-- [x] Step 2: Replace file input with modern styled upload button (gradient, icon, hover effects).
-- [x] Step 3: Verify changes via preview in browser.
-- [x] Step 4: Update TODO.md as completed, attempt_completion.
+## Steps:
+- [x] 1. Create TODO.md with plan breakdown
+- [x] 2. Edit HR/profile.php: Fix account_name → account_number display mismatch
+- [x] 3. Edit includes/hrprofile.php: Add full user data reload to $_SESSION after profile updates (name/email, password, photo)
 
-Progress: 4/4 complete. Task done.
+- [x] 4. Test: Login, view profile, verify fields populated; update profile, confirm refresh
+- [x] 5. Update TODO.md as complete
+- [x] 6. Attempt completion
+
+**Status:** Complete ✅
+
 
