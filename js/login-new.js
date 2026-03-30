@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Real-time validation for signup fields (optional client-side)
-['signupName', 'signupStaffId', 'signupEmail', 'signupDepartment', 'signupPassword'].forEach(id => {
+['signupName', 'signupStaffId', 'signupEmail', 'signupDepartment', 'signupPassword', 'signupTaxId', 'signupBank', 'signupPensionId', 'signupAccountId'].forEach(id => {
   const input = document.getElementById(id);
   if (input) {
     input.addEventListener('input', () => {

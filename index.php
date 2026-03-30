@@ -50,16 +50,56 @@
              <!-- SIGNUP FORM -->
             <form id="signupForm" class="hidden">
 
+
+                   
                 <div class="mb-4">
                     <label class="text-sm font-medium">Full Name</label>
                     <input name="fullname" id="signupName" type="text" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none invalid:border-red-500 invalid:focus:ring-red-500">
                     <p id="signupNameError" class="mt-1 text-sm text-red-600 hidden">Name must be at least 2 characters.</p>
                 </div>
 
+                <!-- Email -->
                 <div class="mb-4">
+                    <label class="text-sm font-medium">Email</label>
+                    <input name="email" id="signupEmail" type="email" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none invalid:border-red-500 invalid:focus:ring-red-500">
+                    <p id="signupEmailError" class="mt-1 text-sm text-red-600 hidden">Please enter a valid email.</p>
+                </div>
+
+                    <!-- Staff Id & Pension Id -->
+                <div class="flex justify-between gap-6">
+                        <div class="mb-4">
                     <label class="text-sm font-medium">Staff ID</label>
                     <input name="staff_id" id="signupStaffId" type="text" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none invalid:border-red-500 invalid:focus:ring-red-500">
                     <p id="signupStaffIdError" class="mt-1 text-sm text-red-600 hidden">Staff ID must be at least 2 characters.</p>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="text-sm font-medium">Pension ID</label>
+                            <input name="pension_id" id="signupPensionId" type="text" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none invalid:border-red-500 invalid:focus:ring-red-500">
+                            <p id="signupPensionIdError" class="mt-1 text-sm text-red-600 hidden">Pension ID must be at least 2 characters.</p>
+                        </div>
+                </div>
+
+                <!-- Account Name -->
+                <div class="mb-4">
+                    <label class="text-sm font-medium">Account  Name</label>
+                    <input name="account_id" id="signupAccountId" type="text" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none invalid:border-red-500 invalid:focus:ring-red-500">
+                    <p id="signupAccountIdError" class="mt-1 text-sm text-red-600 hidden">Account Name must be at least 2 characters.</p>
+                </div>
+
+                <div class="flex justify-between gap-6">
+                        
+                    <div class="mb-4">
+                        <label class="text-sm font-medium">Bank</label>
+                        <input name="bank" id="signupBank" type="text" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none invalid:border-red-500 invalid:focus:ring-red-500">
+                        <p id="signupBankError" class="mt-1 text-sm text-red-600 hidden">Bank must be at least 2 characters.</p>
+                    </div>
+        
+                    <div class="mb-4">
+                        <label class="text-sm font-medium">Tax ID</label>
+                        <input name="tax_id" id="signupTaxId" type="text" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none invalid:border-red-500 invalid:focus:ring-red-500">
+                        <p id="signupTaxIdError" class="mt-1 text-sm text-red-600 hidden">Tax ID must be at least 2 characters.</p>
+                    </div>
                 </div>
 
                 <div class="mb-4">
@@ -70,13 +110,9 @@
                     <p id="signupDepartmentError" class="mt-1 text-sm text-red-600 hidden">Please select a department.</p>
                 </div>
 
-                <div class="mb-4">
-                    <label class="text-sm font-medium">Email</label>
-                    <input name="email" id="signupEmail" type="email" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none invalid:border-red-500 invalid:focus:ring-red-500">
-                    <p id="signupEmailError" class="mt-1 text-sm text-red-600 hidden">Please enter a valid email.</p>
-                </div>
+                
 
-<div class="mb-4 relative">
+                <div class="mb-4 relative">
                     <label class="text-sm font-medium">Password</label>
                     <div class="relative mt-1">
                         <input name="password" id="signupPassword" type="password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none pr-12 invalid:border-red-500 invalid:focus:ring-red-500">
@@ -87,7 +123,7 @@
                     <p id="signupPasswordError" class="mt-1 text-sm text-red-600 hidden">Password must be at least 6 characters.</p>
                 </div>
 
-<div class="mb-6 relative">
+                <div class="mb-6 relative">
                     <label class="text-sm font-medium">Confirm Password</label>
                     <div class="relative mt-1">
                         <input name="confirm_password" id="signupConfirmPassword" type="password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none pr-12 invalid:border-red-500 invalid:focus:ring-red-500">
