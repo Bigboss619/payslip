@@ -52,15 +52,15 @@ include_once("../includes/header.php"); ?>
 
               <?php $photo = $_SESSION['photo'] ?? ''; ?>
               <?php if ($photo && file_exists('../uploads/dp/' . $photo)): ?>
-                <div class="relative w-24 h-24 mx-auto shadow-lg ring-4 ring-gray-200/50 hover:ring-blue-200/80 transition-all duration-200 group">
-                  <img src="../uploads/dp/<?= htmlspecialchars($photo) ?>" alt="Profile Picture" class="w-24 h-24 mx-auto rounded-full object-cover">
+                <div class="relative group w-32 h-32 mx-auto p-1 bg-gradient-to-r from-indigo-400/30 via-blue-500/20 to-purple-600/30 rounded-3xl shadow-2xl ring-4 ring-white/50 hover:ring-gradient-to-r hover:from-indigo-400/70 hover:to-purple-600/70 transition-all duration-500 [box-shadow:_0_20px_40px_-10px_rgba(79,70,229,0.4)]">
+                  <img src="../uploads/dp/<?= htmlspecialchars($photo) ?>" alt="Profile Picture" class="w-full h-full rounded-3xl object-cover shadow-2xl saturate-105 brightness-105">
                   <!-- Hover camera icon overlay -->
-                  <div class="absolute inset-0 bg-black/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                  <!-- <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-all duration-400 flex items-center justify-center backdrop-blur-md">
+                    <svg class="w-12 h-12 text-white/95 drop-shadow-2xl animate-pulse" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
                       <circle cx="12" cy="13" r="3"></circle>
                     </svg>
-                  </div>
+                  </div> -->
                 </div>
               <?php else: ?>
                 <div class="relative w-24 h-24 mx-auto bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center rounded-full text-3xl font-bold mb-4 shadow-lg ring-4 ring-gray-200/50 hover:ring-blue-200/80 transition-all duration-200 group">
