@@ -88,7 +88,7 @@ background: linear-gradient(90deg, #eff6ff 0%, #e0e7ff 100%) !important;
 <tr>
 <td style="padding: 12px; border: 2px solid #000; background: #f3f4f6; font-weight: bold;">Employee Name</td>
 <td style="padding: 12px; border: 2px solid #000;" id="pdf-employee-name"></td>
-<td style="padding: 12px; border: 2px solid #000; background: #f3f4f6; font-weight: bold;">Account name</td>
+<td style="padding: 12px; border: 2px solid #000; background: #f3f4f6; font-weight: bold;">Account Number</td>
 <td style="padding: 12px; border: 2px solid #000;" id="pdf-position"></td>
 </tr>
 <tr>
