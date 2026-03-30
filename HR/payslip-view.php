@@ -82,12 +82,13 @@
                                         <td style="padding: 12px; border: 2px solid #000; background: #f3f4f6; font-weight: bold;">Worked Days</td>
                                         <td style="padding: 12px; border: 2px solid #000;" id="pdf-days-worked">22</td>
                                         <td style="padding: 12px; border: 2px solid #000; background: #f3f4f6; font-weight: bold;">Payer ID</td>
-                                        <td style="padding: 12px; border: 2px solid #000;">N-21897635</td>
+                                        <td style="padding: 12px; border: 2px solid #000;" id="pdf-payer-id">N/A</td>
+
                                     </tr>
                                     <tr>
                                         <td style="padding: 12px; border: 2px solid #000; background: #f3f4f6; font-weight: bold;">Employee Name</td>
                                         <td style="padding: 12px; border: 2px solid #000;" id="pdf-employee-name"></td>
-                                        <td style="padding: 12px; border: 2px solid #000; background: #f3f4f6; font-weight: bold;">Designation</td>
+                                        <td style="padding: 12px; border: 2px solid #000; background: #f3f4f6; font-weight: bold;">Account name</td>
                                         <td style="padding: 12px; border: 2px solid #000;" id="pdf-position">HR Manager</td>
                                     </tr>
                                     <tr>

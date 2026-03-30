@@ -57,7 +57,9 @@ function loadPayslipData(data) {
     document.getElementById('pdf-period').textContent = `${data.month || 'January'} ${data.year || new Date().getFullYear()}`;
     document.getElementById('pdf-employee-name').textContent = data.employeeName || data.name || 'Unknown';
     document.getElementById('pdf-department').textContent = data.department || 'Unknown';
+    document.getElementById('pdf-payer-id').textContent = data.taxId || 'N/A';
     document.getElementById('pdf-days-worked').textContent = data.days_worked || 22;
+
     
     // ✅ EARNINGS (MATCH YOUR DB EXACTLY)
     document.getElementById('pdf-basic').textContent = formatCurrency(data.basic_salary);

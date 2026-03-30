@@ -27,8 +27,13 @@ try {
             p.paye, p.pension, p.days_worked, p.pro_rata,
             COALESCE(u.name, 'Unknown') AS employeeName,
             COALESCE(u.staff_id, 'N/A') AS employeeId,
-            COALESCE(d.name, 'Unknown') AS department,  -- ✅ FIXED: JOIN department
+            COALESCE(d.name, 'Unknown') AS department,
+            COALESCE(u.tax_id, 'N/A') AS taxId,
+            COALESCE(u.pension_id, 'N/A') AS pensionId,
+            COALESCE(u.account_number, 'N/A') AS accountNumber,
+            COALESCE(u.bank_name, 'N/A') AS bankName,
             COALESCE(pb.month, DATE_FORMAT(p.created_at, '%M')) AS month,
+
             COALESCE(pb.year, YEAR(p.created_at)) AS year,
             COALESCE(pb.status, 'Paid') AS status,
             DATE_FORMAT(COALESCE(pb.created_at, p.created_at), '%d %M %Y') AS generatedDate
