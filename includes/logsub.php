@@ -30,7 +30,9 @@ if (isset($_POST['login'])) {
 
     try {
         // Query by email OR staff_id
-        $query = "SELECT id, name, staff_id, email, password, role, pension_id, tax_id, account_number, bank_name FROM users WHERE (email = ? OR staff_id = ?) LIMIT 1";
+        $query = "SELECT u.id, u.name, u.staff_id, u.email, u.password, u.role, u.pension_id, u.tax_id, u.account_number, u.bank_name, d.name as department_name FROM users u LEFT JOIN departments d ON u.department_id = d.id WHERE (u.email = ? OR u.staff_id = ?) LIMIT 1";
+
+
         $stmt = $conn->prepare($query);
         $stmt->execute([$email, $staff_id]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -45,7 +47,9 @@ if (isset($_POST['login'])) {
             $_SESSION['pension_id'] = $user['pension_id'];
             $_SESSION['account_number'] = $user['account_number'];
             $_SESSION['bank_name'] = $user['bank_name'];
+            $_SESSION['department_name'] = $user['department_name'];
             $_SESSION['role'] = $user['role'];
+
 
             // Role-based redirect
 $redirect_url = 'HR/dashboard.php'; // Unified shared dashboard for all roles

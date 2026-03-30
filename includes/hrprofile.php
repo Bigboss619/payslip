@@ -31,8 +31,9 @@ if (isset($_POST['update_profile'])) {
             $stmt->execute([$name, $email, $user_id]);
             
             // Reload full user data to refresh session
-            $reload_stmt = $conn->prepare("SELECT name, email, staff_id, pension_id, tax_id, account_number, bank_name, photo FROM users WHERE id = ?");
+            $reload_stmt = $conn->prepare("SELECT u.name, u.email, u.staff_id, u.pension_id, u.tax_id, u.account_number, u.bank_name, u.photo, d.name as department_name FROM users u LEFT JOIN departments d ON u.department_id = d.id WHERE u.id = ?");
             $reload_stmt->execute([$user_id]);
+
             $user_data = $reload_stmt->fetch(PDO::FETCH_ASSOC);
             if ($user_data) {
                 $_SESSION['name'] = $user_data['name'];
@@ -42,9 +43,10 @@ if (isset($_POST['update_profile'])) {
                 $_SESSION['tax_id'] = $user_data['tax_id'];
                 $_SESSION['account_number'] = $user_data['account_number'];
                 $_SESSION['bank_name'] = $user_data['bank_name'];
-                $_SESSION['department'] = $user_data['bank_name'];
+                $_SESSION['department_name'] = $user_data['department_name'];
                 $_SESSION['photo'] = $user_data['photo'];
             }
+
             
             echo json_encode([
                 'success' => true,
@@ -81,8 +83,9 @@ if (isset($_POST['update_profile'])) {
             $stmt->execute([$hashed_new, $user_id]);
             
             // Reload full user data to refresh session (no password)
-            $reload_stmt = $conn->prepare("SELECT name, email, staff_id, pension_id, tax_id, account_number, bank_name, photo FROM users WHERE id = ?");
+            $reload_stmt = $conn->prepare("SELECT u.name, u.email, u.staff_id, u.pension_id, u.tax_id, u.account_number, u.bank_name, u.photo, d.name as department_name FROM users u LEFT JOIN departments d ON u.department_id = d.id WHERE u.id = ?");
             $reload_stmt->execute([$user_id]);
+
             $user_data = $reload_stmt->fetch(PDO::FETCH_ASSOC);
             if ($user_data) {
                 $_SESSION['name'] = $user_data['name'];
@@ -149,8 +152,9 @@ if(isset($_POST['update_profile_picture'])) {
         $stmt->execute([$new_name, $user_id]);
         
         // Reload full user data to refresh session
-        $reload_stmt = $conn->prepare("SELECT name, email, staff_id, pension_id, tax_id, account_number, bank_name, photo FROM users WHERE id = ?");
-        $reload_stmt->execute([$user_id]);
+            $reload_stmt = $conn->prepare("SELECT u.name, u.email, u.staff_id, u.pension_id, u.tax_id, u.account_number, u.bank_name, u.photo, d.name as department_name FROM users u LEFT JOIN departments d ON u.department_id = d.id WHERE u.id = ?");
+            $reload_stmt->execute([$user_id]);
+
         $user_data = $reload_stmt->fetch(PDO::FETCH_ASSOC);
         if ($user_data) {
             $_SESSION['name'] = $user_data['name'];

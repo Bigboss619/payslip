@@ -163,8 +163,9 @@ include_once("../includes/header.php"); ?>
 
                   <div>
                     <label class="text-sm text-gray-500">Department</label>
-                    <input type="text" value="<?php echo htmlspecialchars($_SESSION['department']); ?>" disabled class="w-full mt-1 border px-4 py-2 rounded-lg bg-gray-100">
+                    <input type="text" value="<?php echo htmlspecialchars($_SESSION['department_name'] ?? ''); ?>" disabled class="w-full mt-1 border px-4 py-2 rounded-lg bg-gray-100">
                   </div>
+
 
                 </div>
 
