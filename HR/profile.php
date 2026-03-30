@@ -141,6 +141,26 @@ include_once("../includes/header.php"); ?>
                   </div>
 
                   <div>
+                    <label class="text-sm text-gray-500">Pension ID</label>
+                    <input type="text" value="<?php echo htmlspecialchars($_SESSION['pension_id']); ?>" disabled class="w-full mt-1 border px-4 py-2 rounded-lg bg-gray-100">
+                  </div>
+
+                  <div>
+                    <label class="text-sm text-gray-500">Tax ID</label>
+                    <input type="text" value="<?php echo htmlspecialchars($_SESSION['tax_id']); ?>" disabled class="w-full mt-1 border px-4 py-2 rounded-lg bg-gray-100">
+                  </div>
+
+                  <div>
+                    <label class="text-sm text-gray-500">Account Number</label>
+                    <input type="text" value="<?php echo htmlspecialchars($_SESSION['account_name']); ?>" disabled class="w-full mt-1 border px-4 py-2 rounded-lg bg-gray-100">
+                  </div>
+
+                  <div>
+                    <label class="text-sm text-gray-500">Bank</label>
+                    <input type="text" value="<?php echo htmlspecialchars($_SESSION['bank_name']); ?>" disabled class="w-full mt-1 border px-4 py-2 rounded-lg bg-gray-100">
+                  </div>
+
+                  <div>
                     <label class="text-sm text-gray-500">Department</label>
                     <input type="text" value="IT" disabled class="w-full mt-1 border px-4 py-2 rounded-lg bg-gray-100">
                   </div>

@@ -30,7 +30,7 @@ if (isset($_POST['login'])) {
 
     try {
         // Query by email OR staff_id
-        $query = "SELECT id, name, staff_id, email, password, role FROM users WHERE (email = ? OR staff_id = ?) LIMIT 1";
+        $query = "SELECT id, name, staff_id, email, password, role, pension_id, tax_id, account_number, bank_name FROM users WHERE (email = ? OR staff_id = ?) LIMIT 1";
         $stmt = $conn->prepare($query);
         $stmt->execute([$email, $staff_id]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -41,6 +41,10 @@ if (isset($_POST['login'])) {
             $_SESSION['name'] = $user['name'];
             $_SESSION['staff_id'] = $user['staff_id'];
             $_SESSION['email'] = $user['email'];
+            $_SESSION['tax_id'] = $user['tax_id'];
+            $_SESSION['pension_id'] = $user['pension_id'];
+            $_SESSION['account_number'] = $user['account_number'];
+            $_SESSION['bank_name'] = $user['bank_name'];
             $_SESSION['role'] = $user['role'];
 
             // Role-based redirect
