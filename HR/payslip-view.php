@@ -94,7 +94,7 @@ background: linear-gradient(90deg, #eff6ff 0%, #e0e7ff 100%) !important;
 <tr>
 <td style="padding: 12px; border: 2px solid #000; background: #f3f4f6; font-weight: bold;">Department</td>
 <td style="padding: 12px; border: 2px solid #000;" id="pdf-department"></td>
-<td style="padding: 12px; border: 2px solid #000; background: #f3f4f6; font-weight: bold;">SBU</td>
+<td style="padding: 12px; border: 2px solid #000; background: #f3f4f6; font-weight: bold;">Bank</td>
 <td id="pdf-bank" style="padding: 12px; border: 2px solid #000;"></td>
 </tr>
 </table>

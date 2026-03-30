@@ -24,7 +24,7 @@ try {
         SELECT 
             p.id, p.deductions, p.gross_salary AS grossSalary, p.net_salary AS netSalary,
             p.basic_salary, p.housing, p.transport, p.medical, p.utility,
-            p.paye, p.pension, p.days_worked, p.pro_rata,
+            p.paye, p.pension, p.days_worked,
             COALESCE(u.name, 'Unknown') AS employeeName,
             COALESCE(u.staff_id, 'N/A') AS employeeId,
             COALESCE(d.name, 'Unknown') AS department,
