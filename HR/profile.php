@@ -76,7 +76,7 @@ include_once("../includes/header.php"); ?>
               <?php endif; ?>
 
               <h2 class="text-lg font-semibold"><?php echo $_SESSION['name']; ?></h2>
-              <p class="text-gray-500 text-sm">HR Department</p>
+              <p class="text-gray-500 text-sm"><?php echo htmlspecialchars($_SESSION['department_name'] ?? ''); ?></p>
 
 
               <!-- <button class="mt-4 bg-gray-200 px-4 py-2 rounded-lg text-sm">
