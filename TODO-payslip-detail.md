@@ -10,14 +10,19 @@
 3. Update js/payslip-view.js to populate #pdf-payer-id with data.tax_id
 4. Test payslip-view.php?id=1
 
+**Updated table layout:**
+- Removed Designation, SBU rows
+- Added Account Number, Bank Name rows
+- Payer ID = tax_id (dynamic)
+- Department kept (dynamic)
+
 **Steps:**
-- [x] Create TODO-payslip-detail.md
-- [x] 1. Edit get-payslip-detail.php: Added `COALESCE(u.tax_id, 'N/A') AS taxId`
-- [x] 2. Edit payslip-view.php: `<td id="pdf-payer-id">N/A</td>`
-- [x] 3. Edit js/payslip-view.js: `pdf-payer-id.textContent = data.taxId || 'N/A'`
-- [x] 4. Complete TODO & test
+- [x] 1. Added accountNumber, bankName to get-payslip-detail.php SELECT
+- [x] 2. Replaced Designation/SBU with Account/Bank in payslip-view.php table
+- [x] 3. Added JS populate for new fields
+- [x] 4. Complete
 
 **Status:** Complete ✅
 
-Department already displays via `data.department`. Test HR/payslip-view.php?id=1
+Test: HR/payslip-view.php?id=1
 

@@ -54,9 +54,9 @@ include_once("../includes/nav.php");
       <tr>
         <th class="p-2 border">Staff ID</th>
         <th class="p-2 border">Name</th>
-        <th class="p-2 border">Department</th>
+        <!-- <th class="p-2 border">Department</th> -->
         <th class="p-2 border">Monthly Gross</th>
-        <th class="p-2 border">Pro-Rata</th>
+        <!-- <th class="p-2 border">Pro-Rata</th> -->
         <th class="p-2 border">Days Worked</th>
         <th class="p-2 border">Basic Salary</th>
         <th class="p-2 border">Housing</th>
@@ -125,41 +125,6 @@ include_once("../includes/nav.php");
           <p id="total-net" class="text-2xl font-bold mt-2">₦0</p>
         </div>
       </div>
-
-  <!-- ✅ PAYSIP FILTER -->
-<!-- <div id="filterSection" class="bg-white p-6 rounded-xl shadow mb-6 hidden">
-  <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-    </svg>
-    Filter Payslips
-  </h3>
-  <div class="flex flex-wrap gap-4 items-end">
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">Month</label>
-      <select id="payslipMonth" class="border p-3 rounded-lg w-32">
-        <option value="">All Months</option>
-        <option value="01">Jan</option><option value="02">Feb</option><option value="03">Mar</option>
-        <option value="04">Apr</option><option value="05">May</option><option value="06">Jun</option>
-        <option value="07">Jul</option><option value="08">Aug</option><option value="09">Sep</option>
-        <option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option>
-      </select>
-    </div>
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">Year</label>
-      <input type="number" id="payslipYear" value="<?php echo date('Y'); ?>" 
-             class="border p-3 rounded-lg w-28" min="2020" max="2030">
-    </div>
-    <button onclick="refreshPayslips()" 
-            class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 font-medium flex items-center gap-2">
-      🔄 Load Payslips
-    </button>
-    <button onclick="window.payrollTable.renderPayslipTable()" 
-            class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium">
-      📊 Refresh Table
-    </button>
-  </div>
-</div> -->
 
 <!-- ✅ ENHANCED PAYSIP FILTER -->
 <div id="filterSection" class="bg-white p-6 rounded-xl shadow mb-6 hidden">

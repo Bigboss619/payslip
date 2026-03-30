@@ -69,9 +69,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['mode']) && $_GET['mode'
                 'row_index' => $rowIndex + 2, // Excel row number
                 'staff_id' => $row[0] ?? '',
                 'name' => $row[1] ?? '',
-                'department' => $row[2] ?? '',
+                // 'department' => $row[2] ?? '',
                 'gross_salary' => (float)($row[3] ?? 0),
-                'pro_rata' => (float)($row[4] ?? 0),
+                // 'pro_rata' => (float)($row[4] ?? 0),
                 'days_worked' => (int)($row[5] ?? 0),
                 'basic_salary' => (float)($row[6] ?? 0),
                 'housing' => (float)($row[7] ?? 0),
@@ -172,9 +172,9 @@ switch ($mode) {
                 $previewData[] = [
                     'staff_id' => $row[0] ?? '',
                     'name' => $row[1] ?? '',
-                    'department' => $row[2] ?? '',
+                    // 'department' => $row[2] ?? '',
                     'gross_salary' => (float)($row[3] ?? 0),
-                    'pro_rata' => (float)($row[4] ?? 0),
+                    // 'pro_rata' => (float)($row[4] ?? 0),
                     'days_worked' => (int)($row[5] ?? 0),
                     'basic_salary' => (float)($row[6] ?? 0),
                     'housing' => (float)($row[7] ?? 0),
@@ -250,15 +250,15 @@ switch ($mode) {
                     INSERT INTO payslip (
                         user_id, batch_id, gross_salary, basic_salary, housing, transport, 
                         medical, utility, paye, deductions, pension, net_salary, 
-                        days_worked, pro_rata
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        days_worked
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ");
                 $payslipStmt->execute([
                     $user['id'], $batch_id,
                     $data['gross_salary'], $data['basic_salary'], $data['housing'], 
                     $data['transport'], $data['medical'], $data['utility'], 
                     $data['paye'], $data['deductions'], $data['pension'], 
-                    $data['net_salary'], $data['days_worked'], $data['pro_rata']
+                    $data['net_salary'], $data['days_worked']
                 ]);
                 $inserted++;
             }

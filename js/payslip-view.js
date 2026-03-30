@@ -59,6 +59,8 @@ function loadPayslipData(data) {
     document.getElementById('pdf-department').textContent = data.department || 'Unknown';
     document.getElementById('pdf-payer-id').textContent = data.taxId || 'N/A';
     document.getElementById('pdf-days-worked').textContent = data.days_worked || 22;
+    document.getElementById('pdf-position').textContent = data.accountNumber;
+    document.getElementById('pdf-bank').textContent = data.bankName;
 
     
     // ✅ EARNINGS (MATCH YOUR DB EXACTLY)

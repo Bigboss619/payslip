@@ -195,9 +195,7 @@ function showPreview(data) {
       <tr class="hover:bg-gray-50 border-b">
         <td class="p-2 border font-medium">${row.staff_id || ''}</td>
         <td class="p-2 border">${row.name || ''}</td>
-        <td class="p-2 border">${row.department || ''}</td>
         <td class="p-2 border text-right font-semibold">${formatAmount(row.gross_salary)}</td>
-        <td class="p-2 border text-right">${formatAmount(row.pro_rata)}</td>
         <td class="p-2 border text-center">${row.days_worked || ''}</td>
         <td class="p-2 border text-right">${formatAmount(row.basic_salary)}</td>
         <td class="p-2 border text-right">${formatAmount(row.housing)}</td>
