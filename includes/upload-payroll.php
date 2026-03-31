@@ -63,25 +63,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['mode']) && $_GET['mode'
         
         $excelData = [];
         foreach ($rows as $rowIndex => $row) {
-            if (count($row) < 16 || empty($row[1]) || trim($row[0]) === 'STAFF ID') continue;
+            if (count($row) < 14 || empty($row[1]) || trim($row[0]) === 'STAFF ID') continue;
             
             $excelData[] = [
                 'row_index' => $rowIndex + 2, // Excel row number
                 'staff_id' => $row[0] ?? '',
                 'name' => $row[1] ?? '',
                 // 'department' => $row[2] ?? '',
-                'gross_salary' => (float)($row[3] ?? 0),
+                'gross_salary' => (float)($row[2] ?? 0),
                 // 'pro_rata' => (float)($row[4] ?? 0),
-                'days_worked' => (int)($row[5] ?? 0),
-                'basic_salary' => (float)($row[6] ?? 0),
-                'housing' => (float)($row[7] ?? 0),
-                'transport' => (float)($row[8] ?? 0),
-                'medical' => (float)($row[9] ?? 0),
-                'utility' => (float)($row[10] ?? 0),
-                'paye' => (float)($row[12] ?? 0),
-                'deductions' => (float)($row[13] ?? 0),
-                'pension' => (float)($row[14] ?? 0),
-                'net_salary' => (float)($row[15] ?? 0),
+                'days_worked' => (int)($row[3] ?? 0),
+                'basic_salary' => (float)($row[4] ?? 0),
+                'housing' => (float)($row[5] ?? 0),
+                'transport' => (float)($row[6] ?? 0),
+                'medical' => (float)($row[7] ?? 0),
+                'utility' => (float)($row[8] ?? 0),
+                'paye' => (float)($row[10] ?? 0),
+                'deductions' => (float)($row[11] ?? 0),
+                'pension' => (float)($row[12] ?? 0),
+                'net_salary' => (float)($row[13] ?? 0),
                 'raw_row' => $row // Full raw row for debugging
             ];
         }
@@ -167,24 +167,24 @@ switch ($mode) {
             array_shift($rows); // Skip header
 
             foreach ($rows as $rowIndex => $row) {
-                if (count($row) < 16 || empty($row[1]) || trim($row[0]) === 'STAFF ID') continue;
+                if (count($row) < 14 || empty($row[1]) || trim($row[0]) === 'STAFF ID') continue;
 
                 $previewData[] = [
                     'staff_id' => $row[0] ?? '',
                     'name' => $row[1] ?? '',
                     // 'department' => $row[2] ?? '',
-                    'gross_salary' => (float)($row[3] ?? 0),
-                    // 'pro_rata' => (float)($row[4] ?? 0),
-                    'days_worked' => (int)($row[5] ?? 0),
-                    'basic_salary' => (float)($row[6] ?? 0),
-                    'housing' => (float)($row[7] ?? 0),
-                    'transport' => (float)($row[8] ?? 0),
-                    'medical' => (float)($row[9] ?? 0),
-                    'utility' => (float)($row[10] ?? 0),
-                    'paye' => (float)($row[12] ?? 0),
-                    'deductions' => (float)($row[13] ?? 0),
-                    'pension' => (float)($row[14] ?? 0),
-                    'net_salary' => (float)($row[15] ?? 0)
+                    'gross_salary' => (float)($row[2] ?? 0),
+                // 'pro_rata' => (float)($row[4] ?? 0),
+                'days_worked' => (int)($row[3] ?? 0),
+                'basic_salary' => (float)($row[4] ?? 0),
+                'housing' => (float)($row[5] ?? 0),
+                'transport' => (float)($row[6] ?? 0),
+                'medical' => (float)($row[7] ?? 0),
+                'utility' => (float)($row[8] ?? 0),
+                'paye' => (float)($row[10] ?? 0),
+                'deductions' => (float)($row[11] ?? 0),
+                'pension' => (float)($row[12] ?? 0),
+                'net_salary' => (float)($row[13] ?? 0)
                 ];
             }
 
