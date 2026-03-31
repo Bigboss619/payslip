@@ -70,10 +70,24 @@ if (isset($_POST['register'])) {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             $stmt = $conn->prepare("INSERT INTO users (name, staff_id, email, password, role, department_id, pension_id, tax_id, account_number, bank_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([$fullname, $staff_id, $email, $hashed_password, $role, $department_id, $pension_id, $tax_id, $account_name, $bank]);
-            
+            // 🔥 NEW: GET THE CREATED USER ID
+            $user_id = $conn->lastInsertId();
+            // 🔥 MAGIC FIX: LINK ALL EXISTING PAYSLIPS BY staff_id
+            $stmt_link = $conn->prepare("
+                UPDATE payslip 
+                SET user_id = ? 
+                WHERE staff_id = ? AND user_id IS NULL
+            ");
+            $stmt_link->execute([$user_id, $staff_id]);
+
+            // 🔥 LOG HOW MANY PAYSLIPS WERE LINKED (for debugging)
+            $stmt_count = $conn->prepare("SELECT COUNT(*) FROM payslip WHERE staff_id = ? AND user_id = ?");
+            $stmt_count->execute([$staff_id, $user_id]);
+            $linked_count = $stmt_count->fetchColumn();
+
             echo json_encode([
                 'success' => true,
-                'message' => 'Account created successfully and saved to database! You can now log in.',
+                'message' => 'Account created successfully! and  ' . $linked_count . ' existing payslips linked.',
                 'user' => [
                     'email' => $email,
                     'role' => 'user',

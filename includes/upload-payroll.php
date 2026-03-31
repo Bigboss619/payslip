@@ -216,69 +216,74 @@ switch ($mode) {
         break;
 
     case 'save':
-        if (!$batch_id) {
-            echo json_encode(['success' => false, 'error' => 'Batch ID required']);
-            exit;
+    if (!$batch_id) {
+        echo json_encode(['success' => false, 'error' => 'Batch ID required']);
+        exit;
+    }
+
+    $previewData = $_SESSION['preview_' . $batch_id] ?? [];
+    if (empty($previewData)) {
+        echo json_encode(['success' => false, 'error' => 'Preview data expired']);
+        exit;
+    }
+
+    // Update batch to completed
+    $stmt = $conn->prepare("UPDATE payroll_batches SET status = 'completed' WHERE id = ? AND status = 'preview'");
+    $stmt->execute([$batch_id]);
+
+    // Insert payslips - FIXED!
+    $conn->beginTransaction();
+    $inserted = 0;
+    $with_user = 0;
+    $without_user = 0;
+    
+    try {
+        foreach ($previewData as $data) {
+            // Check if user exists (for stats only)
+            $userStmt = $conn->prepare("SELECT id FROM users WHERE staff_id = ? LIMIT 1");
+            $userStmt->execute([$data['staff_id']]);
+            $user = $userStmt->fetch(PDO::FETCH_ASSOC);
+            $user_id = $user ? $user['id'] : null;  // 🔥 NULL = unregistered
+
+            if ($user_id) $with_user++;
+            else $without_user++;
+
+            // 🔥 ALWAYS SAVE PAYSLIP - staff_id enables future linking!
+            $payslipStmt = $conn->prepare("
+                INSERT INTO payslip (
+                    user_id, staff_id, batch_id, gross_salary, basic_salary, housing, transport, 
+                    medical, utility, paye, deductions, pension, net_salary, days_worked
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ");
+            $payslipStmt->execute([
+                $user_id,           // NULL if unregistered
+                $data['staff_id'],  // KEY for registration linking!
+                $batch_id,
+                $data['gross_salary'], $data['basic_salary'], $data['housing'], 
+                $data['transport'], $data['medical'], $data['utility'], 
+                $data['paye'], $data['deductions'], $data['pension'], 
+                $data['net_salary'], $data['days_worked']
+            ]);
+            $inserted++;
         }
+        $conn->commit();
+    } catch (Exception $e) {
+        $conn->rollBack();
+        echo json_encode(['success' => false, 'error' => 'Save failed: ' . $e->getMessage()]);
+        exit;
+    }
 
-        $previewData = $_SESSION['preview_' . $batch_id] ?? [];
-        if (empty($previewData)) {
-            echo json_encode(['success' => false, 'error' => 'Preview data not found for batch ' . $batch_id]);
-            exit;
-        }
+    // Cleanup session
+    unset($_SESSION['preview_' . $batch_id]);
 
-        // Update batch to completed
-        $stmt = $conn->prepare("UPDATE payroll_batches SET status = 'completed' WHERE id = ? AND status = 'preview'");
-        $stmt->execute([$batch_id]);
-
-        // Insert payslips
-        $conn->beginTransaction();
-        $inserted = 0;
-        $skipped = 0;
-        try {
-            foreach ($previewData as $data) {
-                $userStmt = $conn->prepare("SELECT id FROM users WHERE staff_id = ? OR name LIKE ? LIMIT 1");
-                $userStmt->execute([$data['staff_id'], '%' . $data['name'] . '%']);
-                $user = $userStmt->fetch(PDO::FETCH_ASSOC);
-
-                if (!$user) {
-                    $skipped++;
-                    continue;  
-                }
-
-                $payslipStmt = $conn->prepare("
-                    INSERT INTO payslip (
-                        user_id, batch_id, gross_salary, basic_salary, housing, transport, 
-                        medical, utility, paye, deductions, pension, net_salary, 
-                        days_worked
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ");
-                $payslipStmt->execute([
-                    $user['id'], $batch_id,
-                    $data['gross_salary'], $data['basic_salary'], $data['housing'], 
-                    $data['transport'], $data['medical'], $data['utility'], 
-                    $data['paye'], $data['deductions'], $data['pension'], 
-                    $data['net_salary'], $data['days_worked']
-                ]);
-                $inserted++;
-            }
-            $conn->commit();
-        } catch (Exception $e) {
-            $conn->rollBack();
-            echo json_encode(['success' => false, 'error' => 'Database error during save: ' . $e->getMessage()]);
-            exit;
-        }
-
-        // Cleanup
-        unset($_SESSION['preview_' . $batch_id]);
-
-        echo json_encode([
-            'success' => true,
-            'message' => "Saved! $inserted payslips created ($skipped skipped - no matching staff).",
-            'inserted' => $inserted,
-            'skipped' => $skipped
-        ]);
-        break;
+    echo json_encode([
+        'success' => true,
+        'message' => "✅ $inserted payslips saved! ($with_user linked, $without_user pending registration)",
+        'inserted' => $inserted,
+        'with_user' => $with_user,
+        'without_user' => $without_user
+    ]);
+    break;
 
     case 'cancel':
         if (!$batch_id) {
