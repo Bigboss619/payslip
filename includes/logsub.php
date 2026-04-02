@@ -30,7 +30,7 @@ if (isset($_POST['login'])) {
 
     try {
         // Query by email OR staff_id
-        $query = "SELECT u.id, u.name, u.staff_id, u.email, u.password, u.role, u.pension_id, u.tax_id, u.account_number, u.bank_name, d.name as department_name FROM users u LEFT JOIN departments d ON u.department_id = d.id WHERE (u.email = ? OR u.staff_id = ?) LIMIT 1";
+        $query = "SELECT u.id, u.name, u.staff_id, u.email, u.hr_type, u.password, u.role, u.pension_id, u.tax_id, u.account_number, u.bank_name, d.name as department_name FROM users u LEFT JOIN departments d ON u.department_id = d.id WHERE (u.email = ? OR u.staff_id = ?) LIMIT 1";
 
 
         $stmt = $conn->prepare($query);
@@ -49,6 +49,7 @@ if (isset($_POST['login'])) {
             $_SESSION['bank_name'] = $user['bank_name'];
             $_SESSION['department_name'] = $user['department_name'];
             $_SESSION['role'] = $user['role'];
+            $_SESSION['hr_type'] = $user['hr_type'] ?? null; // Store HR type if available
 
 
             // Role-based redirect

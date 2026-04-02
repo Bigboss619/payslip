@@ -1,239 +1,149 @@
 <?php
 session_start();
 header('Content-Type: application/json');
-
 require '../config/config.php';
 
-$userRole = $_SESSION['role'] ?? 'Employee';
-$userId = $_SESSION['user_id'] ?? 1;
+$userId = $_SESSION['user_id'] ?? null;
+$userRole = $_SESSION['role'] ?? 'STAFF';
+$hrType = $_SESSION['hr_type'] ?? null;
+$staffId = $_SESSION['staff_id'] ?? null;
+
+if (!$userId) {
+    exit(json_encode(['success' => false, 'error' => 'Login required']));
+}
 
 try {
-    // STATS - DYNAMIC (Role-aware)
-    $stats = [
-'total_payslips' => getTotalPayslips($conn, $userId, $userRole),
-        'total_employees' => getSafeCount($conn, 'users'),
-        'last_salary' => getLastSalary($conn, $userId, $userRole),
-        'current_month' => getLatestMonth($conn, $userId, $userRole),
-        'user_name' => $_SESSION['name'] ?? 'Emmanuel'
-    ];
-
-    // RECENT PAYSLIPS - NEWEST FIRST
-    $recentPayslips = getRecentPayslips($conn, $userId, $userRole);
-
-    echo json_encode([
+    $response = [
         'success' => true,
-        'stats' => $stats,
-        'recent_payslips' => $recentPayslips
-    ]);
-
+        'user' => [
+            'name' => $_SESSION['name'] ?? 'User',
+            'role' => $userRole,
+            'hr_type' => $hrType
+        ],
+        'stats' => getSmartStats($conn, $userId, $userRole, $hrType),
+        'payslips' => getSmartPayslips($conn, $userId, $userRole, $hrType, $staffId)
+    ];
+    
+    echo json_encode($response);
+    
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }
 
-// ================= NEW FUNCTIONS =================
-function getLatestMonth($conn, $userId, $role) {
-    try {
-        if ($role === 'HR') {
-            // HR: Latest company batch
-            $stmt = $conn->query("
-                SELECT CONCAT(month, ' ', year) as period
-                FROM payroll_batches 
-                ORDER BY year DESC, FIELD(month, 'January','February','March','April','May','June','July','August','September','October','November','December') DESC
-                LIMIT 1
-            ");
-        } else {
-            // Employee: Latest personal payslip
-            $stmt = $conn->prepare("
-                SELECT CONCAT(COALESCE(pb.month, DATE_FORMAT(p.created_at, '%M')), ' ', COALESCE(pb.year, YEAR(p.created_at))) as period
-                FROM payslip p 
-                LEFT JOIN payroll_batches pb ON p.batch_id = pb.id
-                WHERE p.user_id = ?
-                ORDER BY COALESCE(pb.year, YEAR(p.created_at)) DESC, 
-                         FIELD(COALESCE(pb.month, DATE_FORMAT(p.created_at, '%M')), 
-                               'January','February','March','April','May','June','July','August','September','October','November','December') DESC
-                LIMIT 1
-            ");
-            $stmt->execute([$userId]);
-        }
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result['period'] ?? date('F Y');
-    } catch (Exception $e) {
-        return date('F Y');
-    }
-}
-
-function getLastSalary($conn, $userId, $userRole) {
-    try {
-        if ($userRole === 'STAFF') {
-            $monthDetails = getLastMonthDetails($conn, $userId, $userRole);
-            $stmt = $conn->prepare("
-                SELECT net_salary 
-                FROM payslip 
-                WHERE user_id = ? AND (
-                    (batch_id IN (SELECT id FROM payroll_batches WHERE month=? AND year=?)) OR 
-                    (MONTH(created_at)=? AND YEAR(created_at)=?)
-                )
-                ORDER BY created_at DESC LIMIT 1
-            ");
-            $stmt->execute([$userId, $monthDetails['month'], $monthDetails['year'], $monthDetails['month_num'], $monthDetails['year']]);
-        } else {
-            // HR: latest overall
-            $stmt = $conn->prepare("
-                SELECT net_salary 
-                FROM payslip ORDER BY created_at DESC LIMIT 1
-            ");
-            $stmt->execute();
-        }
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result ? (float)$result['net_salary'] : 0;
-    } catch (Exception $e) {
-        return 0;
-    }
-}
-
-function getRecentPayslips($conn, $userId, $role) {
-    try {
-        if ($role === 'HR') {
-            // HR: Latest batches (April first!)
-            $stmt = $conn->query("
-                SELECT pb.month, pb.year, 
-                       COALESCE(SUM(p.gross_salary), 0) as gross_salary,
-                       COALESCE(SUM(p.net_salary), 0) as net_salary,
-                       pb.status, pb.id as batch_id, pb.created_at
-                FROM payroll_batches pb 
-                LEFT JOIN payslip p ON p.batch_id = pb.id
-                GROUP BY pb.id 
-                ORDER BY pb.year DESC, 
-                         FIELD(pb.month, 'December','November','October','September','August','July','June','May','April','March','February','January') ASC,
-                         pb.created_at DESC
-                LIMIT 5
-            ");
-        } else {
-            // Employee: Personal (newest first)
-            $stmt = $conn->prepare("
-                SELECT pb.month, pb.year, p.gross_salary, p.net_salary, 
-                       COALESCE(pb.status, 'Paid') as status, p.id, p.created_at
-                FROM payslip p 
-                LEFT JOIN payroll_batches pb ON p.batch_id = pb.id
-                WHERE p.user_id = ? 
-                ORDER BY COALESCE(pb.year, YEAR(p.created_at)) DESC, 
-                         FIELD(COALESCE(pb.month, DATE_FORMAT(p.created_at, '%M')), 
-                               'December','November','October','September','August','July','June','May','April','March','February','January') ASC,
-                         p.created_at DESC
-                LIMIT 5
-            ");
-            $stmt->execute([$userId]);
-        }
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (Exception $e) {
-        return [];
-    }
-}
-
-function getSafeCount($conn, $table) {
-    try {
-        $stmt = $conn->query("SELECT COUNT(*) as count FROM `$table`");
-        return (int)$stmt->fetch(PDO::FETCH_ASSOC)['count'];
-    } catch (Exception $e) {
-        return 0;
-    }
-}
-
-function getMonthDetails($conn, $userId, $role, $isLastMonth = false) {
-    try {
-        if ($role === 'HR') {
-            $order = $isLastMonth ? 'LIMIT 2' : 'LIMIT 1';
-            $stmt = $conn->query("
-                SELECT month, year, MONTHNAME(STR_TO_DATE(CONCAT(month, ' 1 ', year), '%M %d %Y')) as month_name, 
-                       MONTH(STR_TO_DATE(CONCAT(month, ' 1 ', year), '%M %d %Y')) as month_num
-                FROM payroll_batches 
-                ORDER BY year DESC, FIELD(month, 'January','February','March','April','May','June','July','August','September','October','November','December') DESC
-                $order
-            ");
-            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            if ($isLastMonth && count($results) >= 2) {
-                return $results[1]; // Second latest
-            }
-            return $results[0] ?? [
-                'month' => date('F'), 
-                'year' => date('Y'), 
-                'month_name' => date('F'), 
-                'month_num' => (int)date('n')
-            ];
-        } else {
-            // STAFF: from their payslips
-            $order = $isLastMonth ? 'LIMIT 2' : 'LIMIT 1';
-            $stmt = $conn->prepare("
-                SELECT COALESCE(pb.month, DATE_FORMAT(p.created_at, '%M')) as month, 
-                       COALESCE(pb.year, YEAR(p.created_at)) as year,
-                       MONTHNAME(STR_TO_DATE(CONCAT(COALESCE(pb.month, DATE_FORMAT(p.created_at, '%M')), ' 1 ', COALESCE(pb.year, YEAR(p.created_at))), '%M %d %Y')) as month_name,
-                       MONTH(STR_TO_DATE(CONCAT(COALESCE(pb.month, DATE_FORMAT(p.created_at, '%M')), ' 1 ', COALESCE(pb.year, YEAR(p.created_at))), '%M %d %Y')) as month_num
-                FROM payslip p LEFT JOIN payroll_batches pb ON p.batch_id = pb.id
-                WHERE p.user_id = ?
-                ORDER BY COALESCE(pb.year, YEAR(p.created_at)) DESC, FIELD(COALESCE(pb.month, DATE_FORMAT(p.created_at, '%M')), 'January','February','March','April','May','June','July','August','September','October','November','December') DESC
-                $order
-            ");
-            $stmt->execute([$userId]);
-            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            if ($isLastMonth && count($results) >= 2) {
-                return $results[1];
-            }
-            return $results[0] ?? [
-                'month' => date('F'), 
-                'year' => date('Y'), 
-                'month_name' => date('F'), 
-                'month_num' => (int)date('n')
-            ];
-        }
-    } catch (Exception $e) {
+function getSmartStats($conn, $userId, $role, $hrType) {
+    if ($role === 'STAFF') {
+        $stmt = $conn->prepare("
+            SELECT COUNT(*) as total_payslips,
+                   COALESCE(SUM(net_salary), 0) as total_earned
+            FROM payslip WHERE user_id = ? OR staff_id = ?
+        ");
+        $stmt->execute([$userId, $_SESSION['staff_id']]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        
         return [
-            'month' => date('F'), 
-            'year' => date('Y'), 
-            'month_name' => date('F'), 
-            'month_num' => (int)date('n')
+            'total_payslips' => (int)$row['total_payslips'],
+            'total_earned' => (float)$row['total_earned'],
+            'last_salary' => getLastSalary($conn, $userId),
+            'current_month' => getCurrentMonth($conn, $userId)
         ];
     }
+    
+    // HR Stats
+    $params = [$_SESSION['user_id']];
+    $hrFilter = $hrType ? "AND u.hr_type = ?" : "";
+    if ($hrType) $params[] = $hrType;
+    
+    $stmt = $conn->prepare("
+        SELECT COUNT(DISTINCT p.id) as total_payslips,
+               COUNT(DISTINCT u.id) as total_employees
+        FROM payslip p 
+        INNER JOIN payroll_batches b ON p.batch_id = b.id  /* 🔥 Fixed alias */
+        LEFT JOIN users u ON p.user_id = u.id
+        WHERE b.uploaded_by = ? $hrFilter
+    ");
+    $stmt->execute($params);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    return [
+        'total_payslips' => (int)$row['total_payslips'],
+        'total_employees' => (int)$row['total_employees'],
+        'last_salary' => getLastSalary($conn, $userId),
+        'current_month' => getCurrentMonth($conn, $userId, 'HR')
+    ];
 }
 
-function getCurrentMonthDetails($conn, $userId, $userRole) {
-    return getMonthDetails($conn, $userId, $userRole, false);
-}
-
-function getLastMonthDetails($conn, $userId, $userRole) {
-    return getMonthDetails($conn, $userId, $userRole, true);
-}
-
-function getTotalPayslips($conn, $userId, $userRole) {
-    try {
-        $monthDetails = $userRole === 'STAFF' ? getLastMonthDetails($conn, $userId, $userRole) : getCurrentMonthDetails($conn, $userId, $userRole);
-        
-        if ($userRole === 'STAFF') {
-            // STAFF: count their payslips in last month
-            $stmt = $conn->prepare("
-                SELECT COUNT(*) as count
-                FROM payslip 
-                WHERE user_id = ? AND (
-                    (batch_id IN (SELECT id FROM payroll_batches WHERE month=? AND year=?)) OR 
-                    (MONTH(created_at)=? AND YEAR(created_at)=?)
-                )
-            ");
-            $stmt->execute([$userId, $monthDetails['month'], $monthDetails['year'], $monthDetails['month_num'], $monthDetails['year']]);
-        } else {
-            // HR: count all payslips in current month
-            $stmt = $conn->prepare("
-                SELECT COUNT(*) as count
-                FROM payslip 
-                WHERE (
-                    (batch_id IN (SELECT id FROM payroll_batches WHERE month=? AND year=?)) OR 
-                    (MONTH(created_at)=? AND YEAR(created_at)=?)
-                )
-            ");
-            $stmt->execute([$monthDetails['month'], $monthDetails['year'], $monthDetails['month_num'], $monthDetails['year']]);
-        }
-        
-        return (int)$stmt->fetch(PDO::FETCH_ASSOC)['count'];
-    } catch (Exception $e) {
-        return 0;
+function getSmartPayslips($conn, $userId, $role, $hrType, $staffId) {
+    if ($role === 'STAFF') {
+        $stmt = $conn->prepare("
+            SELECT b.month, b.year, p.gross_salary, p.net_salary, 
+                   COALESCE(b.status, 'Paid') as status, p.id, p.created_at
+            FROM payslip p 
+            LEFT JOIN payroll_batches b ON p.batch_id = b.id  /* 🔥 Fixed alias */
+            WHERE p.user_id = ? OR p.staff_id = ?
+            ORDER BY b.year DESC, b.created_at DESC 
+            LIMIT 10
+        ");
+        $stmt->execute([$userId, $staffId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
+    // HR Payslips
+    $params = [$_SESSION['user_id']];
+    $hrFilter = $hrType ? "AND u.hr_type = ?" : "";
+    if ($hrType) $params[] = $hrType;
+    
+    $stmt = $conn->prepare("
+        SELECT b.month, b.year, 
+               SUM(p.gross_salary) as gross_salary,
+               SUM(p.net_salary) as net_salary,
+               b.status, b.id as batch_id, b.created_at,
+               COUNT(p.id) as employees
+        FROM payroll_batches b  /* 🔥 Clear alias */
+        LEFT JOIN payslip p ON p.batch_id = b.id
+        LEFT JOIN users u ON p.user_id = u.id
+        WHERE b.uploaded_by = ? $hrFilter
+        GROUP BY b.id 
+        ORDER BY b.year DESC, b.created_at DESC 
+        LIMIT 10
+    ");
+    $stmt->execute($params);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getLastSalary($conn, $userId) {
+    $stmt = $conn->prepare("
+        SELECT net_salary FROM payslip 
+        WHERE user_id = ? OR staff_id = ?
+        ORDER BY created_at DESC LIMIT 1
+    ");
+    $stmt->execute([$userId, $_SESSION['staff_id']]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result ? (float)$result['net_salary'] : 0;
+}
+
+function getCurrentMonth($conn, $userId, $role = 'STAFF') {
+    if ($role === 'STAFF') {
+        $stmt = $conn->prepare("
+            SELECT CONCAT(COALESCE(b.month, DATE_FORMAT(p.created_at, '%M')), ' ', 
+                          COALESCE(b.year, YEAR(p.created_at))) as period
+            FROM payslip p
+            LEFT JOIN payroll_batches b ON p.batch_id = b.id
+            WHERE p.user_id = ? OR p.staff_id = ?
+            ORDER BY COALESCE(b.year, YEAR(p.created_at)) DESC LIMIT 1
+        ");
+        $stmt->execute([$userId, $_SESSION['staff_id']]);
+    } else {
+        // HR version - use payroll_batches directly
+        $stmt = $conn->prepare("
+            SELECT CONCAT(b.month, ' ', b.year) as period
+            FROM payroll_batches b
+            WHERE b.uploaded_by = ?
+            ORDER BY b.year DESC, b.created_at DESC LIMIT 1
+        ");
+        $stmt->execute([$_SESSION['user_id']]);
+    }
+    
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['period'] ?? date('F Y');
 }
 ?>

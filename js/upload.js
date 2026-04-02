@@ -184,6 +184,36 @@ async function handleFileUpload(e) {
   }
 }
 
+// function showPreview(data) {
+//   previewData = data;
+//   const previewSection = document.getElementById('previewSection');
+//   const previewTable = document.getElementById('previewTable');
+//   const saveBtn = document.getElementById('saveBtn');
+  
+//   if (previewTable) {
+//     previewTable.innerHTML = data.map((row, index) => `
+//       <tr class="hover:bg-gray-50 border-b">
+//         <td class="p-2 border font-medium">${row.staff_id || ''}</td>
+//         <td class="p-2 border">${row.name || ''}</td>
+//         <td class="p-2 border text-right font-semibold">${formatAmount(row.gross_salary)}</td>
+//         <td class="p-2 border text-center">${row.days_worked || ''}</td>
+//         <td class="p-2 border text-right">${formatAmount(row.basic_salary)}</td>
+//         <td class="p-2 border text-right">${formatAmount(row.housing)}</td>
+//         <td class="p-2 border text-right">${formatAmount(row.transport)}</td>
+//         <td class="p-2 border text-right">${formatAmount(row.medical)}</td>
+//         <td class="p-2 border text-right">${formatAmount(row.utility)}</td>
+//         <td class="p-2 border text-right text-red-600">${formatAmount(row.paye)}</td>
+//         <td class="p-2 border text-right">${formatAmount(row.deductions)}</td>
+//         <td class="p-2 border text-right">${formatAmount(row.pension)}</td>
+//         <td class="p-2 border text-right font-bold text-green-600">${formatAmount(row.net_salary)}</td>
+//       </tr>
+//     `).join('');
+//   }
+  
+//   previewSection.classList.remove('hidden');
+//   if (saveBtn) saveBtn.disabled = false;
+// }
+
 function showPreview(data) {
   previewData = data;
   const previewSection = document.getElementById('previewSection');
@@ -198,11 +228,13 @@ function showPreview(data) {
         <td class="p-2 border text-right font-semibold">${formatAmount(row.gross_salary)}</td>
         <td class="p-2 border text-center">${row.days_worked || ''}</td>
         <td class="p-2 border text-right">${formatAmount(row.basic_salary)}</td>
-        <td class="p-2 border text-right">${formatAmount(row.housing)}</td>
-        <td class="p-2 border text-right">${formatAmount(row.transport)}</td>
+        <!-- 🔥 DUAL SUPPORT: housing OR housing_allowance -->
+        <td class="p-2 border text-right">${formatAmount(row.housing || row.housing_allowance)}</td>
+        <td class="p-2 border text-right">${formatAmount(row.transport || row.transport_allowance)}</td>
         <td class="p-2 border text-right">${formatAmount(row.medical)}</td>
         <td class="p-2 border text-right">${formatAmount(row.utility)}</td>
-        <td class="p-2 border text-right text-red-600">${formatAmount(row.paye)}</td>
+        <!-- 🔥 DUAL SUPPORT: paye OR monthly_paye -->
+        <td class="p-2 border text-right text-red-600">${formatAmount(row.paye || row.monthly_paye)}</td>
         <td class="p-2 border text-right">${formatAmount(row.deductions)}</td>
         <td class="p-2 border text-right">${formatAmount(row.pension)}</td>
         <td class="p-2 border text-right font-bold text-green-600">${formatAmount(row.net_salary)}</td>
