@@ -214,38 +214,121 @@ async function handleFileUpload(e) {
 //   if (saveBtn) saveBtn.disabled = false;
 // }
 
+// function showPreview(data) {
+//   previewData = data;
+//   const previewSection = document.getElementById('previewSection');
+//   const previewTable = document.getElementById('previewTable');
+//   const saveBtn = document.getElementById('saveBtn');
+  
+//   if (previewTable) {
+//     previewTable.innerHTML = data.map((row, index) => `
+//       <tr class="hover:bg-gray-50 border-b">
+//         <td class="p-2 border font-medium">${row.staff_id || ''}</td>
+//         <td class="p-2 border">${row.name || ''}</td>
+//         <td class="p-2 border text-right font-semibold">${formatAmount(row.gross_salary)}</td>
+//         <td class="p-2 border text-center">${row.days_worked || ''}</td>
+//         <td class="p-2 border text-right">${formatAmount(row.basic_salary)}</td>
+//         <!-- 🔥 DUAL SUPPORT: housing OR housing_allowance -->
+//         <td class="p-2 border text-right">${formatAmount(row.housing || row.housing_allowance)}</td>
+//         <td class="p-2 border text-right">${formatAmount(row.transport || row.transport_allowance)}</td>
+//         <td class="p-2 border text-right">${formatAmount(row.medical)}</td>
+//         <td class="p-2 border text-right">${formatAmount(row.utility)}</td>
+//         <!-- 🔥 DUAL SUPPORT: paye OR monthly_paye -->
+//         <td class="p-2 border text-right text-red-600">${formatAmount(row.paye || row.monthly_paye)}</td>
+//         <td class="p-2 border text-right">${formatAmount(row.deductions)}</td>
+//         <td class="p-2 border text-right">${formatAmount(row.pension)}</td>
+//         <td class="p-2 border text-right font-bold text-green-600">${formatAmount(row.net_salary)}</td>
+//       </tr>
+//     `).join('');
+//   }
+  
+//   previewSection.classList.remove('hidden');
+//   if (saveBtn) saveBtn.disabled = false;
+// }
+
 function showPreview(data) {
   previewData = data;
   const previewSection = document.getElementById('previewSection');
-  const previewTable = document.getElementById('previewTable');
-  const saveBtn = document.getElementById('saveBtn');
+  const hrType = data[0]?.hr_type || 'MAIN';
   
-  if (previewTable) {
-    previewTable.innerHTML = data.map((row, index) => `
-      <tr class="hover:bg-gray-50 border-b">
-        <td class="p-2 border font-medium">${row.staff_id || ''}</td>
-        <td class="p-2 border">${row.name || ''}</td>
-        <td class="p-2 border text-right font-semibold">${formatAmount(row.gross_salary)}</td>
-        <td class="p-2 border text-center">${row.days_worked || ''}</td>
-        <td class="p-2 border text-right">${formatAmount(row.basic_salary)}</td>
-        <!-- 🔥 DUAL SUPPORT: housing OR housing_allowance -->
-        <td class="p-2 border text-right">${formatAmount(row.housing || row.housing_allowance)}</td>
-        <td class="p-2 border text-right">${formatAmount(row.transport || row.transport_allowance)}</td>
-        <td class="p-2 border text-right">${formatAmount(row.medical)}</td>
-        <td class="p-2 border text-right">${formatAmount(row.utility)}</td>
-        <!-- 🔥 DUAL SUPPORT: paye OR monthly_paye -->
-        <td class="p-2 border text-right text-red-600">${formatAmount(row.paye || row.monthly_paye)}</td>
-        <td class="p-2 border text-right">${formatAmount(row.deductions)}</td>
-        <td class="p-2 border text-right">${formatAmount(row.pension)}</td>
-        <td class="p-2 border text-right font-bold text-green-600">${formatAmount(row.net_salary)}</td>
-      </tr>
-    `).join('');
+  // 🔥 Set title based on HR type
+  document.getElementById('previewTitle').textContent = 
+    hrType === 'MAIN' ? '📋 MAIN HR Payroll Preview' : '🏪 RETAIL HR Payroll Preview';
+  document.getElementById('previewHrType').textContent = 
+    `${hrType} Format • ${data.length} rows parsed`;
+  
+  // 🔥 Hide both tables first
+  document.getElementById('mainHrPreviewTable').classList.add('hidden');
+  document.getElementById('retailHrPreviewTable').classList.add('hidden');
+  
+  if (hrType === 'MAIN') {
+    renderMainHrPreview(data);
+    document.getElementById('mainHrPreviewTable').classList.remove('hidden');
+  } else {
+    renderRetailHrPreview(data);
+    document.getElementById('retailHrPreviewTable').classList.remove('hidden');
   }
   
+  // Show section and enable save
   previewSection.classList.remove('hidden');
-  if (saveBtn) saveBtn.disabled = false;
+  document.getElementById('saveBtn').disabled = false;
+  
+  // Update totals
+  updatePreviewTotals(data);
 }
 
+function renderMainHrPreview(rows) {
+  const tbody = document.getElementById('mainPreviewBody');
+  tbody.innerHTML = rows.map(row => `
+    <tr class="hover:bg-blue-50 transition">
+      <td class="p-3 font-medium">${row.staff_id}</td>
+      <td class="p-3">${row.name}</td>
+      <td class="p-3 text-right font-semibold">${formatAmount(row.gross_salary)}</td>
+      <td class="p-3 text-center">${row.days_worked}</td>
+      <td class="p-3 text-right">${formatAmount(row.basic_salary)}</td>
+      <td class="p-3 text-right">${formatAmount(row.housing_allowance)}</td>
+      <td class="p-3 text-right">${formatAmount(row.transport_allowance)}</td>
+      <td class="p-3 text-right">${formatAmount(row.medical)}</td>
+      <td class="p-3 text-right">${formatAmount(row.utility)}</td>
+      <td class="p-3 text-right text-red-500 font-medium">${formatAmount(row.monthly_paye)}</td>
+      <td class="p-3 text-right">${formatAmount(row.deductions)}</td>
+      <td class="p-3 text-right">${formatAmount(row.pension)}</td>
+      <td class="p-3 text-right font-bold text-green-600">${formatAmount(row.net_salary)}</td>
+    </tr>
+  `).join('');
+}
+
+function renderRetailHrPreview(rows) {
+  const tbody = document.getElementById('retailPreviewBody');
+  tbody.innerHTML = rows.map(row => {
+    const extras = row.extra_data ? JSON.parse(row.extra_data) : {};
+    return `
+      <tr class="hover:bg-purple-50 transition">
+        <td class="p-3 font-medium">${row.staff_id}</td>
+        <td class="p-3">${row.name}</td>
+        <td class="p-3 text-right font-semibold">${formatAmount(row.gross_salary)}</td>
+        <td class="p-3 text-right font-bold text-green-600">${formatAmount(row.net_salary)}</td>
+        <td class="p-3 text-right text-red-500">${formatAmount(row.deductions)}</td>
+        <td class="p-3 text-right">${formatAmount(extras.annual_gross) || '-'}</td>
+        <td class="p-3 text-right">${formatAmount(extras.taxable_income) || '-'}</td>
+        <td class="p-3 text-right">${formatAmount(extras.annual_tax) || '-'}</td>
+        <td class="p-3 text-right text-red-500">${formatAmount(extras.monthly_tax) || '-'}</td>
+        <td class="p-3 text-right text-green-500">${formatAmount(extras.monthly_net) || '-'}</td>
+        <td class="p-3">${extras.stations || '-'}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function updatePreviewTotals(data) {
+  const totalRows = data.length;
+  const totalGross = data.reduce((sum, row) => sum + parseFloat(row.gross_salary || 0), 0);
+  const totalNet = data.reduce((sum, row) => sum + parseFloat(row.net_salary || 0), 0);
+  
+  document.getElementById('previewRowCount').textContent = totalRows;
+  document.getElementById('previewTotalGross').textContent = formatAmount(totalGross);
+  document.getElementById('previewTotalNet').textContent = formatAmount(totalNet);
+}
 function formatAmount(amount) {
   return `₦${parseFloat(amount || 0).toLocaleString()}`;
 }

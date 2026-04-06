@@ -303,6 +303,8 @@ switch ($mode) {
                 // Replace everywhere:
                 $parsed = parseExcelRow($row, $headers, $hrType, $headerMappings);  // Remove $mapping param
                 if (!empty($parsed['staff_id']) && !empty($parsed['name'])) {
+                    if($hrType === 'MAIN'){
+                        // MAIN HR: Ensure all 14 columns are present for preview
                     $previewData[] = [
                         'staff_id' => $parsed['staff_id'] ?? '',
                         'name' => $parsed['name'] ?? '',
@@ -320,7 +322,19 @@ switch ($mode) {
                         'pension' => $parsed['pension'] ?? 0,
                         'extra_data' => $hrType === 'RETAIL' ? $parsed['extra_data'] : null,  // 🔥 MAIN = NULL
                         'hr_type' => $hrType
-                ];
+                    ];
+                    } else {
+                        // RETAIL HR: Only show mapped fields + extras
+                        $previewData[] = [
+                        'staff_id' => $parsed['staff_id'],
+                        'name' => $parsed['name'],
+                        'gross_salary' => $parsed['gross_salary'],
+                        'net_salary' => $parsed['net_salary'],
+                        'deductions' => $parsed['deductions'],
+                        'extra_data' => $parsed['extra_data'], // JSON string
+                        'hr_type' => $hrType
+                        ];
+                    }
                 }
             }
 

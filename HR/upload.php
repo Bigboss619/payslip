@@ -40,39 +40,73 @@ include_once("../includes/nav.php");
       </div>
 
       <!-- PREVIEW SECTION (post-upload) -->
-      <div id="previewSection" class="bg-white rounded-xl shadow p-6 mb-6 hidden">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-lg font-semibold">Preview Data (Save to confirm)</h2>
-          <div class="space-x-2">
-            <button onclick="cancelPreview()" class="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300">Cancel</button>
-            <button onclick="savePayroll()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700" id="saveBtn" disabled>Save Payroll</button>
-          </div>
-        </div>
-<div class="overflow-x-auto max-h-96 overflow-y-auto">
-  <table class="w-full text-sm border">
-    <thead class="bg-gray-100">
-      <tr>
-        <th class="p-2 border">Staff ID</th>
-        <th class="p-2 border">Name</th>
-        <!-- <th class="p-2 border">Department</th> -->
-        <th class="p-2 border">Monthly Gross</th>
-        <!-- <th class="p-2 border">Pro-Rata</th> -->
-        <th class="p-2 border">Days Worked</th>
-        <th class="p-2 border">Basic Salary</th>
-        <th class="p-2 border">Housing</th>
-        <th class="p-2 border">Transport</th>
-        <th class="p-2 border">Medical</th>
-        <th class="p-2 border">Utility</th>
-        <th class="p-2 border">Monthly PAYE</th>
-        <th class="p-2 border">Payroll Deductions</th>
-        <th class="p-2 border">Pension</th>
-        <th class="p-2 border">Monthly Take Home</th>
-      </tr>
-    </thead>
-    <tbody id="previewTable"></tbody>
-  </table>
+<div id="previewSection" class="bg-white rounded-xl shadow p-6 mb-6 hidden">
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h2 class="text-xl font-bold text-gray-800" id="previewTitle">Payroll Preview</h2>
+      <p class="text-sm text-gray-500 mt-1" id="previewHrType"></p>
+    </div>
+    <div class="space-x-3">
+      <button onclick="cancelPreview()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-lg font-medium transition">Cancel</button>
+      <button onclick="savePayroll()" class="bg-green-600 hover:bg-green-700 text-white px-8 py-2 rounded-lg font-semibold transition" id="saveBtn" disabled>Save Payroll</button>
+    </div>
+  </div>
+
+  <!-- 🔥 MAIN HR PREVIEW TABLE -->
+  <div id="mainHrPreviewTable" class="overflow-x-auto hidden">
+    <table class="w-full text-sm border-collapse">
+      <thead class="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+        <tr>
+          <th class="p-3 text-left font-semibold">Staff ID</th>
+          <th class="p-3 text-left font-semibold">Name</th>
+          <th class="p-3 text-right font-semibold">Gross</th>
+          <th class="p-3 text-center font-semibold">Days</th>
+          <th class="p-3 text-right font-semibold">Basic</th>
+          <th class="p-3 text-right font-semibold">Housing</th>
+          <th class="p-3 text-right font-semibold">Transport</th>
+          <th class="p-3 text-right font-semibold">Medical</th>
+          <th class="p-3 text-right font-semibold">Utility</th>
+          <th class="p-3 text-right font-semibold text-red-400">PAYE</th>
+          <th class="p-3 text-right font-semibold">Deductions</th>
+          <th class="p-3 text-right font-semibold">Pension</th>
+          <th class="p-3 text-right font-semibold text-green-400">Net</th>
+        </tr>
+      </thead>
+      <tbody id="mainPreviewBody" class="divide-y divide-gray-200"></tbody>
+    </table>
+  </div>
+
+  <!-- 🔥 RETAIL HR PREVIEW TABLE -->
+  <div id="retailHrPreviewTable" class="overflow-x-auto hidden">
+    <table class="w-full text-sm border-collapse">
+      <thead class="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+        <tr>
+          <th class="p-3 text-left font-semibold">Staff ID</th>
+          <th class="p-3 text-left font-semibold">Name</th>
+          <th class="p-3 text-right font-semibold">Monthly Gross</th>
+          <th class="p-3 text-right font-semibold">Monthly Net</th>
+          <th class="p-3 text-right font-semibold">Deductions</th>
+          <th class="p-3 text-right font-semibold">Annual Gross</th>
+          <th class="p-3 text-right font-semibold">Taxable Income</th>
+          <th class="p-3 text-right font-semibold">Annual Tax 15%</th>
+          <th class="p-3 text-right font-semibold text-red-400">Monthly Tax</th>
+          <th class="p-3 text-right font-semibold text-green-400">Monthly Net</th>
+          <th class="p-3 text-left font-semibold">Stations</th>
+        </tr>
+      </thead>
+      <tbody id="retailPreviewBody" class="divide-y divide-gray-200"></tbody>
+    </table>
+  </div>
+
+  <!-- Summary Row -->
+  <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+    <div class="flex justify-between items-center text-sm">
+      <span class="font-semibold text-gray-800">Total Rows: <span id="previewRowCount">0</span></span>
+      <span class="font-semibold text-gray-800">Total Gross: <span id="previewTotalGross">₦0</span></span>
+      <span class="font-semibold text-gray-800">Total Net: <span id="previewTotalNet">₦0</span></span>
+    </div>
+  </div>
 </div>
-      </div>
 
       <!-- MONTH STATUS CHECK -->
       <div id="monthSection" class="bg-white p-6 rounded-xl shadow mb-6">
