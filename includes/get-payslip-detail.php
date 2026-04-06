@@ -24,7 +24,11 @@ try {
         SELECT 
             p.id, p.deductions, p.gross_salary AS grossSalary, p.net_salary AS netSalary,
             p.basic_salary, p.housing, p.transport, p.medical, p.utility,
-            p.paye, p.pension, p.days_worked,
+            p.paye, p.pension, p.days_worked, pb.hr_type,
+            JSON_UNQUOTE(JSON_EXTRACT(p.extra_data, '$.annual_gross')) AS annual_gross,
+            JSON_UNQUOTE(JSON_EXTRACT(p.extra_data, '$.taxable_income')) AS taxable_income,
+            JSON_UNQUOTE(JSON_EXTRACT(p.extra_data, '$.annual_tax')) AS annual_tax,
+            JSON_UNQUOTE(JSON_EXTRACT(p.extra_data, '$.stations')) AS station,
             COALESCE(u.name, 'Unknown') AS employeeName,
             COALESCE(u.staff_id, 'N/A') AS employeeId,
             COALESCE(d.name, 'Unknown') AS department,

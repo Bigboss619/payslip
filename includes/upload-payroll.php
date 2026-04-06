@@ -46,6 +46,7 @@ $headerMappings = [
     'taxable_income' => ['taxable income', 'taxable'],
     'annual_tax' => ['annual tax'],
     'monthly_tax' => ['monthly tax'],
+    'monthly_net'=> ['monthly net', 'net'],
     'stations' => ['stations', 'station', 'branch', 'location']
     ]
 ];
@@ -110,6 +111,8 @@ function parseExcelRow($row, $headers, $hrType, $headerMappings) {
         'annual_gross' => true,
         'taxable_income' => true,
         'annual_tax' => true,
+        'monthly_tax' => true,
+        'monthly_net' => true,
         'stations' => true
     ]);
     $data['extra_data'] = !empty($retailExtras) ? json_encode($retailExtras) : null;
