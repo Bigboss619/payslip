@@ -44,7 +44,7 @@ $headerMappings = [
     // Retail extras (flexible)
     'annual_gross' => ['annual gross', 'annual_gross'],
     'taxable_income' => ['taxable income', 'taxable'],
-    'annual_tax' => ['annual tax'],
+    'annual_tax' => ['annual tax', 'annual_tax'],
     'monthly_tax' => ['monthly tax'],
     'monthly_net'=> ['monthly net', 'net'],
     'stations' => ['stations', 'station', 'branch', 'location']
@@ -94,7 +94,7 @@ function parseExcelRow($row, $headers, $hrType, $headerMappings) {
                 $value = trim($row[$index]);
                 if (!empty($value)) {
                     $extraData[$dbField] = match($dbField) {
-                        'gross_salary', 'net_salary', 'deductions' => (float)$value,
+                        'gross_salary', 'net_salary', 'deductions', 'annual_gross', 'taxable_income', 'annual_tax', 'monthly_tax', 'monthly_net' => (float)$value,
                         default => $value
                     };
                 }
@@ -140,8 +140,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['mode']) && $_GET['mode'
     $month = $monthNames[$monthNum] ?? $monthNum;
     
     try {
-        $stmt = $conn->prepare("SELECT id, file_path FROM payroll_batches WHERE month = ? AND year = ? AND status = 'completed'");
-        $stmt->execute([$month, $year]);
+        $stmt = $conn->prepare("SELECT id, file_path FROM payroll_batches WHERE month = ? AND year = ? AND hr_type = ? AND status = 'completed'");
+        $stmt->execute([$month, $year, $hrType]);
         $batch = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if (!$batch || !file_exists($batch['file_path'])) {
@@ -162,7 +162,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['mode']) && $_GET['mode'
         $mapping = $headerMappings[$hrType];
         
         // Validate required common fields
-        $required = ['staff_id', 'name', 'gross_salary', 'deductions', 'net_salary'];
+        // $required = ['staff_id', 'name', 'gross_salary', 'deductions', 'net_salary'];
+        //  ✅ NEW: HR-type specific validation
+        $required = $hrType === 'MAIN' 
+        ? ['staff_id', 'name', 'gross_salary']  // MAIN: Fixed positions, minimal check
+        : ['staff_id', 'name', 'gross_salary', 'deductions', 'net_salary']; 
         foreach ($required as $field) {
             if (findHeaderIndex($headers, $mapping[$field]) === -1) {
                 echo json_encode(['success' => false, 'error' => "Missing required header: {$field}"]);

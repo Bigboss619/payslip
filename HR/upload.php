@@ -40,6 +40,7 @@ include_once("../includes/nav.php");
       </div>
 
       <!-- PREVIEW SECTION (post-upload) -->
+<!-- PREVIEW SECTION (post-upload) -->
 <div id="previewSection" class="bg-white rounded-xl shadow p-6 mb-6 hidden">
   <div class="flex justify-between items-center mb-6">
     <div>
@@ -83,12 +84,12 @@ include_once("../includes/nav.php");
         <tr>
           <th class="p-3 text-left font-semibold">Staff ID</th>
           <th class="p-3 text-left font-semibold">Name</th>
-          <th class="p-3 text-right font-semibold">Monthly Gross</th>
-          <th class="p-3 text-right font-semibold">Monthly Net</th>
+          <th class="p-3 text-right font-semibold">Gross</th>
+          <th class="p-3 text-right font-semibold">Net</th>
           <th class="p-3 text-right font-semibold">Deductions</th>
           <th class="p-3 text-right font-semibold">Annual Gross</th>
-          <th class="p-3 text-right font-semibold">Taxable Income</th>
-          <th class="p-3 text-right font-semibold">Annual Tax 15%</th>
+          <th class="p-3 text-right font-semibold">Taxable</th>
+          <th class="p-3 text-right font-semibold">Annual Tax</th>
           <th class="p-3 text-right font-semibold text-red-400">Monthly Tax</th>
           <th class="p-3 text-right font-semibold text-green-400">Monthly Net</th>
           <th class="p-3 text-left font-semibold">Stations</th>
