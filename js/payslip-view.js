@@ -61,7 +61,7 @@ function loadPayslipData(data) {
     
     if (data.hr_type === 'MAIN' || !data.hr_type) {
         // 🔥 MAIN HR (your existing code)
-        document.getElementById('pdf-days-worked').textContent = data.days_worked || 22;
+        document.getElementById('pdf-days-worked').textContent = data.days_worked;
         document.getElementById('pdf-basic').textContent = formatCurrency(data.basic_salary);
         document.getElementById('pdf-housing').textContent = formatCurrency(data.housing);
         document.getElementById('pdf-transport').textContent = formatCurrency(data.transport);
@@ -71,7 +71,8 @@ function loadPayslipData(data) {
         document.getElementById('pdf-paye').textContent = formatCurrency(data.paye);
         document.getElementById('pdf-deductions').textContent = formatCurrency(data.deductions);
         document.getElementById('pdf-gross-total').textContent = formatCurrency(data.grossSalary);
-        document.getElementById('pdf-total-deduction').textContent = formatCurrency(data.deductions);
+        document.getElementById('pdf-total-deduction').textContent = totalDeduction;
+        totalDeduction = data.deductions + data.paye + data.pension;
         document.getElementById('pdf-net-pay').textContent = formatCurrency(data.netSalary);
         
     } else {
@@ -88,8 +89,12 @@ function loadPayslipData(data) {
     const taxableIncome = parseFloat(data.taxable_income) || 0;
     const annualTax = parseFloat(data.annual_tax) || 0;
     const monthlyTax = parseFloat(data.monthly_tax) || 0;
+    const monthlyNet = parseFloat(data.monthly_net) || 0;
+    const monthlyGross = parseFloat(data.grossSalary) || 0;
     const station = data.station || 'N/A';
-
+    const totalDeduction = taxableIncome + annualTax + monthlyTax; 
+    const grossPay = annualGross + monthlyNet + monthlyGross; 
+    const netPay = grossPay - totalDeduction;
         // 🔥 RETAIL HR - Use JSON-extracted fields
         // Create common-style tables for RETAIL matching payslip-template.php
         const retailTables = document.createElement('div');
@@ -158,8 +163,8 @@ function loadPayslipData(data) {
                         <td style="border: 1px solid #000; padding: 8px; text-align: right;">${formatAmount(taxableIncome)}</td>
                     </tr>
                     <tr>
-                        <td style="border: 1px solid #000; padding: 8px;">Monthly Gross</td>
-                        <td style="border: 1px solid #000; padding: 8px; text-align: right;">${formatAmount(data.grossSalary)}</td>
+                        <td style="border: 1px solid #000; padding: 8px;">Monthly Net</td>
+                        <td style="border: 1px solid #000; padding: 8px; text-align: right;">${formatAmount(monthlyNet)}</td>
                         <td style="border: 1px solid #000; padding: 8px;">Annual Tax</td>
                         <td style="border: 1px solid #000; padding: 8px; text-align: right;">${formatAmount(annualTax)}</td>
                     </tr>
@@ -171,14 +176,14 @@ function loadPayslipData(data) {
                     </tr>
                     <tr style="font-weight: bold;">
                         <td style="border: 1px solid #000; padding: 8px;">Gross Pay</td>
-                        <td style="border: 1px solid #000; padding: 8px; text-align: right;">${formatAmount(data.grossSalary)}</td>
+                        <td style="border: 1px solid #000; padding: 8px; text-align: right;">${formatAmount(grossPay)}</td>
                         <td style="border: 1px solid #000; padding: 8px;">Total Deduction</td>
-                        <td style="border: 1px solid #000; padding: 8px; text-align: right;">${formatAmount(totalDed)}</td>
+                        <td style="border: 1px solid #000; padding: 8px; text-align: right;">${formatAmount(totalDeduction)}</td>
                     </tr>
                     
                     <tr style="background: #d1fae5; font-weight: bold; font-size: 14px;">
                         <td colspan="2" style="border: 1px solid #000; padding: 8px;">Net Pay</td>
-                        <td colspan="2" style="border: 1px solid #000; padding: 8px; text-align: right;">${formatAmount(data.netSalary)}</td>
+                        <td colspan="2" style="border: 1px solid #000; padding: 8px; text-align: right;">${formatAmount(netPay)}</td>
                     </tr>
                 </tbody>
             </table>
