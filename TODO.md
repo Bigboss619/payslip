@@ -1,17 +1,11 @@
-# Excel Header Fix - New Format Only
+# RETAIL HR Payslip-View Design Match Plan
+Current Progress: 6/6 steps complete ✅
 
-## Steps:
-- [ ] 1. Create TODO.md (current)
-- [x] 1. Create TODO.md 
-- [ ] 2. Read current upload-payroll.php contents 
-- [ ] 3. Apply precise edits for both count checks and column indices
-- [ ] 4. Test with new format Excel
-- [ ] 5. Verify preview/save works
-- [ ] 6. Complete task
-
-**Status:** Awaiting file contents for precise edits...
-- [ ] 4. Verify preview/save works
-- [ ] 5. Complete task
-
-**Status:** Starting step 2...
+## Approved Plan Steps:
+1. ✅ **Create TODO.md** - Track progress (done)
+2. ✅ **Verify payslip-view.js** - Confirmed RETAIL custom gradient code.
+3. ✅ **Design tables** - Created matching info/salary tables HTML.
+4. ✅ **Edit RETAIL branch** - Replaced innerHTML with common table design.
+5. ✅ **Update formatCurrency** - Integrated formatAmount with 2-decimal ₦XX,XXX.XX precision.
+6. ✅ **Fix duplication** - Hide existing #info-table/#salary-table for RETAIL; append only 2 clean tables. Now exactly 2 tables visible matching common design.
 

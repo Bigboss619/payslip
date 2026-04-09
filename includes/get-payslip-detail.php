@@ -38,6 +38,16 @@ try {
             COALESCE(u.bank_name, 'N/A') AS bankName,
             COALESCE(pb.month, DATE_FORMAT(p.created_at, '%M')) AS month,
 
+            -- 🔥 ALL Retail JSON fields
+        COALESCE(JSON_UNQUOTE(JSON_EXTRACT(p.extra_data, '$.annual_gross')), 0) AS annual_gross,
+        COALESCE(JSON_UNQUOTE(JSON_EXTRACT(p.extra_data, '$.taxable_income')), 0) AS taxable_income,
+        COALESCE(JSON_UNQUOTE(JSON_EXTRACT(p.extra_data, '$.annual_tax')), 0) AS annual_tax,
+        COALESCE(JSON_UNQUOTE(JSON_EXTRACT(p.extra_data, '$.monthly_tax')), 0) AS monthly_tax,
+        COALESCE(JSON_UNQUOTE(JSON_EXTRACT(p.extra_data, '$.monthly_net')), 0) AS monthly_net,
+        COALESCE(JSON_UNQUOTE(JSON_EXTRACT(p.extra_data, '$.stations')), 'N/A') AS station,
+        
+
+
             COALESCE(pb.year, YEAR(p.created_at)) AS year,
             COALESCE(pb.status, 'Paid') AS status,
             DATE_FORMAT(COALESCE(pb.created_at, p.created_at), '%d %M %Y') AS generatedDate
