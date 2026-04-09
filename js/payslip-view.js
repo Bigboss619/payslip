@@ -61,7 +61,7 @@ function loadPayslipData(data) {
     
     if (data.hr_type === 'MAIN' || !data.hr_type) {
         // 🔥 MAIN HR (your existing code)
-        document.getElementById('pdf-days-worked').textContent = data.days_worked;
+        document.getElementById('pdf-days-worked').textContent = data.days_worked || 22;
         document.getElementById('pdf-basic').textContent = formatCurrency(data.basic_salary);
         document.getElementById('pdf-housing').textContent = formatCurrency(data.housing);
         document.getElementById('pdf-transport').textContent = formatCurrency(data.transport);
@@ -71,8 +71,7 @@ function loadPayslipData(data) {
         document.getElementById('pdf-paye').textContent = formatCurrency(data.paye);
         document.getElementById('pdf-deductions').textContent = formatCurrency(data.deductions);
         document.getElementById('pdf-gross-total').textContent = formatCurrency(data.grossSalary);
-        document.getElementById('pdf-total-deduction').textContent = totalDeduction;
-        totalDeduction = data.deductions + data.paye + data.pension;
+        document.getElementById('pdf-total-deduction').textContent = formatCurrency(parseFloat(data.deductions) + parseFloat(data.paye) + parseFloat(data.pension));
         document.getElementById('pdf-net-pay').textContent = formatCurrency(data.netSalary);
         
     } else {
