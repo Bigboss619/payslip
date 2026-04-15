@@ -9,16 +9,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const apiUrl = `../includes/get-payslip-detail.php?id=${id}`; 
     
-    console.log('🔍 Fetching:', apiUrl);
+    // console.log('🔍 Fetching:', apiUrl);
     
     fetch(apiUrl)
         .then(response => {
-            console.log('📡 Response status:', response.status);
+            // console.log('📡 Response status:', response.status);
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             return response.json();
         })
         .then(result => {
-            console.log('✅ Data received:', result);
+            // console.log('✅ Data received:', result);
             if (result.success) {
                 loadPayslipData(result.data);
             } else {
@@ -43,7 +43,7 @@ function showError(message) {
 }
 
 function loadPayslipData(data) {
-    console.log('🔍 HR Type:', data.hr_type);
+    // console.log('🔍 HR Type:', data.hr_type);
     
     document.getElementById('loading').style.display = 'none';
     document.getElementById('detail-content').classList.remove('hidden');

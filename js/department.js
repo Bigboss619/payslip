@@ -63,7 +63,7 @@ function renderTable(depts) {
   tableCount.textContent = `${depts.length} department${depts.length !== 1 ? 's' : ''}`;
   
   tbody.innerHTML = depts.map(dept => {
-    console.log('Rendering dept:', dept.id, dept.name); // Debug dept data
+    // console.log('Rendering dept:', dept.id, dept.name); // Debug dept data
     return `
     <tr class="hover:bg-gray-50">
       <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${dept.id}</td>

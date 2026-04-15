@@ -17,7 +17,7 @@ async function loadTotalEmployees() {
 }
 
 async function loadPayrollData(monthNum = null, year = null) {
-  console.log('🚀 loadPayrollData called:', {monthNum, year});
+  // console.log('🚀 loadPayrollData called:', {monthNum, year});
   
   const tbody = document.getElementById('excelTableBody');
   if (tbody) {
@@ -27,7 +27,7 @@ async function loadPayrollData(monthNum = null, year = null) {
   const month = (monthNum || new Date().getMonth() + 1).toString().padStart(2, '0');
   const finalYear = year || new Date().getFullYear();
   
-  console.log('📡 Fetching for month:', month, 'year:', finalYear);
+  // console.log('📡 Fetching for month:', month, 'year:', finalYear);
   
   try {
     const params = new URLSearchParams({
@@ -36,19 +36,19 @@ async function loadPayrollData(monthNum = null, year = null) {
       year: year || new Date().getFullYear()
     });
     
-    console.log('📡 Fetching Excel:', `${API_BASE}upload-payroll.php?${params}`);
+    // console.log('📡 Fetching Excel:', `${API_BASE}upload-payroll.php?${params}`);
     
     const response = await fetch(`${API_BASE}upload-payroll.php?${params}`);
     
     const responseText = await response.text();
-    console.log('📄 Raw response:', responseText.substring(0, 200));
+    // console.log('📄 Raw response:', responseText.substring(0, 200));
     
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
     
     const result = JSON.parse(responseText);
-    console.log('✅ Excel result:', result);
+    // console.log('✅ Excel result:', result);
     
     if (result.success && result.excel_data && result.excel_data.length > 0) {
       // ✅ FIXED: Correct global variables for payroll-table.js
@@ -64,13 +64,13 @@ async function loadPayrollData(monthNum = null, year = null) {
       }
       
       // ✅ Dispatch event for payroll-table.js listener
-      console.log('🚀 [upload.js] Dispatching excelDataLoaded event');
+      // console.log('🚀 [upload.js] Dispatching excelDataLoaded event');
       window.dispatchEvent(new CustomEvent('excelDataLoaded'));
       
       // ✅ Update summary cards
       updateExcelSummary(result);
       
-      console.log('✅ TABLE UPDATED:', result.excel_data.length, 'rows from', result.file_path);
+      // console.log('✅ TABLE UPDATED:', result.excel_data.length, 'rows from', result.file_path);
       
       const statusMsg = document.getElementById('statusMsg');
       if (statusMsg) {
@@ -91,7 +91,7 @@ async function loadPayrollData(monthNum = null, year = null) {
       if (totalEl) totalEl.textContent = result.total_rows;
       
     } else {
-      console.log('❌ No Excel data:', result);
+      // console.log('❌ No Excel data:', result);
       window.currentExcelData = [];
       window.filteredExcelData = [];
       
@@ -138,7 +138,7 @@ async function handleFileUpload(e) {
   uploadStatus.innerHTML = '<div class="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600 inline-block mr-2"></div>Uploading...';
   
   try {
-    console.log('📤 Uploading to:', `${API_BASE}upload-payroll.php`);
+    // console.log('📤 Uploading to:', `${API_BASE}upload-payroll.php`);
     
     const response = await fetch(`${API_BASE}upload-payroll.php`, {
       method: 'POST',
@@ -146,7 +146,7 @@ async function handleFileUpload(e) {
     });
     
     const result = await response.json();
-    console.log('✅ Upload result:', result);
+    // console.log('✅ Upload result:', result);
     
     if (result.success) {
       uploadStatus.innerHTML = `<span class="text-green-600 font-semibold">✅ ${result.message}</span>`;
@@ -238,7 +238,7 @@ function renderMainHrPreview(rows) {
 }
 
 function renderRetailHrPreview(rows) {
-  console.log('🔍 DEBUG: renderRetailHrPreview called with', rows.length, 'rows');
+  // console.log('🔍 DEBUG: renderRetailHrPreview called with', rows.length, 'rows');
 
 
   const tbody = document.getElementById('retailPreviewBody');

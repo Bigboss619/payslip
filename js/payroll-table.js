@@ -103,14 +103,14 @@ function getMonthName(monthNum) {
 }
 
 function renderExcelTable() {
-  console.log('🔍 DEBUG RENDER - currentExcelData:', currentExcelData.length);
-  console.log('🔍 DEBUG RENDER - filteredExcelData:', filteredExcelData.length);
-  console.log('🔍 DEBUG RENDER - window.currentExcelData:', window.currentExcelData?.length);
+  // console.log('🔍 DEBUG RENDER - currentExcelData:', currentExcelData.length);
+  // console.log('🔍 DEBUG RENDER - filteredExcelData:', filteredExcelData.length);
+  // console.log('🔍 DEBUG RENDER - window.currentExcelData:', window.currentExcelData?.length);
   
 
   // console.log('📊 [renderExcelTable] Data check - currentExcelData:', currentExcelData?.length || 0, 'filteredExcelData:', filteredExcelData?.length || 0);
   const data = filteredExcelData.length > 0 ? filteredExcelData : currentExcelData;
-  console.log('📊 Using data length:', data.length);
+  // console.log('📊 Using data length:', data.length);
   const start = (currentPage - 1) * pageSize;
   const end = start + pageSize;
   const paginated = data.slice(start, end);
@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   if (monthSelect) {
     monthSelect.addEventListener('change', function() {
-      console.log('📅 Month changed to:', this.value, 'Excel view:', currentView === 'excel');
+      // console.log('📅 Month changed to:', this.value, 'Excel view:', currentView === 'excel');
       if (currentView === 'excel') {
         loadExcelDataForCurrentMonth();
       }
@@ -311,7 +311,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   if (yearSelect) {
     yearSelect.addEventListener('change', function() {
-      console.log('📅 Year changed to:', this.value, 'Excel view:', currentView === 'excel');
+      // console.log('📅 Year changed to:', this.value, 'Excel view:', currentView === 'excel');
       if (currentView === 'excel') {
         loadExcelDataForCurrentMonth();
       }
@@ -320,13 +320,13 @@ document.addEventListener('DOMContentLoaded', function() {
   
 // ✅ Listen for data loaded from upload.js - FIXED to always render
   window.addEventListener('excelDataLoaded', function(e) {
-    console.log('🎉 [payroll-table] excelDataLoaded received');
+    // console.log('🎉 [payroll-table] excelDataLoaded received');
     
     // Sync window globals to local vars
     currentExcelData = window.currentExcelData || [];
     filteredExcelData = window.filteredExcelData || [...currentExcelData];
     
-    console.log('🔄 Synced data:', currentExcelData.length, 'rows');
+    // console.log('🔄 Synced data:', currentExcelData.length, 'rows');
     
     // Force render regardless of tab (Excel tab will show it)
     renderExcelTable();

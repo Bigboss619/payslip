@@ -13,7 +13,7 @@ async function loadDashboardData() {
         const response = await fetch('../includes/dashboard.php');
         const result = await response.json();
         
-        console.log('✅ Multi-HR Response:', result);
+        // console.log('✅ Multi-HR Response:', result);
         
         if (result.success) {
             renderStats(result.stats || {});
@@ -47,7 +47,7 @@ function renderRecentPayslips(payslips = []) {  // 🔥 Renamed param
     const tbody = document.getElementById('recent-tbody');
     if (!tbody) return console.warn('❌ #recent-tbody missing!');
     
-    console.log('📋 Loading', payslips.length, 'payslips');
+    // console.log('📋 Loading', payslips.length, 'payslips');
     
     if (payslips.length === 0) {
         tbody.innerHTML = '<tr><td colspan="4" class="py-12 text-center text-gray-500">No payslips yet</td></tr>';

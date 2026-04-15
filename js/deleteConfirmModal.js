@@ -2,7 +2,7 @@
 let currentDeleteId = null;
 
 function openDeleteModal(id, name) {
-  console.log("DELETE CLICKED:", id, name);
+  // console.log("DELETE CLICKED:", id, name);
   currentDeleteId = id;
   document.getElementById('delete-confirm-name').textContent = escapeHtml(name);
   document.getElementById('delete-confirm-modal').classList.remove('hidden');
@@ -23,7 +23,7 @@ async function confirmDelete() {
   
   
   const formData = `action=delete&id=${currentDeleteId}`;
-  console.log('Delete request data:', formData); // Debug log
+  // console.log('Delete request data:', formData); // Debug log
   
   try {
     const res = await fetch('../includes/departmentSub.php', {
@@ -32,7 +32,7 @@ async function confirmDelete() {
       body: formData
     });
     const data = await res.json();
-    console.log('Delete response:', data); // Debug log
+    // console.log('Delete response:', data); // Debug log
     closeDeleteModal();
     if (data.success) {
       showMessage(data.message, 'success');
