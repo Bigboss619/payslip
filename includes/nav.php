@@ -51,6 +51,12 @@
             </svg>
             <span>Upload Payroll</span>
           </a>
+          <a href="users.php" class="sidebar-link block px-4 py-3 rounded-lg hover:bg-gray-100 group relative">
+            <svg class="w-5 h-5 flex-shrink-0 inline-block mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+            </svg>
+            <span>Users</span>
+          </a>
 <?php endif; ?>
 
           <a href="<?php echo HR_URL; ?>profile" class="sidebar-link block px-4 py-3 rounded-lg hover:bg-gray-100 group relative">

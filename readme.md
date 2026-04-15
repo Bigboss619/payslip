@@ -22,6 +22,7 @@ then get the email and password from the database
 
 -- Add HR type column
 ALTER TABLE users ADD COLUMN hr_type ENUM('MAIN', 'RETAIL', 'CORPORATE') NULL DEFAULT NULL;
+ALTER TABLE users ADD COLUMN status ENUM('active', 'inactive') NULL DEFAULT 'active';
 ALTER TABLE payslip ADD COLUMN extra_data JSON DEFAULT NULL;
 
 ALTER TABLE payroll_batches ADD COLUMN hr_type VARCHAR(20) DEFAULT 'MAIN';

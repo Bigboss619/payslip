@@ -184,7 +184,6 @@ async function handleFileUpload(e) {
   }
 }
 
-
 function showPreview(data) {
   previewData = data;
   const previewSection = document.getElementById('previewSection');

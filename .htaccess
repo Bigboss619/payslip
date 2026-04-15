@@ -13,6 +13,7 @@ RewriteRule  ^HR/payslip-view$                        HR/payslip-view.php       
 RewriteRule  ^HR/profile$                             HR/profile.php                        [NC,L]
 RewriteRule  ^HR/upload$                              HR/upload.php                         [NC,L]
 RewriteRule  ^HR/department$                          HR/department.php                         [NC,L]
+RewriteRule  ^HR/users$                               HR/users.php                         [NC,L]
 
 # Fallback: Try direct file, else index.php
 RewriteCond %{REQUEST_FILENAME} !-f
