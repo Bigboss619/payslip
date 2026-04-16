@@ -71,11 +71,11 @@
   <!-- QUICK ACTIONS -->
   <div class="bg-white p-6 rounded-xl shadow mb-6 flex flex-wrap gap-4">
     <?php if($_SESSION['role'] === 'HR'): ?>
-    <a href="upload.php" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+    <a href="<?php echo HR_URL; ?>upload" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
       📤 Upload Payroll
     </a>
     <?php endif; ?>
-    <a href="payslip.php" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+    <a href="<?php echo HR_URL; ?>payslip" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
       👀 View Payslips
     </a>
     <?php if($_SESSION['role'] !== 'HR'): ?>

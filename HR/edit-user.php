@@ -11,7 +11,7 @@ $user_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
             <!-- Breadcrumb -->
             <nav class="mb-8">
                 <ol class="inline-flex items-center space-x-1 md:space-x-3 text-sm">
-                    <li><a href="users.php" class="text-blue-600 hover:text-blue-800">Users</a></li>
+                    <li><a href="<?php echo HR_URL; ?>users" class="text-blue-600 hover:text-blue-800">Users</a></li>
                     <li><span class="text-gray-500 mx-2">/</span></li>
                     <li class="text-gray-900 font-medium">Edit <?php echo htmlspecialchars($user['name']); ?></li>
                 </ol>
@@ -90,7 +90,7 @@ $user_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
                                 </svg>
                                 Update User
                             </button>
-                            <a href="users.php" 
+                            <a href="<?php echo HR_URL; ?>users" 
                                class="flex-1 text-center bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold py-3 px-6 rounded-xl transition-all shadow-sm">
                                 Cancel
                             </a>
