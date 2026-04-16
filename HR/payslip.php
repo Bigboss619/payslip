@@ -55,7 +55,7 @@
 
                 <th class="px-6 py-4 cursor-pointer sort-header hover:text-blue-600 transition-colors select-none" onclick="handleSort('grossSalary')" data-column="grossSalary">Gross Salary</th>
 
-                <th class="px-6 py-4 cursor-pointer sort-header hover:text-blue-600 transition-colors select-none" onclick="handleSort('deductions')" data-column="deductions">Deductions</th>
+                <th class="px-6 py-4 cursor-pointer sort-header hover:text-blue-600 transition-colors select-none" onclick="handleSort('deductions')" data-column="deductions">Total Deductions</th>
 
                 <th class="px-6 py-4 cursor-pointer sort-header hover:text-blue-600 transition-colors select-none" onclick="handleSort('netSalary')" data-column="netSalary">Net Salary</th>
 

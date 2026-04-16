@@ -17,6 +17,9 @@ $stmt = $conn->prepare("
         u.name, 
         u.staff_id, 
         u.department_id,
+        u.account_number,
+        u.tax_id,
+        u.bank_name,
         d.name as department_name,  -- ✅ Department name
         pb.month, 
         pb.year, 
@@ -173,19 +176,19 @@ body {
             <td class="label">Worked Days</td>
             <td><?= $data['days_worked'] ?? '0' ?></td>
             <td class="label">Payer ID</td>
-            <td>N-21897635</td>
+            <td><?= htmlspecialchars($data['tax_id']) ?></td>
         </tr>
         <tr>
             <td class="label">Employee Name</td>
             <td><?= htmlspecialchars($data['name']) ?></td>
-            <td class="label">Designation</td>
-            <td>HR Manager</td>
+            <td class="label">Account Number</td>
+            <td><?= htmlspecialchars($data['account_number']) ?></td>
         </tr>
         <tr>
             <td class="label">Department</td>
             <td><?= htmlspecialchars($data['department_name']) ?></td>
-            <td class="label">SBU</td>
-            <td>Corporate Services</td>
+            <td class="label">Bank</td>
+            <td><?= htmlspecialchars($data['bank_name']) ?></td>
         </tr>
     </table>
 

@@ -62,6 +62,8 @@ try {
     $sql = "
         SELECT 
             p.id,
+            p.pension, 
+            p.paye,
             p.deductions,
             p.gross_salary AS grossSalary,
             p.net_salary AS netSalary,

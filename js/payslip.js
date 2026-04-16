@@ -112,13 +112,19 @@ function renderTable(data) {
   emptyState?.classList.add('hidden');
   pagination?.classList.remove('hidden');
 
-  tableBody.innerHTML = data.map(item => `
+  tableBody.innerHTML = data.map(item => {
+    const deductions = Number(item.deductions || 0);
+    const pension = Number(item.pension || 0);
+    const paye = Number(item.paye || 0);
+    const totalDeductions = deductions + pension + paye;
+    console.log(pension, paye, deductions, totalDeductions);
+    return `
     <tr class="hover:bg-gray-50/50 transition-colors border-b border-gray-100 last:border-b-0">
       <td class="py-4 px-6 font-medium text-gray-900">${formatMonthYear(item.month, item.year)}</td>
 
       <td class="py-4 px-6">${formatCurrency(item.grossSalary)}</td>
 
-      <td class="py-4 px-6 text-gray-600">${formatCurrency(item.deductions)}</td>
+      <td class="py-4 px-6 text-gray-600">${formatCurrency(totalDeductions)}</td>
 
       <td class="py-4 px-6 font-semibold text-green-700">${formatCurrency(item.netSalary)}</td>
 
@@ -158,7 +164,8 @@ function renderTable(data) {
         </div>
       </td>
     </tr>
-  `).join('');
+  `;
+  }).join('');
 
   updatePaginationInfo();
 }

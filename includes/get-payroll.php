@@ -51,7 +51,7 @@ error_log("🔍 Params: " . json_encode($filterParams));
 
 $dataQuery = "
     SELECT 
-        p.id, p.deductions, p.gross_salary AS grossSalary, p.net_salary AS netSalary,
+        p.id, p.deductions, p.pension, p.paye, p.gross_salary AS grossSalary, p.net_salary AS netSalary,
         COALESCE(u.name, CONCAT('ID-', p.user_id)) AS employeeName,
         COALESCE(u.staff_id, p.user_id) AS employeeId,
         pb.month, pb.year, pb.status, pb.file_path, pb.created_at AS batch_date,
