@@ -75,7 +75,7 @@
 
                         <div class="mb-4">
                             <label class="text-sm font-medium">Pension ID</label>
-                            <input name="pension_id" id="signupPensionId" type="text" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none invalid:border-red-500 invalid:focus:ring-red-500" required>
+                            <input name="pension_id" id="signupPensionId" type="text" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none invalid:border-red-500 invalid:focus:ring-red-500">
                             <p id="signupPensionIdError" class="mt-1 text-sm text-red-600 hidden">Pension ID must be at least 2 characters.</p>
                         </div>
                 </div>

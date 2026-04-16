@@ -28,24 +28,41 @@ include_once("../config/config.php");
 
 <!-- ✅ GLOBAL SIDEBAR SCRIPT (Add before closing body) -->
 <script>
-// Sidebar active state - Works on ALL pages
+// Enhanced Sidebar - Active for users/* pages
 document.addEventListener('DOMContentLoaded', function() {
     const currentPath = window.location.pathname.split('/').pop();
+    const currentDir = window.location.pathname.split('/').slice(-2).join('/');
     
     document.querySelectorAll('.sidebar-link').forEach(link => {
         // Reset all
         link.classList.remove('bg-blue-100', 'text-blue-600', 'font-medium');
         link.classList.add('hover:bg-gray-100');
         
-        // Get link path
-        const linkPath = link.getAttribute('href')?.split('/').pop() || '';
+        const linkHref = link.getAttribute('href') || '';
+        const linkPath = linkHref.split('/').pop();
+        const linkDir = linkHref.split('/').slice(-2).join('/');
         
-        // Active match
+        // Exact match OR parent section match
+        let isActive = false;
+        
+        // 1. Exact filename match
         if (linkPath === currentPath) {
+            isActive = true;
+        }
+        // 2. Users section: users.php OR edit-user.php
+        else if (linkPath === 'users' && (currentPath === 'users.php' || currentPath === 'edit-user.php' || currentDir.includes('users'))) {
+            isActive = true;
+        }
+        // 3. Add more sections as needed
+        else if (linkPath === 'payslip' && currentDir.includes('payslip-view')) {
+            isActive = true;
+        }
+        
+        if (isActive) {
             link.classList.remove('hover:bg-gray-100');
             link.classList.add('bg-blue-100', 'text-blue-600', 'font-medium');
-            link.style.backgroundColor = '#dbeafe'; // Tailwind blue-100
-            link.style.color = '#2563eb'; // Tailwind blue-600
+            link.style.backgroundColor = '#dbeafe';
+            link.style.color = '#2563eb';
         }
     });
 });
