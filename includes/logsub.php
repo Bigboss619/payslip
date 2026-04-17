@@ -30,7 +30,7 @@ if (isset($_POST['login'])) {
 
     try {
         // Query by email OR staff_id
-        $query = "SELECT u.id, u.name, u.staff_id, u.email, u.hr_type, u.password, u.role, u.pension_id, u.tax_id, u.account_number, u.bank_name, d.name as department_name FROM users u LEFT JOIN departments d ON u.department_id = d.id WHERE (u.email = ? AND u.staff_id = ?) LIMIT 1";
+$query = "SELECT u.id, u.name, u.staff_id, u.email, u.hr_type, u.password, u.role, u.status, u.pension_id, u.tax_id, u.account_number, u.bank_name, d.name as department_name FROM users u LEFT JOIN departments d ON u.department_id = d.id WHERE (u.email = ? AND u.staff_id = ?) LIMIT 1";
 
 
         $stmt = $conn->prepare($query);
@@ -38,6 +38,15 @@ if (isset($_POST['login'])) {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user && password_verify($password, $user['password'])) {
+            // Check status
+            if ($user['status'] !== 'active') {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Your account is suspended. Reach out to the HR department.'
+                ]);
+                exit;
+            }
+
             // Login success
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['name'] = $user['name'];
@@ -49,11 +58,10 @@ if (isset($_POST['login'])) {
             $_SESSION['bank_name'] = $user['bank_name'];
             $_SESSION['department_name'] = $user['department_name'];
             $_SESSION['role'] = $user['role'];
-            $_SESSION['hr_type'] = $user['hr_type'] ?? null; // Store HR type if available
-
+            $_SESSION['hr_type'] = $user['hr_type'] ?? null;
 
             // Role-based redirect
-$redirect_url = 'HR/dashboard.php'; // Unified shared dashboard for all roles
+            $redirect_url = 'HR/dashboard.php';
 
             echo json_encode([
                 'success' => true,

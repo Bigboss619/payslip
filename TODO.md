@@ -1,20 +1,12 @@
-# User Status Toggle - COMPLETE ✓
+# Login Status Check - COMPLETE ✓
 
-**Step 1: Files analyzed** ✓
-
-**Step 2: Plan approved** ✓ 
-
-**Step 3: Edit HR/edit-user.php** ✓
-- Replaced <select> with styled checkbox toggle (Tailwind switch)
-- Checkbox name="status" value="active" (unchecked sends nothing → backend treats as 'inactive')
-- Dynamic label color/text (Active green/Inactive red)
-- JS updates label on toggle
-
-**Backend unchanged:** edit-user-sub.php already handles status='active' or missing→'inactive'
+**Changes:**
+- logsub.php: Added `u.status` to SELECT
+- After password_verify: `if ($user['status'] !== 'active') { JSON error "Your account is suspended. Reach out to HR." }`
 
 **Test:**
-1. HR/users.php → Edit user
-2. Toggle switch → Submit
-3. Verify users.php table badge updates, filter works
+1. Set user inactive (edit-user.php toggle off → save)
+2. Login with creds → see suspend msg
+3. Toggle active → login success → HR/dashboard
 
-Fully functional toggle added!
+All login checks complete! Deploy logsub.php.
