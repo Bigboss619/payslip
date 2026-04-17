@@ -26,7 +26,7 @@ $stmt = $conn->prepare("
         pb.status
     FROM payslip p
     JOIN users u ON p.user_id = u.id
-    JOIN departments d ON u.department_id = d.id  -- ✅ JOIN departments table
+LEFT JOIN departments d ON u.department_id = d.id
     JOIN payroll_batches pb ON p.batch_id = pb.id
     WHERE p.id = ?
     LIMIT 1
