@@ -20,7 +20,7 @@ $hrFilter = ($_SESSION['role'] === 'HR') ? "AND pb.uploaded_by = ?" : "AND p.use
 
 // 🔥 PERFECT SEARCH LOGIC - ONE CONDITION, 3 FIELDS
 $whereConditions = [];
-$params = [$hrParam]; // Start with HR param
+$params = []; // 🔥 FIXED: HR param LAST
 
 if (!empty($name)) {
     $likeTerm = "%$name%";
@@ -29,6 +29,7 @@ if (!empty($name)) {
     $params[] = $likeTerm;
     $params[] = $likeTerm;
 }
+$params[] = $hrParam; // 🔥 HR LAST after name filters
 
 if (!empty($month)) {
     $whereConditions[] = "pb.month = ?";
@@ -85,6 +86,7 @@ $monthsStmt = $conn->prepare($monthsQuery);
 $monthsStmt->execute([$hrParam]);
 $months = $monthsStmt->fetchAll(PDO::FETCH_ASSOC);
 
+ 
 echo json_encode([
     'success' => true,
     'data' => $data,
