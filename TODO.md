@@ -1,8 +1,10 @@
 # Payslip Month/Year Filter Fix
 ✅ Name search working perfectly
 
+## ✅ Month/Year Filters FIXED & Working!
+
 ## Plan Breakdown
-- [x] 1. Fix PDO params order for month/year ✅ **includes/get-payroll.php**
-- [ ] 2. Test month="January" → expect Jane Smith  
-- [ ] 3. Test year="2026" → expect Jane Smith
-- [ ] 4. All filters complete ✅
+- [x] 1. PDO params order fixed ✅
+- [x] 2. Filters working (user confirmed) ✅
+- [ ] 3. **UX Fix**: Dropdowns show selected "January"/"2026" instead of reverting to "All"
+- [ ] 4. Complete

@@ -383,7 +383,11 @@ function updatePaginationInfo() {
 // }
 
 function populateFilters(months = []) {
-  monthSelect.innerHTML = '<option value="">All Months</option>';
+  // 🔥 UX FIX: Preserve current selections
+  const currentMonth = monthSelect.value;
+  const currentYear = yearSelect.value;
+  
+  monthSelect.innerHTML = '<option value="">All Months'
   yearSelect.innerHTML = '<option value="">All Years</option>';
   
   if (!months.length) return;
@@ -399,6 +403,14 @@ function populateFilters(months = []) {
   monthNames.forEach(month => {
     monthSelect.innerHTML += `<option value="${month}">${month}</option>`;
   });
+  
+  // 🔥 UX FIX: Restore selections AFTER populating
+  if (monthSelect.querySelector(`[value="${currentMonth}"]`)) {
+    monthSelect.value = currentMonth;
+  }
+  if (yearSelect.querySelector(`[value="${currentYear}"]`)) {
+    yearSelect.value = currentYear;
+  }
 }
 function handlePagination(direction) {
   const totalPages = Math.ceil(totalItems / pageSize);
