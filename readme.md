@@ -13,7 +13,7 @@ email - retailuser@example.com
 password - retailuser123
 staff_id - RET-002
 
-email - obikenepal@gmail.com
+email - user@example.com
 password - user123@$
 staff_id - STAF002
 for other login

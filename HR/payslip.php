@@ -26,11 +26,14 @@
                 <option value="">All Years</option>
             </select>
 
+            
+            <?php if($_SESSION['role'] === 'HR'): ?>
             <input id="search"
                 type="text" 
                 placeholder="Search by Name or Staff ID" 
                 class="flex-1 bg-white shadow-sm border border-gray-200 px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
             >
+            <?php endif; ?>
             <!-- 👈 NEW: Clear button -->
             <button onclick="clearFilters()" 
                 class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-6 py-2 rounded-xl shadow-sm hover:shadow-md transition-all whitespace-nowrap">

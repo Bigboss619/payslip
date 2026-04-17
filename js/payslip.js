@@ -9,7 +9,7 @@ let currentSort = { column: 'batch_date', direction: 'desc' };
 const tableBody = document.querySelector('#payslip-table tbody');
 const emptyState = document.querySelector('#empty-state');
 const pagination = document.querySelector('#pagination');
-const searchInput = document.querySelector('#search');
+const searchInput = document.querySelector('#search') || {value: ''};
 const monthSelect = document.querySelector('#month-filter');
 const yearSelect = document.querySelector('#year-filter');
 const pageInfo = document.querySelector('#page-info');
@@ -464,15 +464,17 @@ async function downloadPayslip(event, id) {
 }
 // Event listeners
 const debouncedSearch = debounce(() => loadData(1), 300);
-searchInput?.addEventListener('input', debouncedSearch);
+if (searchInput && typeof searchInput.addEventListener === 'function') {
+  searchInput.addEventListener('input', debouncedSearch);
+}
 monthSelect?.addEventListener('change', () => loadData(1));
 yearSelect?.addEventListener('change', () => loadData(1));
 
 // 🔥 CLEAR FILTERS
 window.clearFilters = function() {
-  searchInput.value = '';
-  monthSelect.value = '';
-  yearSelect.value = '';
+  if (searchInput && typeof searchInput.value !== 'undefined') searchInput.value = '';
+  if (monthSelect) monthSelect.value = '';
+  if (yearSelect) yearSelect.value = '';
   loadData(1);
 };
 
