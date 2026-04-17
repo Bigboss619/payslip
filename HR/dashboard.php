@@ -41,7 +41,7 @@
 
   <!-- WELCOME -->
   <div class="mb-6">
-    <h1 class="text-2xl font-bold">Welcome, <?php echo htmlspecialchars($_SESSION['name'] ?? 'User'); ?>
+    <h1 class="text-2xl font-bold">Welcome, <?php echo htmlspecialchars($_SESSION['name']); ?>
     <?php if(isset($_SESSION['hr_type'])): ?>
       <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">(<?php echo strtoupper($_SESSION['hr_type']); ?>)</span>
     <?php endif; ?> 👋

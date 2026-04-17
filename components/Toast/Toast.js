@@ -9,7 +9,7 @@ function showToast(message, type = 'success') {
   toast.className = 'fixed top-4 right-4 z-50 max-w-sm w-full transform translate-x-full transition-transform duration-300';
   
   const colors = {
-    success: 'bg-green-500 border-green-400 text-green-100',
+    success: 'bg-green-800 border-green-400 text-green-500',
     error: 'bg-red-500 border-red-400 text-red-100'
   };
   
