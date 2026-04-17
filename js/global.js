@@ -1,5 +1,11 @@
 // ✅ SIDEBAR ACTIVE LOGIC - Works on ALL pages
 document.addEventListener('DOMContentLoaded', function() {
+    // Ensure showToast is loaded
+    if (typeof showToast === 'undefined') {
+        console.warn('Toast.js not loaded. Check script include.');
+    } else {
+        console.log('✅ Toast system ready');
+    }
     highlightActivePage();
     
     // Re-highlight on navigation (if using SPA)

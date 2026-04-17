@@ -26,6 +26,9 @@ include_once("../config/config.php");
 <body class="bg-gray-100">
     <div class="flex h-screen overflow-hidden">
 
+<!-- 🔥 TOAST SCRIPT - Global Availability -->
+<script defer src="../components/Toast/Toast.js"></script>
+
 <!-- ✅ GLOBAL SIDEBAR SCRIPT (Add before closing body) -->
 <script>
 // Enhanced Sidebar - Active for users/* pages

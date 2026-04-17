@@ -88,7 +88,7 @@
 
                 <!-- Account Name -->
                 <div class="mb-4">
-                    <label class="text-sm font-medium">Account  Number</label>
+                    <label class="text-sm font-medium">Account  Name</label>
                     <input name="account_id" id="signupAccountId" type="text" class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none invalid:border-red-500 invalid:focus:ring-red-500">
                     <p id="signupAccountIdError" class="mt-1 text-sm text-red-600 hidden">Account Name must be at least 2 characters.</p>
                 </div>
@@ -141,7 +141,7 @@
                 </div>
 
                 <button name="register" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition">
-                    Sign Up
+                    Register
                 </button>
             </form>
 
