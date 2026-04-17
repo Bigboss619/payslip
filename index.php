@@ -5,8 +5,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Payslip System</title>
+    
+    <!-- Company Logo Favicon -->
+    <link rel="icon" type="image/png" href="uploads/company-logo/nepal-logo.png">
+    
     <link rel="stylesheet" href="src/output.css">
+
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
     <div class="bg-white shadow-xl rounded-2xl w-full max-w-md p-8">

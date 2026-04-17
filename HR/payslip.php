@@ -41,11 +41,6 @@
             </button>
         </div>
 
-        <?php if($_SESSION['role'] === 'HR'): ?>
-        <button onclick="downloadAll()" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold px-8 py-2.5 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all whitespace-nowrap">
-            📥 Download All Payslips
-        </button>
-        <?php endif; ?>
 
     </div>
 

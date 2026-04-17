@@ -1,10 +1,16 @@
-# Payslip Month/Year Filter Fix
-✅ Name search working perfectly
+# Favicon 404 Fix Progress
 
-## ✅ Month/Year Filters FIXED & Working!
+**Step 1: Diagnosis complete** ✓
+- Confirmed no favicon.ico in root
+- No references found project-wide
+- index.php lacks icon link
+- header.php already has favicon link (but relative path for subdir use)
 
-## Plan Breakdown
-- [x] 1. PDO params order fixed ✅
-- [x] 2. Filters working (user confirmed) ✅
-- [ ] 3. **UX Fix**: Dropdowns show selected "January"/"2026" instead of reverting to "All"
-- [ ] 4. Complete
+**Step 2: Plan approved** ✓ (user confirmed to continue)
+
+**Step 3: Edit index.php** ✓
+Added favicon link to `<head>` matching header.php style
+
+**Step 4: Test & deploy** ⏳
+- Local: Open http://localhost/payslip/index.php, check DevTools Network tab (no favicon 404)
+- Live: Upload updated index.php to https://nepalgroupng.com/, clear cache, verify console
