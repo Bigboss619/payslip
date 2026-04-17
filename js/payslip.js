@@ -145,7 +145,7 @@ async function loadData(page = 1) {
   tableBody.innerHTML = `
     <tr><td colspan="7" class="py-12 text-center">
       <div class="w-8 h-8 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
-      <p>Debugging... Check console</p>
+      <p></p>
     </td></tr>
   `;
 

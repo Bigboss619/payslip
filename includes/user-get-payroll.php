@@ -45,9 +45,9 @@ $monthMap = [
 $whereConditions = ["(p.user_id = ? OR p.staff_id = ?)"];  // 🔥 NOW MATCHES BY staff_id TOO!
 $params = [$userId, $userStaffId];  // 🔥 Two params now
 
-if (!empty($month) && isset($monthMap[$month])) {
+if (!empty($month)) {
     $whereConditions[] = "pb.month = ?";
-    $params[] = $monthMap[$month];
+    $params[] = $month;
 }
 
 if (!empty($year)) {
