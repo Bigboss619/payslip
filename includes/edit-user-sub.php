@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = trim($_POST['password'] ?? '');
     $confirm_password = trim($_POST['confirm_password'] ?? '');
     // $role = $_POST['role'];
-    $status = $_POST['status'];
+    $status = $_POST['status'] ?? 'inactive';
     
     // Validation
     if (empty($name)) $errors[] = 'Name is required';
@@ -85,7 +85,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Repopulate form on error
     $user['name'] = $name;
     $user['email'] = $email;
-    $user['role'] = $role;
+    $user['role'] = $role ?? $user['role'];
     $user['status'] = $status;
 }
 ?>
+

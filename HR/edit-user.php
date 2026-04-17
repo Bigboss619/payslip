@@ -72,14 +72,32 @@ $user_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
                                 class="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500">
                         </div>
 
-                        <!-- Status -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Status</label>
-                            <select name="status" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                <option value="active" <?php echo ($user['status'] ?? '') === 'active' ? 'selected' : ''; ?>>Active</option>
-                                <option value="inactive" <?php echo ($user['status'] ?? '') === 'inactive' ? 'selected' : ''; ?>>Inactive</option>
-                            </select>
+                        <!-- Active Toggle Switch -->
+                        <div class="flex items-center justify-between">
+                            <label class="block text-sm font-semibold text-gray-700">Status</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="status" value="active" 
+                                       id="statusToggle" 
+                                       <?php echo ($user['status'] ?? 'active') === 'active' ? 'checked' : ''; ?>
+                                       class="sr-only peer">
+                                <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                <span class="ml-3 text-sm font-medium text-gray-900 <?php echo ($user['status'] ?? 'active') === 'inactive' ? 'text-red-600' : 'text-green-600'; ?>">
+                                    <?php echo ($user['status'] ?? 'active') === 'active' ? 'Active' : 'Inactive'; ?>
+                                </span>
+                            </label>
                         </div>
+                        <script>
+                            document.getElementById('statusToggle').addEventListener('change', function() {
+                                const label = this.parentElement.nextElementSibling || this.parentElement.parentElement.querySelector('span');
+                                if (this.checked) {
+                                    label.textContent = 'Active';
+                                    label.className = 'ml-3 text-sm font-medium text-green-600';
+                                } else {
+                                    label.textContent = 'Inactive';
+                                    label.className = 'ml-3 text-sm font-medium text-red-600';
+                                }
+                            });
+                        </script>
 
                         <!-- Buttons -->
                         <div class="flex flex-col sm:flex-row gap-4 pt-4 border-t border-gray-200 mt-8">
