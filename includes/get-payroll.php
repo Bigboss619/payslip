@@ -20,26 +20,25 @@ $hrFilter = ($_SESSION['role'] === 'HR') ? "AND pb.uploaded_by = ?" : "AND p.use
 
 // 🔥 PERFECT SEARCH LOGIC - ONE CONDITION, 3 FIELDS
 $whereConditions = [];
-$params = []; // 🔥 FIXED: HR param LAST
+$params = []; // 🔥 CORRECT ORDER: filters before HR
 
 if (!empty($name)) {
     $likeTerm = "%$name%";
     $whereConditions[] = "(u.name LIKE ? OR u.staff_id LIKE ? OR p.user_id LIKE ?)";
-    $params[] = $likeTerm;
-    $params[] = $likeTerm;
-    $params[] = $likeTerm;
+    $params[] = $likeTerm; $params[] = $likeTerm; $params[] = $likeTerm;
 }
-$params[] = $hrParam; // 🔥 HR LAST after name filters
 
 if (!empty($month)) {
     $whereConditions[] = "pb.month = ?";
-    $params[] = $month;
+    $params[] = $month;  // Immediately after condition
 }
 
 if (!empty($year)) {
     $whereConditions[] = "pb.year = ?";
-    $params[] = $year;
+    $params[] = $year;   // Immediately after condition
 }
+
+$params[] = $hrParam; // 🔥 HR ALWAYS LAST
 
 $whereClause = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereConditions) : '';
 
