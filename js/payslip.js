@@ -39,20 +39,114 @@ const debounce = (func, delay) => {
 };
 
 // Load data from backend
+// async function loadData(page = 1) {
+//   const month = monthSelect.value;
+//   const year = yearSelect.value;
+//   const name = searchInput.value.trim();
+//   const offset = (page - 1) * pageSize;
+
+//   // Show loading
+//   tableBody.innerHTML = `
+//     <tr>
+//       <td colspan="7" class="py-12 text-center">
+//         <div class="w-8 h-8 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
+//         <p>Loading payslips...</p>
+//       </td>
+//     </tr>
+//   `;
+
+//   try {
+//     const params = new URLSearchParams({
+//       limit: pageSize,
+//       offset: offset,
+//       month: month || '',
+//       year: year || '',
+//       name: name || ''
+//     });
+    
+//     // const endpoint = window.payslipEndpoint || 'get-payroll.php';
+//     const response = await fetch(`${window.PAYSLOP_API}?${params}`);
+//     const result = await response.json();
+
+//     if (result.success) {
+//       currentData = result.data || [];
+//       totalItems = result.total || 0;
+//       currentPage = page;
+//       renderTable(result.data || []);
+//       populateFilters(result.months || []);
+//       updatePaginationInfo();
+//     } else {
+//       console.error('API error:', result.error);
+//       showError(`Error: ${result.error}`);
+//     }
+//   } catch (error) {
+//     console.error('Fetch error:', error);
+//     showError('Network error. Please try again.');
+//   }
+// }
+
+// 🔥 FIXED loadData (add console.log for debug)
+// async function loadData(page = 1) {
+//   const month = monthSelect.value;
+//   const year = yearSelect.value;
+//   const name = searchInput.value.trim();
+//   const offset = (page - 1) * pageSize;
+
+//   console.log('🔍 Filters:', { month, year, name, page }); // 👈 DEBUG
+
+//   // Show loading
+//   tableBody.innerHTML = `
+//     <tr>
+//       <td colspan="7" class="py-12 text-center">
+//         <div class="w-8 h-8 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
+//         <p>Loading payslips...</p>
+//       </td>
+//     </tr>
+//   `;
+
+//   try {
+//     const params = new URLSearchParams({
+//       limit: pageSize,
+//       offset: offset,
+//       month: month || '',
+//       year: year || '',
+//       name: name || ''
+//     });
+    
+//     const response = await fetch(`${window.PAYSLOP_API}?${params}`);
+//     const result = await response.json();
+
+//     console.log('📊 API Response:', result.debug); // 👈 DEBUG
+
+//     if (result.success) {
+//       currentData = result.data || [];
+//       totalItems = result.total || 0;
+//       currentPage = page;
+//       renderTable(result.data || []);
+//       populateFilters(result.months || []);
+//       updatePaginationInfo();
+//     } else {
+//       showError(`Error: ${result.error}`);
+//     }
+//   } catch (error) {
+//     console.error('Fetch error:', error);
+//     showError('Network error. Please try again.');
+//   }
+// }
+// 🔥 DEBUG VERSION - Replace your loadData function
 async function loadData(page = 1) {
   const month = monthSelect.value;
   const year = yearSelect.value;
   const name = searchInput.value.trim();
   const offset = (page - 1) * pageSize;
 
-  // Show loading
+  console.log('🔍 DEBUG REQUEST:', { month, year, name, page, offset, api: window.PAYSLOP_API });
+
   tableBody.innerHTML = `
-    <tr>
-      <td colspan="7" class="py-12 text-center">
-        <div class="w-8 h-8 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
-        <p>Loading payslips...</p>
-      </td>
-    </tr>
+    <tr><td colspan="7" class="py-12 text-center">
+      <div class="w-8 h-8 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
+      <p>Debugging... Check console</p>
+    </td></tr>
   `;
 
   try {
@@ -64,27 +158,48 @@ async function loadData(page = 1) {
       name: name || ''
     });
     
-    // const endpoint = window.payslipEndpoint || 'get-payroll.php';
+    console.log('🌐 FULL URL:', `${window.PAYSLOP_API}?${params}`);
+    
     const response = await fetch(`${window.PAYSLOP_API}?${params}`);
     const result = await response.json();
+    
+    console.log('📊 FULL API RESPONSE:', result);
 
-    if (result.success) {
+    if (result.success || result.DEBUG_MODE) {
       currentData = result.data || [];
       totalItems = result.total || 0;
       currentPage = page;
+      
+      // 🔥 Show debug info in table
+      if (result.DEBUG_MODE) {
+        tableBody.innerHTML = `
+          <tr class="bg-yellow-50">
+            <td colspan="7" class="p-8 text-center">
+              <h3 class="text-xl font-bold text-yellow-800 mb-4">🔍 DEBUG INFO</h3>
+              <pre class="bg-gray-100 p-4 rounded-xl text-sm max-h-96 overflow-auto text-left mx-auto max-w-4xl">
+${JSON.stringify(result.debug, null, 2)}
+              </pre>
+              <button onclick="loadData(1)" class="mt-4 bg-blue-500 text-white px-6 py-2 rounded-xl hover:bg-blue-600">
+                🔄 Retry Normal Load
+              </button>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      
       renderTable(result.data || []);
       populateFilters(result.months || []);
       updatePaginationInfo();
     } else {
-      console.error('API error:', result.error);
-      showError(`Error: ${result.error}`);
+      console.error('API Error:', result);
+      tableBody.innerHTML = `<tr><td colspan="7" class="py-12 text-center text-red-500">Error: ${result.error}</td></tr>`;
     }
   } catch (error) {
-    console.error('Fetch error:', error);
-    showError('Network error. Please try again.');
+    console.error('Fetch Error:', error);
+    tableBody.innerHTML = `<tr><td colspan="7" class="py-12 text-center text-red-500">Network Error: ${error.message}</td></tr>`;
   }
 }
-
 function showError(message) {
   tableBody.innerHTML = `
     <tr>
@@ -184,31 +299,107 @@ function updatePaginationInfo() {
   if (nextBtn) nextBtn.disabled = currentPage >= totalPages || totalPages === 0;
 }
 
-function populateFilters(months = []) {
-  let monthHtml = '<option value="">All Months</option>';
-  let yearHtml = '<option value="">All Years</option>';
+// function populateFilters(months = []) {
+//   let monthHtml = '<option value="">All Months</option>';
+//   let yearHtml = '<option value="">All Years</option>';
   
-  // Group by year for better UX
-  const years = {};
-  months.forEach(m => {
-    if (!years[m.year]) years[m.year] = [];
-    years[m.year].push(m.month);
-  });
+//   // Group by year for better UX
+//   const years = {};
+//   months.forEach(m => {
+//     if (!years[m.year]) years[m.year] = [];
+//     years[m.year].push(m.month);
+//   });
 
-  // Sort years descending
-  Object.keys(years).sort((a, b) => b - a).forEach(year => {
-    yearHtml += `<option value="${year}">${year}</option>`;
+//   // Sort years descending
+//   Object.keys(years).sort((a, b) => b - a).forEach(year => {
+//     yearHtml += `<option value="${year}">${year}</option>`;
     
-    // Add months for this year
-    years[year].sort().forEach(month => {
-      monthHtml += `<option value="${month}">${month} ${year}</option>`;
-    });
+//     // Add months for this year
+//     years[year].sort().forEach(month => {
+//       monthHtml += `<option value="${month}">${month} ${year}</option>`;
+//     });
+//   });
+
+//   monthSelect.innerHTML = monthHtml;
+//   yearSelect.innerHTML = yearHtml;
+// }
+// function populateFilters(months = []) {
+//   // Clear options
+//   monthSelect.innerHTML = '<option value="">All Months</option>';
+//   yearSelect.innerHTML = '<option value="">All Years</option>';
+  
+//   if (months.length === 0) return;
+  
+//   // Group by year
+//   const years = {};
+//   months.forEach(m => {
+//     if (!years[m.year]) years[m.year] = [];
+//     if (!years[m.year].includes(m.month)) {
+//       years[m.year].push(m.month);
+//     }
+//   });
+
+//   // Add sorted years
+//   Object.keys(years)
+//     .sort((a, b) => b - a)  // Newest first
+//     .forEach(year => {
+//       yearSelect.innerHTML += `<option value="${year}">${year}</option>`;
+//     });
+
+//   // Add all unique months (sorted)
+//   const allMonths = [...new Set(months.map(m => m.month))].sort();
+//   allMonths.forEach(month => {
+//     monthSelect.innerHTML += `<option value="${month}">${month}</option>`;
+//   });
+// }
+
+// function populateFilters(months = []) {
+//   // Clear options first
+//   monthSelect.innerHTML = '<option value="">All Months</option>';
+//   yearSelect.innerHTML = '<option value="">All Years</option>';
+  
+//   if (months.length === 0) return;
+  
+//   const years = {};
+//   months.forEach(m => {
+//     if (!years[m.year]) years[m.year] = [];
+//     if (!years[m.year].includes(m.month)) {
+//       years[m.year].push(m.month);
+//     }
+//   });
+
+//   // 🔥 FIXED: Populate YEARS dropdown
+//   Object.keys(years)
+//     .sort((a, b) => b - a)  // Newest first
+//     .forEach(year => {
+//       yearSelect.innerHTML += `<option value="${year}">${year}</option>`;
+//     });
+
+//   // 🔥 FIXED: Populate MONTHS dropdown (show full month names)
+//   const allMonths = [...new Set(months.map(m => m.month))].sort();
+//   allMonths.forEach(month => {
+//     monthSelect.innerHTML += `<option value="${month}">${month}</option>`;
+//   });
+// }
+
+function populateFilters(months = []) {
+  monthSelect.innerHTML = '<option value="">All Months</option>';
+  yearSelect.innerHTML = '<option value="">All Years</option>';
+  
+  if (!months.length) return;
+  
+  // Years
+  const years = [...new Set(months.map(m => m.year))].sort((a,b) => b-a);
+  years.forEach(year => {
+    yearSelect.innerHTML += `<option value="${year}">${year}</option>`;
   });
-
-  monthSelect.innerHTML = monthHtml;
-  yearSelect.innerHTML = yearHtml;
+  
+  // Months
+  const monthNames = [...new Set(months.map(m => m.month))].sort();
+  monthNames.forEach(month => {
+    monthSelect.innerHTML += `<option value="${month}">${month}</option>`;
+  });
 }
-
 function handlePagination(direction) {
   const totalPages = Math.ceil(totalItems / pageSize);
   if (direction === 'prev' && currentPage > 1) {
@@ -264,6 +455,14 @@ const debouncedSearch = debounce(() => loadData(1), 300);
 searchInput?.addEventListener('input', debouncedSearch);
 monthSelect?.addEventListener('change', () => loadData(1));
 yearSelect?.addEventListener('change', () => loadData(1));
+
+// 🔥 CLEAR FILTERS
+window.clearFilters = function() {
+  searchInput.value = '';
+  monthSelect.value = '';
+  yearSelect.value = '';
+  loadData(1);
+};
 
 // Initial load
 document.addEventListener('DOMContentLoaded', () => {
