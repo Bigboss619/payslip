@@ -17,7 +17,7 @@ if (isset($_POST['register'])) {
 
     $errors = [];
 
-    // Required fields
+    // Required fields validation
     if (empty($fullname)) $errors[] = 'Full name is required.';
     if (empty($staff_id)) $errors[] = 'Staff ID is required.';
     if (empty($department_name)) $errors[] = 'Department is required.';
@@ -25,7 +25,7 @@ if (isset($_POST['register'])) {
     if (empty($password)) $errors[] = 'Password is required.';
     if (empty($confirm_password)) $errors[] = 'Confirm password is required.';
 
-    // Specific validations
+    // Format validation
     if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = 'Invalid email format.';
     }
@@ -35,77 +35,128 @@ if (isset($_POST['register'])) {
     if (!empty($password) && strlen($password) < 6) {
         $errors[] = 'Password must be at least 6 characters.';
     }
-    if (!empty($password) && $password !== $confirm_password) {
+    if ($password !== $confirm_password) {
         $errors[] = 'Passwords do not match.';
     }
 
-    // Real DB duplicate check with error handling
-    try {
-        $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
-        $stmt->execute([$email]);
-        if ($stmt->rowCount() > 0) {
-            $errors[] = 'Email already exists.';
+    // 🔥 CRITICAL: CHECK EMAIL & STAFF ID DUPLICATES FIRST
+    if (empty($errors)) {
+        try {
+            // Check EMAIL duplicate
+            $stmt_email = $conn->prepare("SELECT id, name FROM users WHERE email = ?");
+            $stmt_email->execute([$email]);
+            if ($stmt_email->rowCount() > 0) {
+                $existing_user = $stmt_email->fetch(PDO::FETCH_ASSOC);
+                $errors[] = "❌ Email '{$email}' already registered by '{$existing_user['name']}'";
+            }
+        } catch (PDOException $e) {
+            $errors[] = 'Database error checking email.';
         }
-    } catch (PDOException $e) {
-        $errors[] = 'Database error: Table may not exist.';
     }
 
+    if (empty($errors)) {
+        try {
+            // Check STAFF ID duplicate
+            $stmt_staff = $conn->prepare("SELECT id, name, email FROM users WHERE staff_id = ?");
+            $stmt_staff->execute([$staff_id]);
+            if ($stmt_staff->rowCount() > 0) {
+                $existing_staff = $stmt_staff->fetch(PDO::FETCH_ASSOC);
+                $errors[] = "❌ Staff ID '{$staff_id}' already registered by '{$existing_staff['name']}' ({$existing_staff['email']})";
+            }
+        } catch (PDOException $e) {
+            $errors[] = 'Database error checking staff ID.';
+        }
+    }
+
+    // 🚫 IF ANY ERRORS - STOP & SHOW TOAST MESSAGE
     if (!empty($errors)) {
         echo json_encode([
             'success' => false,
-            'message' => implode(' ', $errors)
+            'message' => implode(' | ', $errors),
+            'toast_type' => 'error'
         ]);
-    } else {
-        try {
-            // Validate and get department_id
-            $stmt_dep = $conn->prepare("SELECT id FROM departments WHERE name = ?");
-            $stmt_dep->execute([$department_name]);
-            $department_id = $stmt_dep->fetchColumn();
-            if (!$department_id) {
-                echo json_encode(['success' => false, 'message' => 'Invalid department selected.']);
-                exit;
-            }
+        exit;
+    }
 
-            // Real insert with hashed password
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $conn->prepare("INSERT INTO users (name, staff_id, email, password, role, department_id, pension_id, tax_id, account_number, bank_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$fullname, $staff_id, $email, $hashed_password, $role, $department_id, $pension_id, $tax_id, $account_name, $bank]);
-            // 🔥 NEW: GET THE CREATED USER ID
-            $user_id = $conn->lastInsertId();
-            // 🔥 MAGIC FIX: LINK ALL EXISTING PAYSLIPS BY staff_id
-            $stmt_link = $conn->prepare("
-                UPDATE payslip 
-                SET user_id = ? 
-                WHERE staff_id = ? AND user_id IS NULL
-            ");
-            $stmt_link->execute([$user_id, $staff_id]);
-
-            // 🔥 LOG HOW MANY PAYSLIPS WERE LINKED (for debugging)
-            $stmt_count = $conn->prepare("SELECT COUNT(*) FROM payslip WHERE staff_id = ? AND user_id = ?");
-            $stmt_count->execute([$staff_id, $user_id]);
-            $linked_count = $stmt_count->fetchColumn();
-
-            echo json_encode([
-                'success' => true,
-                'message' => 'Account created successfully! and  ' . $linked_count . ' existing payslips linked.',
-                'user' => [
-                    'email' => $email,
-                    'role' => 'user',
-                    'dashboard' => '../HR/dashboard.php'
-                ]
-            ]);
-        } catch (PDOException $e) {
+    // ✅ ALL CHECKS PASSED - CREATE USER
+    try {
+        // Get department_id
+        $stmt_dep = $conn->prepare("SELECT id FROM departments WHERE name = ?");
+        $stmt_dep->execute([$department_name]);
+        $department_id = $stmt_dep->fetchColumn();
+        
+        if (!$department_id) {
             echo json_encode([
                 'success' => false,
-                'message' => 'Insert failed: ' . $e->getMessage()
+                'message' => 'Department not found. Please refresh and try again.',
+                'toast_type' => 'error'
+            ]);
+            exit;
+        }
+
+        // Hash password & insert user
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $conn->prepare("
+            INSERT INTO users (
+                name, staff_id, email, password, role, 
+                department_id, pension_id, tax_id, 
+                account_number, bank_name, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        ");
+        $stmt->execute([
+            $fullname, $staff_id, $email, $hashed_password, 
+            $role, $department_id, $pension_id, $tax_id, 
+            $account_name, $bank
+        ]);
+
+        $user_id = $conn->lastInsertId();
+
+        // 🔥 AUTO-LINK EXISTING PAYSLIPS by staff_id
+        $stmt_link = $conn->prepare("
+            UPDATE payslip 
+            SET user_id = ? 
+            WHERE staff_id = ? AND user_id IS NULL
+        ");
+        $stmt_link->execute([$user_id, $staff_id]);
+
+        // Count linked payslips
+        $stmt_count = $conn->prepare("SELECT COUNT(*) FROM payslip WHERE user_id = ?");
+        $stmt_count->execute([$user_id]);
+        $linked_count = $stmt_count->fetchColumn();
+
+        echo json_encode([
+            'success' => true,
+            'message' => "🎉 Welcome {$fullname}! Account created successfully.",
+            'linked_payslips' => $linked_count,
+            'toast_type' => 'success',
+            'user' => [
+                'email' => $email,
+                'role' => $role,
+                'dashboard' => '../HR/dashboard.php'
+            ]
+        ]);
+
+    } catch (PDOException $e) {
+        // Handle unique constraint violations
+        if (stripos($e->getMessage(), 'Duplicate entry') !== false) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Duplicate entry detected. Please try a different email/staff ID.',
+                'toast_type' => 'error'
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Registration failed: ' . $e->getMessage(),
+                'toast_type' => 'error'
             ]);
         }
     }
-    exit;
-
-
+} else {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Invalid request.',
+        'toast_type' => 'error'
+    ]);
 }
-
-echo json_encode(['success' => false, 'message' => 'Invalid request.']);
 ?>
-
