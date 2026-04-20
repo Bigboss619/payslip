@@ -39,6 +39,14 @@ if (isset($_POST['register'])) {
         $errors[] = 'Passwords do not match.';
     }
 
+    // 🔥 NEW: STAFF ID FORMAT VALIDATION (BACKEND)
+    if (!empty($staff_id)) {
+        // Valid formats: N/SA/001, N/TR/001, N/AV/001, N/RT/001, N/CS/001
+        if (!preg_match('/^N\/(SA|TR|AV|RT|CS)\/\d{3}$/', $staff_id)) {
+            $errors[] = "❌ Invalid Staff ID format. Must be: N/SA/001, N/TR/001, N/AV/001, N/RT/001, or N/CS/001";
+        }
+    }
+
     // 🔥 CRITICAL: CHECK EMAIL & STAFF ID DUPLICATES FIRST
     if (empty($errors)) {
         try {
