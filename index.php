@@ -12,10 +12,44 @@
     <link rel="icon" type="image/png" href="uploads/company-logo/nepal-logo.png">
     
     <link rel="stylesheet" href="src/output.css">
+    <style>
+        .index-enter-prep .auth-card,
+        .index-enter-prep .auth-card > * {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .index-enter-ready .auth-card {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 560ms ease, transform 560ms ease;
+        }
+
+        .index-enter-ready .auth-card > * {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 520ms ease, transform 520ms ease;
+        }
+
+        .index-enter-ready .auth-card > *:nth-child(1) { transition-delay: 90ms; }
+        .index-enter-ready .auth-card > *:nth-child(2) { transition-delay: 180ms; }
+        .index-enter-ready .auth-card > *:nth-child(3) { transition-delay: 270ms; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .index-enter-prep .auth-card,
+            .index-enter-prep .auth-card > *,
+            .index-enter-ready .auth-card,
+            .index-enter-ready .auth-card > * {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
+        }
+    </style>
 
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="bg-white shadow-xl rounded-2xl w-full max-w-md p-8">
+<body class="index-enter-prep bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="auth-card bg-white shadow-xl rounded-2xl w-full max-w-md p-8">
         <!-- Title -->
          <h2 id="formTitle" class="text-2xl font-bold text-center mb-6">
             Login
@@ -158,4 +192,12 @@
 <script src="components/Toast/Toast.js"></script>
 <!-- <script src="components/modal/Modal.js"></script> -->
 <script src="js/login-new.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    requestAnimationFrame(function () {
+        document.body.classList.remove('index-enter-prep');
+        document.body.classList.add('index-enter-ready');
+    });
+});
+</script>
 </html>

@@ -63,7 +63,7 @@ $logoBase64 = 'data:image/png;base64,' . $logoData;
 body {
     font-family: Arial, sans-serif;
     font-size: 12px;
-    color: #000;
+    color: #374151;
 }
 
 .container {
@@ -73,33 +73,44 @@ body {
 /* HEADER */
 .header {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 14px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 14px 10px 12px;
 }
 .logo {
-    height: 120px;
-    margin-bottom: 5px;
+    height: 42px;
+    margin-bottom: 1px;
 }
 .title {
     font-size: 20px;
     font-weight: bold;
-    margin-bottom: 10px;
+    margin-bottom: 2px;
+    color: #1f2937;
+}
+.subtitle {
+    font-size: 11px;
+    color: #6b7280;
 }
 
 /* TOP INFO TABLE */
 .info-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .info-table td {
-    padding: 6px;
-    border: 1px solid #000;
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
 }
 
 .label {
-    font-weight: bold;
-    background: #f3f4f6;
+    font-weight: 600;
+    background: #f9fafb;
+    width: 25%;
+    color: #374151;
 }
 
 /* MAIN TABLE */
@@ -111,14 +122,18 @@ body {
 
 .salary-table th,
 .salary-table td {
-    border: 1px solid #000;
+    border: 1px solid #d1d5db;
     padding: 8px;
 }
 
 .salary-table th {
-    background: #e5e7eb;
-    text-align: center;
+    background: #f3f4f6;
+    text-align: left;
     font-weight: bold;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #374151;
 }
 
 .text-right {
@@ -144,6 +159,7 @@ body {
     background: #d1fae5;
     font-weight: bold;
     font-size: 14px;
+    color: #065f46;
 }
 
 /* FOOTER */
@@ -162,6 +178,7 @@ body {
     <div class="header">
         <img src="<?= $logoBase64 ?>" alt="company logo"  class="logo"/>
         <div class="title">PAYSLIP</div>
+        <div class="subtitle">Generated payroll statement</div>
     </div>
 
     <!-- TOP DETAILS -->
@@ -235,7 +252,7 @@ body {
             </tr>
 
             <!-- TOTALS -->
-            <tr class="bold">
+            <tr class="bold" style="background:#f9fafb;">
                 <td>Gross Pay</td>
                 <td class="text-right"><?= number_format($data['gross_salary'], 2) ?></td>
                 <td>Total Deduction</td>

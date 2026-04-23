@@ -16,7 +16,7 @@ $limit = (int)($_GET['limit'] ?? 10);
 $offset = (int)($_GET['offset'] ?? 0);
 
 $hrParam = $_SESSION['user_id'];
-$hrFilter = ($_SESSION['role'] === 'HR') ? "AND pb.uploaded_by = ?" : "AND p.user_id = ?";
+$hrFilter = ($_SESSION['role'] === 'HR') ? "" : "AND p.user_id = ?";
 
 // 🔥 PERFECT SEARCH LOGIC - ONE CONDITION, 3 FIELDS
 $whereConditions = [];
@@ -38,7 +38,9 @@ if (!empty($year)) {
     $params[] = $year;   // Immediately after condition
 }
 
-$params[] = $hrParam; // 🔥 HR ALWAYS LAST
+if ($_SESSION['role'] !== 'HR') {
+    $params[] = $hrParam;
+}
 
 $whereClause = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereConditions) : '';
 
@@ -77,12 +79,15 @@ $total = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
 $monthsQuery = "
     SELECT DISTINCT pb.year, pb.month 
     FROM payroll_batches pb 
-    INNER JOIN payslip p ON pb.id = p.batch_id 
-    $hrFilter 
-    ORDER BY pb.year DESC, pb.month
+    INNER JOIN payslip p ON pb.id = p.batch_id
 ";
+if ($_SESSION['role'] !== 'HR') {
+    $monthsQuery .= " WHERE p.user_id = ?";
+}
+$monthsQuery .= " ORDER BY pb.year DESC, pb.month";
+
 $monthsStmt = $conn->prepare($monthsQuery);
-$monthsStmt->execute([$hrParam]);
+$monthsStmt->execute($_SESSION['role'] === 'HR' ? [] : [$hrParam]);
 $months = $monthsStmt->fetchAll(PDO::FETCH_ASSOC);
 
  
