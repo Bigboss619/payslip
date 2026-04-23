@@ -8,6 +8,10 @@ $userRole = $_SESSION['role'] ?? 'STAFF';
 $hrType = $_SESSION['hr_type'] ?? null;
 $staffId = $_SESSION['staff_id'] ?? null;
 
+function isStaffLikeRole($role) {
+    return in_array($role, ['STAFF', 'USER'], true);
+}
+
 if (!$userId) {
     exit(json_encode(['success' => false, 'error' => 'Login required']));
 }
@@ -31,11 +35,13 @@ try {
 }
 
 function getSmartStats($conn, $userId, $role, $hrType) {
-    if ($role === 'STAFF') {
+    if (isStaffLikeRole($role)) {
         $stmt = $conn->prepare("
-            SELECT COUNT(*) as total_payslips,
+            SELECT COUNT(DISTINCT CONCAT(COALESCE(b.year, YEAR(p.created_at)), '-', COALESCE(b.month, DATE_FORMAT(p.created_at, '%M')))) as total_payslips,
                    COALESCE(SUM(net_salary), 0) as total_earned
-            FROM payslip WHERE user_id = ? OR staff_id = ?
+            FROM payslip p
+            LEFT JOIN payroll_batches b ON p.batch_id = b.id
+            WHERE p.user_id = ? OR p.staff_id = ?
         ");
         $stmt->execute([$userId, $_SESSION['staff_id']]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -50,11 +56,11 @@ function getSmartStats($conn, $userId, $role, $hrType) {
     
     // HR Stats
     $params = [$_SESSION['user_id']];
-    $hrFilter = $hrType ? "AND u.hr_type = ?" : "";
+    $hrFilter = $hrType ? "AND b.hr_type = ?" : "";
     if ($hrType) $params[] = $hrType;
     
     $stmt = $conn->prepare("
-        SELECT COUNT(DISTINCT p.id) as total_payslips,
+        SELECT COUNT(DISTINCT CONCAT(b.year, '-', b.month)) as total_payslips,
                COUNT(DISTINCT u.id) as total_employees
         FROM payslip p 
         INNER JOIN payroll_batches b ON p.batch_id = b.id  /* 🔥 Fixed alias */
@@ -73,7 +79,7 @@ function getSmartStats($conn, $userId, $role, $hrType) {
 }
 
 function getSmartPayslips($conn, $userId, $role, $hrType, $staffId) {
-    if ($role === 'STAFF') {
+    if (isStaffLikeRole($role)) {
         $stmt = $conn->prepare("
             SELECT b.month, b.year, p.gross_salary, p.net_salary, 
                    COALESCE(b.status, 'Paid') as status, p.id, p.created_at
@@ -89,7 +95,7 @@ function getSmartPayslips($conn, $userId, $role, $hrType, $staffId) {
     
     // HR Payslips
     $params = [$_SESSION['user_id']];
-    $hrFilter = $hrType ? "AND u.hr_type = ?" : "";
+    $hrFilter = $hrType ? "AND b.hr_type = ?" : "";
     if ($hrType) $params[] = $hrType;
     
     $stmt = $conn->prepare("
@@ -122,7 +128,7 @@ function getLastSalary($conn, $userId) {
 }
 
 function getCurrentMonth($conn, $userId, $role = 'STAFF') {
-    if ($role === 'STAFF') {
+    if (isStaffLikeRole($role)) {
         $stmt = $conn->prepare("
             SELECT CONCAT(COALESCE(b.month, DATE_FORMAT(p.created_at, '%M')), ' ', 
                           COALESCE(b.year, YEAR(p.created_at))) as period

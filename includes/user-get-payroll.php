@@ -8,7 +8,10 @@ header('Content-Type: application/json');
 
 error_log("👤 USER PAYROLL API - Role: " . ($_SESSION['role'] ?? 'none'));
 
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'STAFF') {
+$sessionRole = $_SESSION['role'] ?? null;
+$isStaffLike = in_array($sessionRole, ['STAFF', 'USER'], true);
+
+if (!$isStaffLike) {
     http_response_code(403);
     echo json_encode(['success' => false, 'error' => 'User access required']);
     exit;
