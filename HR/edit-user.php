@@ -1,7 +1,7 @@
 <?php
-include_once("../includes/header.php");
-include_once("../includes/nav.php");
-include_once("../includes/edit-user-sub.php");
+include_once("../api/services/header.php");
+include_once("../api/services/nav.php");
+include_once("../api/services/edit-user-sub.php");
 
 $user_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 ?>

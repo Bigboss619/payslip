@@ -1,6 +1,7 @@
 <?php
 // Get database connection
-require_once '../config/config.php';
+// require_once '../config/config.php';
+// require_once '../config/config.php';
 
 // Handle search, filter, pagination
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;

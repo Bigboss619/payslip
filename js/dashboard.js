@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadDashboardData() {
     try {
         // 🔥 Updated API endpoint
-        const response = await fetch('../includes/dashboard.php');
+        const response = await fetch('../api/services/dashboard.php');
         const result = await response.json();
         
         // console.log('✅ Multi-HR Response:', result);

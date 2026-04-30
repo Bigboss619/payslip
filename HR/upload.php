@@ -1,11 +1,7 @@
 <?php
-// if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'HR') {
-//   header('Location: dashboard.php?error=hr_only');
-//   exit;
-// }
 
-include_once("../includes/header.php");
-include_once("../includes/nav.php");
+include_once("../api/services/header.php");
+include_once("../api/services/nav.php");
 ?>
     <!-- MAIN -->
     <main class="flex-1 p-6 overflow-y-auto">

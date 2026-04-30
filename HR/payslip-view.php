@@ -1,8 +1,8 @@
 <!-- Header -->
-<?php include_once("../includes/header.php"); ?>
+<?php include_once("../api/services/header.php"); ?>
 
 <!-- Nav Section -->
-<?php include_once("../includes/nav.php"); ?>
+<?php include_once("../api/services/nav.php"); ?>
 <style>
 .payslip-info td {
     border: 1px solid #d1d5db;

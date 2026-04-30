@@ -30,7 +30,7 @@ document.addEventListener('click', function(e) {
 
 async function loadDepartments() {
   try {
-    const res = await fetch('../includes/departmentSub.php', {
+    const res = await fetch('../api/services/departmentSub.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: 'action=list'
@@ -99,7 +99,7 @@ async function handleSave(e) {
   const formData = `action=${action}${id ? `&id=${id}` : ''}&name=${encodeURIComponent(name)}`;
   
   try {
-    const res = await fetch('../includes/departmentSub.php', {
+    const res = await fetch('../api/services/departmentSub.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: formData

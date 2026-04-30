@@ -41,6 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'])) {
 }
 
 // Redirect back to users page
-header('Location: ../HR/users');
+header('Location: ../../HR/users');
 exit;
 ?>

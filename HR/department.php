@@ -1,6 +1,6 @@
-<?php include_once("../includes/header.php"); ?>
+<?php include_once("../api/services/header.php"); ?>
 
-<?php include_once("../includes/nav.php"); ?>
+<?php include_once("../api/services/nav.php"); ?>
 
     <!-- MAIN -->
     <main class="flex-1 p-6 overflow-y-auto">

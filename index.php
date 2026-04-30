@@ -1,4 +1,4 @@
-<?php include_once("config/config.php"); ?>
+<?php include_once("api/config/config.php"); ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -35,6 +35,33 @@
         .index-enter-ready .auth-card > *:nth-child(2) { transition-delay: 180ms; }
         .index-enter-ready .auth-card > *:nth-child(3) { transition-delay: 270ms; }
 
+        .login-button {
+            position: relative;
+            overflow: hidden;
+            z-index: 0;
+            transition: color 300ms ease, box-shadow 300ms ease, transform 300ms ease;
+        }
+
+        .login-button::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: #1d4ed8;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 350ms ease;
+            z-index: -1;
+        }
+
+        .login-button:hover::before {
+            transform: scaleX(1);
+        }
+
+        .login-button:hover {
+            box-shadow: 0 10px 20px rgba(29, 78, 216, 0.18);
+            transform: translateY(-1px);
+        }
+
         @media (prefers-reduced-motion: reduce) {
             .index-enter-prep .auth-card,
             .index-enter-prep .auth-card > *,
@@ -43,6 +70,15 @@
                 opacity: 1;
                 transform: none;
                 transition: none;
+            }
+
+            .login-button,
+            .login-button::before {
+                transition: none;
+            }
+
+            .login-button:hover {
+                transform: none;
             }
         }
     </style>
@@ -82,7 +118,7 @@
                     <p id="loginPasswordError" class="mt-1 text-sm text-red-600 hidden">Password must be at least 6 characters.</p>
                 </div>
 
-                <button class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
+                <button class="login-button w-full bg-blue-600 text-white py-2 rounded-lg hover:cursor-pointer">
                     Login
                 </button>
             </form>
@@ -174,7 +210,7 @@
                     <p id="signupConfirmPasswordError" class="mt-1 text-sm text-red-600 hidden">Passwords do not match.</p>
                 </div>
 
-                <button name="register" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition">
+                <button name="register" class="login-button w-full bg-green-600 text-white py-2 rounded-lg">
                     Register
                 </button>
             </form>

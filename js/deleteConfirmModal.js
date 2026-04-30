@@ -26,7 +26,7 @@ async function confirmDelete() {
   // console.log('Delete request data:', formData); // Debug log
   
   try {
-    const res = await fetch('../includes/departmentSub.php', {
+    const res = await fetch('../api/services/departmentSub.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: formData

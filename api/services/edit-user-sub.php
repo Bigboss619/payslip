@@ -4,7 +4,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'HR') {
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
     exit;
 }
-require_once '../config/config.php';
+// require_once '../config/config.php'; 
 
 $user_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $errors = [];

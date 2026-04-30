@@ -1,9 +1,9 @@
  <!-- Header -->
-  <?php include_once("../includes/header.php"); ?>
+  <?php include_once("../api/services/header.php"); ?>
   
 
   <!-- Nav Section -->
-   <?php include_once("../includes/nav.php"); ?>
+   <?php include_once("../api/services/nav.php"); ?>
 
         <!-- MAIN -->
         <main class="p-6 overflow-y-auto">
@@ -109,8 +109,8 @@
 // 🛠️ Smart API endpoint selector
 window.PAYSLOP_API = <?php 
     echo $_SESSION['role'] === 'HR' 
-        ? json_encode('../includes/get-payroll.php') 
-        : json_encode('../includes/user-get-payroll.php'); 
+        ? json_encode('../api/services/get-payroll.php') 
+        : json_encode('../api/services/user-get-payroll.php'); 
 ?>;
 </script>
     <script src="../js/payslip.js"></script>

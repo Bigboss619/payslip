@@ -9,7 +9,7 @@ if (!isset($_SESSION['role'])) {
 // Role logged for debugging
 error_log("Header access: {$_SESSION['role']}");
 
-include_once("../config/config.php"); 
+include_once("../api/config/config.php"); 
 ?>
 <!DOCTYPE html>
 <html lang="en">

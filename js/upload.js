@@ -1,5 +1,5 @@
 // upload.js - COMPLETE FIXED VERSION
-const API_BASE = '../includes/';
+const API_BASE = '../api/services/';
 let previewData = [];
 let currentBatchId = null;
 

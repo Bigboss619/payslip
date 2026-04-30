@@ -8,7 +8,7 @@ header('Access-Control-Allow-Headers: Content-Type');
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit(0);
 
 require '../config/config.php';
-require '../vendor/autoload.php';
+require '../../vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'HR') {

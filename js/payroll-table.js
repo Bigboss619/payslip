@@ -162,7 +162,7 @@ async function loadPayslipRecords(month = filteredMonth, year = filteredYear) {
       offset: 0
     });
     
-    const response = await fetch(`../includes/get-payroll.php?${params}`);
+    const response = await fetch(`../api/services/get-payroll.php?${params}`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     
     const result = await response.json();
@@ -378,7 +378,7 @@ window.refreshPayslips = async function() {
       year: year
     });
     
-    const url = `../includes/filter-payslips.php?${params.toString()}`;
+    const url = `../api/services/filter-payslips.php?${params.toString()}`;
     // console.log('🔗 [refreshPayslips] Fetching:', url);
     
     const response = await fetch(url, {
@@ -501,7 +501,7 @@ window.refreshPayslips = async function() {
   tbody.innerHTML = '<tr><td colspan="6" class="p-12 text-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>Loading...</td></tr>';
   
   try {
-    const response = await fetch(`../includes/filter-payslip.php?month=${month}&year=${year}`, {
+    const response = await fetch(`../api/services/filter-payslip.php?month=${month}&year=${year}`, {
       credentials: 'same-origin'
     });
     

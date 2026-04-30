@@ -1,10 +1,10 @@
 <?php
-// Your existing includes (they output header/nav/sidebar)
-include_once("../includes/header.php"); 
-include_once("../includes/nav.php"); 
+    // Your existing includes (they output header/nav/sidebar)
+    include_once("../api/services/header.php"); 
+include_once("../api/services/nav.php"); 
 
 // Include users logic
-include_once("../includes/all-users.php");
+include_once("../api/services/all-users.php");
 
 // Extract variables
 $users = $GLOBALS['users'] ?? [];
@@ -273,7 +273,7 @@ if (isset($_SESSION['message'])) {
                                    class="user-action-link user-action-edit">
                                     Edit
                                 </a>
-                                <form method="POST" action="../includes/delete-user.php" class="inline" 
+                                <form method="POST" action="../api/services/delete-user.php" class="inline" 
                                       onsubmit="return confirm('Are you sure you want to delete <?php echo htmlspecialchars($user['name']); ?>?')">
                                     <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
                                     <button type="submit" class="user-action-link user-action-delete">

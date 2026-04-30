@@ -38,101 +38,7 @@ const debounce = (func, delay) => {
   };
 };
 
-// Load data from backend
-// async function loadData(page = 1) {
-//   const month = monthSelect.value;
-//   const year = yearSelect.value;
-//   const name = searchInput.value.trim();
-//   const offset = (page - 1) * pageSize;
 
-//   // Show loading
-//   tableBody.innerHTML = `
-//     <tr>
-//       <td colspan="7" class="py-12 text-center">
-//         <div class="w-8 h-8 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
-//         <p>Loading payslips...</p>
-//       </td>
-//     </tr>
-//   `;
-
-//   try {
-//     const params = new URLSearchParams({
-//       limit: pageSize,
-//       offset: offset,
-//       month: month || '',
-//       year: year || '',
-//       name: name || ''
-//     });
-    
-//     // const endpoint = window.payslipEndpoint || 'get-payroll.php';
-//     const response = await fetch(`${window.PAYSLOP_API}?${params}`);
-//     const result = await response.json();
-
-//     if (result.success) {
-//       currentData = result.data || [];
-//       totalItems = result.total || 0;
-//       currentPage = page;
-//       renderTable(result.data || []);
-//       populateFilters(result.months || []);
-//       updatePaginationInfo();
-//     } else {
-//       console.error('API error:', result.error);
-//       showError(`Error: ${result.error}`);
-//     }
-//   } catch (error) {
-//     console.error('Fetch error:', error);
-//     showError('Network error. Please try again.');
-//   }
-// }
-
-// 🔥 FIXED loadData (add console.log for debug)
-// async function loadData(page = 1) {
-//   const month = monthSelect.value;
-//   const year = yearSelect.value;
-//   const name = searchInput.value.trim();
-//   const offset = (page - 1) * pageSize;
-
-//   console.log('🔍 Filters:', { month, year, name, page }); // 👈 DEBUG
-
-//   // Show loading
-//   tableBody.innerHTML = `
-//     <tr>
-//       <td colspan="7" class="py-12 text-center">
-//         <div class="w-8 h-8 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
-//         <p>Loading payslips...</p>
-//       </td>
-//     </tr>
-//   `;
-
-//   try {
-//     const params = new URLSearchParams({
-//       limit: pageSize,
-//       offset: offset,
-//       month: month || '',
-//       year: year || '',
-//       name: name || ''
-//     });
-    
-//     const response = await fetch(`${window.PAYSLOP_API}?${params}`);
-//     const result = await response.json();
-
-//     console.log('📊 API Response:', result.debug); // 👈 DEBUG
-
-//     if (result.success) {
-//       currentData = result.data || [];
-//       totalItems = result.total || 0;
-//       currentPage = page;
-//       renderTable(result.data || []);
-//       populateFilters(result.months || []);
-//       updatePaginationInfo();
-//     } else {
-//       showError(`Error: ${result.error}`);
-//     }
-//   } catch (error) {
-//     console.error('Fetch error:', error);
-//     showError('Network error. Please try again.');
-//   }
-// }
 // 🔥 DEBUG VERSION - Replace your loadData function
 async function loadData(page = 1) {
   const month = monthSelect.value;
@@ -158,12 +64,12 @@ async function loadData(page = 1) {
       name: name || ''
     });
     
-    console.log('🌐 FULL URL:', `${window.PAYSLOP_API}?${params}`);
+    // console.log('🌐 FULL URL:', `${window.PAYSLOP_API}?${params}`);
     
     const response = await fetch(`${window.PAYSLOP_API}?${params}`);
     const result = await response.json();
     
-    console.log('📊 FULL API RESPONSE:', result);
+    // console.log('📊 FULL API RESPONSE:', result);
 
     if (result.success || result.DEBUG_MODE) {
       currentData = result.data || [];
@@ -299,88 +205,6 @@ function updatePaginationInfo() {
   if (nextBtn) nextBtn.disabled = currentPage >= totalPages || totalPages === 0;
 }
 
-// function populateFilters(months = []) {
-//   let monthHtml = '<option value="">All Months</option>';
-//   let yearHtml = '<option value="">All Years</option>';
-  
-//   // Group by year for better UX
-//   const years = {};
-//   months.forEach(m => {
-//     if (!years[m.year]) years[m.year] = [];
-//     years[m.year].push(m.month);
-//   });
-
-//   // Sort years descending
-//   Object.keys(years).sort((a, b) => b - a).forEach(year => {
-//     yearHtml += `<option value="${year}">${year}</option>`;
-    
-//     // Add months for this year
-//     years[year].sort().forEach(month => {
-//       monthHtml += `<option value="${month}">${month} ${year}</option>`;
-//     });
-//   });
-
-//   monthSelect.innerHTML = monthHtml;
-//   yearSelect.innerHTML = yearHtml;
-// }
-// function populateFilters(months = []) {
-//   // Clear options
-//   monthSelect.innerHTML = '<option value="">All Months</option>';
-//   yearSelect.innerHTML = '<option value="">All Years</option>';
-  
-//   if (months.length === 0) return;
-  
-//   // Group by year
-//   const years = {};
-//   months.forEach(m => {
-//     if (!years[m.year]) years[m.year] = [];
-//     if (!years[m.year].includes(m.month)) {
-//       years[m.year].push(m.month);
-//     }
-//   });
-
-//   // Add sorted years
-//   Object.keys(years)
-//     .sort((a, b) => b - a)  // Newest first
-//     .forEach(year => {
-//       yearSelect.innerHTML += `<option value="${year}">${year}</option>`;
-//     });
-
-//   // Add all unique months (sorted)
-//   const allMonths = [...new Set(months.map(m => m.month))].sort();
-//   allMonths.forEach(month => {
-//     monthSelect.innerHTML += `<option value="${month}">${month}</option>`;
-//   });
-// }
-
-// function populateFilters(months = []) {
-//   // Clear options first
-//   monthSelect.innerHTML = '<option value="">All Months</option>';
-//   yearSelect.innerHTML = '<option value="">All Years</option>';
-  
-//   if (months.length === 0) return;
-  
-//   const years = {};
-//   months.forEach(m => {
-//     if (!years[m.year]) years[m.year] = [];
-//     if (!years[m.year].includes(m.month)) {
-//       years[m.year].push(m.month);
-//     }
-//   });
-
-//   // 🔥 FIXED: Populate YEARS dropdown
-//   Object.keys(years)
-//     .sort((a, b) => b - a)  // Newest first
-//     .forEach(year => {
-//       yearSelect.innerHTML += `<option value="${year}">${year}</option>`;
-//     });
-
-//   // 🔥 FIXED: Populate MONTHS dropdown (show full month names)
-//   const allMonths = [...new Set(months.map(m => m.month))].sort();
-//   allMonths.forEach(month => {
-//     monthSelect.innerHTML += `<option value="${month}">${month}</option>`;
-//   });
-// }
 
 function populateFilters(months = []) {
   // 🔥 UX FIX: Preserve current selections
@@ -436,7 +260,7 @@ async function downloadPayslip(event, id) {
     button.disabled = true;
 
     // Fetch PDF from server
-    const response = await fetch(`../includes/payslip-template.php?id=${item.id}`);
+    const response = await fetch(`../api/services/payslip-template.php?id=${item.id}`);
     // const response = await fetch(`payslip-pdf.php?id=${item.id}`);
     
     if (!response.ok) {

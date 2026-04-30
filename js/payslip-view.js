@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
     
-    const apiUrl = `../includes/get-payslip-detail.php?id=${id}`; 
+    const apiUrl = `../api/services/get-payslip-detail.php?id=${id}`; 
     
     // console.log('🔍 Fetching:', apiUrl);
     
@@ -221,5 +221,5 @@ function printPayslip() {
 function downloadPDF() {
     const urlParams = new URLSearchParams(window.location.search);
     const payslipId = urlParams.get('id');
-    window.open(`../includes/payslip-template.php?id=${payslipId}`, '_blank');
+    window.open(`../api/services/payslip-template.php?id=${payslipId}`, '_blank');
 }

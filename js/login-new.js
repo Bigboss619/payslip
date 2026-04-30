@@ -72,7 +72,7 @@ signupForm.addEventListener('submit', async (e) => {
   formData.append('register', '1');  // Ensure backend condition passes
   
   try {
-    const response = await fetch('includes/resub.php', {
+    const response = await fetch('api/auth/register.php', {
       method: 'POST',
       body: formData
     });
@@ -139,7 +139,7 @@ loginForm.addEventListener('submit', async (e) => {
     formData.append('login', '1');
 
     try {
-      const response = await fetch('includes/logsub.php', {
+      const response = await fetch('api/auth/login.php', {
         method: 'POST',
         body: formData
       });
@@ -184,7 +184,7 @@ function toggleForm() {
 // Load departments for signup form
 async function loadDepartments() {
   try {
-    const response = await fetch('includes/get-departments.php');
+    const response = await fetch('api/services/departments.php');
     const departments = await response.json();
     const select = document.getElementById('signupDepartment');
     select.innerHTML = '<option value="">Select Department</option>';

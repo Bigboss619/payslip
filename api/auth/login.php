@@ -1,5 +1,6 @@
 <?php
 require_once('../config/config.php');
+require_once('../utils/response.php');
 session_start();
 header('Content-Type: application/json');
 
